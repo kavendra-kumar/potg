@@ -1,0 +1,17 @@
+# Global files
+
+*.zip
+.svn
+.DS_Store
+thumbs.db
+
+# Codeigniter files
+*/system/logs/log-*.php
+*/system/cache/*
+*/system/cache/!index.html
+*/wsdls/*
+*mailing/
+
+# ignore an entire directory...
+/application/config/
+/promotions/application/config/
