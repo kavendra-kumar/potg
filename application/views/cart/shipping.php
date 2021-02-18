@@ -436,6 +436,38 @@ $( 'select[name="billing_country_id"]' ).change(function () {
   $('.numbers-only').keyup(function () { 
     this.value = this.value.replace(/[^0-9]/g,'');
 });
+
+
+/* *********Kave function********* */
+$( 'input[name="shipping_phone_number"]' ).focusout(function() {
+	var a = $( 'input[name="shipping_phone_number"]' ).val();
+    var digit = a.toString()[0];
+	if(digit == '0') {
+        a = a.slice(1);
+        $( 'input[name="shipping_phone_number"]' ).val(a);
+    }
+});
+
+$( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
+	var k = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+    var digit = k.toString()[0];
+	if(digit == '0') {
+        k = k.slice(1);
+        $( 'input[name="shipping_phone_number_confirm"]' ).val(k);
+    }
+
+    var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+    if(a == b){
+		$( 'input[name="confirm_validation"]').val("1");
+	}
+	else{
+	$( 'input[name="confirm_validation"]').val("");
+	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
+	}
+
+});
+
+
 $( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 	var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
    // console.log(a);
