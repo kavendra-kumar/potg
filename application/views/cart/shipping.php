@@ -422,7 +422,7 @@ $( 'select[name="shipping_country_id"]' ).change(function () {
    $(".shipping-phone-number-code").html(a.attr('data-code'));
    $('input[name="shipping_phone_code"]').val(a.attr('data-code'));
    $('input[name="shipping_phone_number"]').val(mob);
-   $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":a.attr("data-length")});
+   $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":parseInt(a.attr("data-length")) + 1});
   }).change();
 $( 'select[name="billing_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="billing_phone_number"]').val();
