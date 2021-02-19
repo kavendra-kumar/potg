@@ -229,7 +229,7 @@
                                                             <select id="countries" name="shipping_country_id" class="form-control" required>
                                                                 <option value="" selected><?php echo trans("select_country"); ?></option>
                                                                 <?php foreach ($this->countries as $item): ?>
-                                                                    <option data-code="<?php echo $item->code; ?>" data-length="<?php echo $item->phone_length; ?>" value="<?php echo $item->id; ?>" <?php echo ($shipping_address->shipping_country_id == $item->id) ? 'selected' : ''; ?>><?php echo html_escape($item->name); ?></option>
+                                                                    <option data-code="<?php echo $item->code; ?>" data-length="<?php echo $item->phone_length; ?>" value="<?php echo $item->id; ?>" <?php echo ($shipping_address->shipping_country_id == $item->id) ? 'selected' : ($country->id == $item->id)?'selected':''; ?>><?php echo html_escape($item->name); ?></option>
                                                                 <?php endforeach; ?>
                                                             </select>
                                                         </div>
@@ -253,10 +253,10 @@
                                                     <label><?php echo trans("phone_number"); ?>*</label>
                                                     <div class="input-group input-group-sm mb-3">
 														<div class="input-group-prepend">
-															<span class="input-group-text shipping-phone-number-code"></span>
+															<span class="input-group-text shipping-phone-number-code"><?= ($country)?$country->code:''; ?></span>
 														</div>
-														<input class="d-none" name="shipping_phone_code" hidden>
-														<input type="text" name="shipping_phone_number" class="form-control form-input numbers-only" value="<?php echo $shipping_address->shipping_phone_number; ?>" required>
+														<input class="d-none" name="shipping_phone_code" value="<?= ($country)?$country->code:''; ?>" type="hidden" />
+														<input type="text" name="shipping_phone_number" class="form-control form-input numbers-only" value="<?php echo $shipping_address->shipping_phone_number; ?>" placeholder="58 234 4567" required>
 													</div>
 												</div>
 												<div class="col-12 col-md-6">
@@ -265,7 +265,7 @@
 														<div class="input-group-prepend">
 															<span class="input-group-text shipping-phone-number-code"></span>
 														</div>
-														<input type="text" name="shipping_phone_number_confirm" class="form-control form-input numbers-only" value="" required>
+														<input type="text" name="shipping_phone_number_confirm" class="form-control form-input numbers-only" value=""  placeholder="58 234 4567" required>
 														
 														<input type="text" name="confirm_validation" class="border-0 h-0 w-0 p-0" required>
 													</div>
