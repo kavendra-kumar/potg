@@ -91,7 +91,12 @@
                                     endif; ?>
                                 </div>
                                 <a href="<?php echo lang_base_url(); ?>" class="btn btn-md btn-custom m-t-15"><i class="icon-arrow-left m-r-2"></i><?php echo trans("keep_shopping") ?></a>
+
+                                
+
                             </div>
+
+
                             <div class="col-sm-12 col-lg-4">
                                 <div class="right">
                                     <p>
@@ -135,8 +140,28 @@
                                     </div>
                                 </div>
                             </div>
+                            <!--Addon Products start-->
+                            
+                            <div class="col-md-12">
+                                <div class="col-12 section section-related-products" bis_skin_checked="1">
+                                    <h3 class="title mt-5"><?= trans("addon_products"); ?></h3>
+                                    <div class="row row-product" bis_skin_checked="1">
+                                        <!--print related posts-->
+                                        <?php foreach ($addon_products as $product): ?>
+                                            <div class="col-6 col-sm-6 col-md-4 col-lg-3 col-product">
+                                                <?php $this->load->view('product/_product_item', ['product' => $product, 'promoted_badge' => false]); ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--Addon Products else-->
+
                         </div>
                     </div>
+                    
                 <?php else: ?>
                     <div class="shopping-cart-empty">
                         <p><strong class="font-600"><?php echo trans("your_cart_is_empty"); ?></strong></p>

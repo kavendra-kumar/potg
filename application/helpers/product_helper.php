@@ -196,6 +196,26 @@ if (!function_exists('get_latest_products')) {
     }
 }
 
+
+//get latest products
+if (!function_exists('get_addon_products')) {
+    function get_addon_products($limit)
+    {
+        $ci =& get_instance();
+        $key = "addon_products";
+        if ($ci->default_location_id != 0) {
+            $key = "addon_products_location_" . $ci->default_location_id;
+        }
+        $addon_products = get_cached_data($key);
+        if (empty($addon_products)) {
+            $addon_products = $ci->product_model->get_addon_products_limited($limit);
+            set_cache_data($key, $addon_products);
+        }
+        return $addon_products;
+    }
+}
+
+
 //get promoted products
 if (!function_exists('get_promoted_products')) {
     function get_promoted_products($offset, $per_page)

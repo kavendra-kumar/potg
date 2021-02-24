@@ -92,12 +92,13 @@ class Order_admin_controller extends Admin_Core_Controller
 		$product_id = $this->input->post('product_id', true);
 		$quantity = $this->input->post('quantity', true);
 		if($product_id)
-		{	
+		{
 			$data=$this->product_model->get_product_by_id($product_id);
 			$appended_variations = $this->cart_model->get_selected_variations($product_id)->str;
 			$options_array = $this->cart_model->get_selected_variations($product_id)->options_array;
-			
-			$optionData=$this->variation_model->get_variation_option($options_array[0]);
+			if($options_array){
+				$optionData=$this->variation_model->get_variation_option($options_array[0]);
+			}
 			
 			$checkextrashippingcharge=$this->order_admin_model->get_order_productswithproduct($order_id,$product_id);
 			$this->order_admin_model->add_order_products_to_existing_order($order_id,count($checkextrashippingcharge),$quantity,$data,$appended_variations);

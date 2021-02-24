@@ -64,6 +64,7 @@
 								</td>
 								<td><strong><?php echo price_formatted($item->price_total, $item->price_currency); ?></strong></td>
 								<td><?php echo $item->price_currency; ?></td>
+
 								<td>
 								<?php if ($item->status == 1): ?>
                                     <label class="label label-success"><?php echo trans("completed"); ?></label>
@@ -77,10 +78,15 @@
                                     <label class="label label-success"><?php echo trans("payment_received"); ?></label>
                                 <?php elseif ($item->status == 6): ?>
                                     <label class="label label-danger"><?php echo trans("awaiting_payment"); ?></label>
+								<?php elseif ($item->status == 7): ?>
+                                    <label class="label label-info"><?php echo trans("order_processing"); ?></label>
+								<?php elseif ($item->status == 8): ?>
+                                    <label class="label label-dark"><?php echo trans("scheduled"); ?></label>
 								<?php else: ?>
-									<label class="label label-default"><?php echo trans("order_processing"); ?></label>
+									<label class="label label-default"><?php echo trans("new"); ?></label>
                                 <?php endif; ?>
 								</td>
+
 								<td>
 									<?php echo trans($item->payment_status); ?>
 								</td>

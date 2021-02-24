@@ -15,6 +15,52 @@ class Product_admin_model extends CI_Model
 	}
 
 	//get products
+	public function get_products_for_addon()
+	{
+		$this->db->where('status', 1);
+		$this->db->where('products.is_draft', 0);
+		$this->db->where('products.is_deleted', 0);
+		$this->db->order_by('products.created_at', 'DESC');
+		$query = $this->db->get('products');
+		return $query->result();
+	}
+	
+	//get addon products on cart page front end.
+	public function addon_products()
+	{
+		$addon_products = $this->get_addon_products();
+        if($addon_products) {
+            $addon = explode(",", $addon_products->product_ids);
+			if($addon) {
+				$this->db->where('status', 1);
+				$this->db->where('products.is_draft', 0);
+				$this->db->where('products.is_deleted', 0);
+				$this->db->where_in('products.id', $addon);
+				$this->db->order_by('products.created_at', 'DESC');
+				$query = $this->db->get('products');
+				return $query->result();
+			}
+        }
+		return array();
+	}
+	
+	//get addon products
+	public function get_addon_products()
+	{
+		$this->db->where('id', 1);
+		$query = $this->db->get('addon_products');
+		return $query->row();
+	}
+
+	public function save_addon_products($products) {
+		$data = array(
+			'product_ids' => $products
+		);
+		$this->db->where('id', 1);
+		return $this->db->update('addon_products', $data);
+	}
+
+	//get products
 	public function get_productsbycountryid($country_id)
 	{
 		$this->db->where('status', 1);

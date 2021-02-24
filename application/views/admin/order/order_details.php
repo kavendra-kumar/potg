@@ -16,21 +16,25 @@
                                 <strong> <?php echo trans("status"); ?></strong>
                             </div>
                             <div class="col-sm-8">
-                                <?php if ($order->status == 1): ?>
-                                    <label class="label label-success"><?php echo trans("completed"); ?></label>
-                                <?php elseif ($order->status == 2): ?>
-                                    <label class="label label-warning"><?php echo trans("confirmed"); ?></label>
-                                <?php elseif ($order->status == 3): ?>
-                                    <label class="label label-danger"><?php echo trans("cancelled"); ?></label>
-                                <?php elseif ($order->status == 4): ?>
-                                    <label class="label label-primary"><?php echo trans("shipped"); ?></label>
-                                <?php elseif ($order->status == 5): ?>
-                                    <label class="label label-success"><?php echo trans("payment_received"); ?></label>
-                                <?php elseif ($order->status == 6): ?>
-                                    <label class="label label-danger"><?php echo trans("awaiting_payment"); ?></label>
-								<?php else: ?>
-									<label class="label label-default"><?php echo trans("order_processing"); ?></label>
-                                <?php endif; ?>
+                            <?php if ($order->status == 1): ?>
+                                <label class="label label-success"><?php echo trans("completed"); ?></label>
+                            <?php elseif ($order->status == 2): ?>
+                                <label class="label label-warning"><?php echo trans("confirmed"); ?></label>
+                            <?php elseif ($order->status == 3): ?>
+                                <label class="label label-danger"><?php echo trans("cancelled"); ?></label>
+                            <?php elseif ($order->status == 4): ?>
+                                <label class="label label-primary"><?php echo trans("shipped"); ?></label>
+                            <?php elseif ($order->status == 5): ?>
+                                <label class="label label-success"><?php echo trans("payment_received"); ?></label>
+                            <?php elseif ($order->status == 6): ?>
+                                <label class="label label-danger"><?php echo trans("awaiting_payment"); ?></label>
+                            <?php elseif ($order->status == 7): ?>
+                                <label class="label label-info"><?php echo trans("order_processing"); ?></label>
+                            <?php elseif ($order->status == 8): ?>
+                                <label class="label label-info"><?php echo trans("scheduled"); ?></label>
+                            <?php else: ?>
+                                <label class="label label-default"><?php echo trans("new"); ?></label>
+                            <?php endif; ?>
                             </div>
                         </div>
 
@@ -501,6 +505,7 @@
                                             endif; ?>
                                         </td>
                                         <td><?php echo price_formatted($item->product_total_price, $item->product_currency); ?></td>
+                                        
                                         <td>
                                             <strong><?php echo trans($item->order_status); ?></strong>
                                             <?php if ($item->buyer_id == 0): ?>
@@ -513,6 +518,7 @@
                                                 <?php endif; ?>
                                             <?php endif; ?>
                                         </td>
+
                                         <td>
                                             <?php if ($item->product_type == 'physical'):
                                                 echo time_ago($item->updated_at);
@@ -636,6 +642,8 @@
                                 <?php endif; ?>
 								<option value="confirmed" <?php echo ($item->order_status == 'confirmed') ? 'selected' : ''; ?>><?php echo trans("confirmed"); ?></option>
                                 <option value="cancelled" <?php echo ($item->order_status == 'cancelled') ? 'selected' : ''; ?>><?php echo trans("cancelled"); ?></option>
+                                <option value="scheduled" <?php echo ($item->order_status == 'scheduled') ? 'selected' : ''; ?>><?php echo trans("scheduled"); ?></option>
+                                <option value="new" <?php echo ($item->order_status == 'new') ? 'selected' : ''; ?>><?php echo trans("new"); ?></option>
                             </select>
                         </div>
                     </div>
@@ -649,6 +657,8 @@
         </div>
     </div>
 <?php endforeach; ?>
+
+
 <div id="AddProductModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">

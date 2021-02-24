@@ -88,63 +88,118 @@ class Order_admin_model extends CI_Model
             $statusprocessingcount=0;
             $statuspaymentreceivedcount=0;
             $statusawaitedpaymentcount=0;
+
+            $statusscheduledcount=0;
+            $statusnewcount=0;
+
             $statuscount=0;
             foreach ($order_products as $order_product) {
-               
-                    if($order_product->order_status=='cancelled')
-                    {
-                        $statuscancelledcount+=1;
-                    }
-                    if($order_product->order_status=='confirmed')
-                    {
-                        $statusconfirmedcount+=1;
-                    }
-                    if($order_product->order_status=='completed')
-                    {
-                        $statuscompletedcount+=1;
-                    }
-                    if($order_product->order_status=='shipped')
-                    {
-                        $statusshippedcount+=1;
-                    }
-                    if($order_product->order_status=='order_processing')
-                    {
-                        $statusprocessingcount+=1;
-                    }
-                    if($order_product->order_status=='payment_received')
-                    {
-                        $statuspaymentreceivedcount+=1;
-                    }
-                    if($order_product->order_status=='awaiting_payment')
-                    {
-                        $statusawaitedpaymentcount+=1;
-                    }
-                    if($order_product->order_status!='confirmed' && $order_product->order_status!='cancelled')
-                    {
-                        $statuscount=1;
-                    }
-                    
+            
+                
+                if($order_product->order_status=='scheduled')
+                {
+                    $statusscheduledcount+=1;
                 }
-                $productcount=count($order_products);
+                if($order_product->order_status=='new')
+                {
+                    $statusnewcount+=1;
+                }
+
+                if($order_product->order_status=='cancelled')
+                {
+                    $statuscancelledcount+=1;
+                }
+                if($order_product->order_status=='confirmed')
+                {
+                    $statusconfirmedcount+=1;
+                }
+                if($order_product->order_status=='completed')
+                {
+                    $statuscompletedcount+=1;
+                }
+                if($order_product->order_status=='shipped')
+                {
+                    $statusshippedcount+=1;
+                }
+                if($order_product->order_status=='order_processing')
+                {
+                    $statusprocessingcount+=1;
+                }
+                if($order_product->order_status=='payment_received')
+                {
+                    $statuspaymentreceivedcount+=1;
+                }
+                if($order_product->order_status=='awaiting_payment')
+                {
+                    $statusawaitedpaymentcount+=1;
+                }
+                if($order_product->order_status!='confirmed' && $order_product->order_status!='cancelled')
+                {
+                    $statuscount=1;
+                }
+                
+            }
+
+            $productcount=count($order_products);
            //echo $statusprocessingcount;die();
-            /********Start Of processing ***/        
-			if($statusprocessingcount==$productcount)
+
+            /********Start Of new ***/
+            if($statusnewcount==$productcount)
+			{
+				$updateStatus['status']=0; //new
+            }
+            elseif($statusnewcount>$statuscancelledcount && ($statuscancelledcount+$statusnewcount==$productcount))
+			{
+				$updateStatus['status']=0;//new
+			}
+			elseif($statusnewcount==$statuscancelledcount && ($statuscancelledcount+$statusnewcount==$productcount))
+			{
+				$updateStatus['status']=0;//new
+			}
+			elseif($statusnewcount<$statuscancelledcount && $statusnewcount!=0 && ($statuscancelledcount+$statusnewcount==$productcount))
+			{
+				$updateStatus['status']=0;//new
+            }
+            /********End Of new ***/
+
+            /********Start Of scheduled ***/ 
+            elseif($statusscheduledcount==$productcount)
+			{
+				$updateStatus['status']=8; //scheduled
+            }
+            elseif($statusscheduledcount>$statuscancelledcount && ($statuscancelledcount+$statusscheduledcount==$productcount))
+			{
+				$updateStatus['status']=8;//scheduled
+			}
+			elseif($statusscheduledcount==$statuscancelledcount && ($statuscancelledcount+$statusscheduledcount==$productcount))
+			{
+				$updateStatus['status']=8;//scheduled
+			}
+			elseif($statusscheduledcount<$statuscancelledcount && $statusscheduledcount!=0 && ($statuscancelledcount+$statusscheduledcount==$productcount))
+			{
+				$updateStatus['status']=8;//scheduled
+            }
+            /********End Of scheduled ***/
+
+            /********Start Of processing ***/ 
+            elseif($statusprocessingcount==$productcount)
 			{ 
-				$updateStatus['status']=0;//processing
+				$updateStatus['status']=7; //processing
             }
             elseif($statusprocessingcount>$statuscancelledcount && ($statuscancelledcount+$statusprocessingcount==$productcount))
 			{
-				$updateStatus['status']=0;//processing
+				$updateStatus['status']=7;//processing
 			}
 			elseif($statusprocessingcount==$statuscancelledcount && ($statuscancelledcount+$statusprocessingcount==$productcount))
 			{
-				$updateStatus['status']=0;//processing
+				$updateStatus['status']=7;//processing
 			}
 			elseif($statusprocessingcount<$statuscancelledcount && $statusprocessingcount!=0 && ($statuscancelledcount+$statusprocessingcount==$productcount))
 			{
-				$updateStatus['status']=0;//processing
+				$updateStatus['status']=7;//processing
             }
             /********End Of processing ***/
+
             /********Start Of completed ***/
             elseif($statuscompletedcount==$productcount)
 			{
@@ -364,6 +419,12 @@ class Order_admin_model extends CI_Model
                 $this->db->where('orders.status', 3);
             }
             elseif ($data['status'] == 'processing') {
+                $this->db->where('orders.status', 7);
+            }
+            elseif ($data['status'] == 'scheduled') {
+                $this->db->where('orders.status', 8);
+            }
+            elseif ($data['status'] == 'new') {
                 $this->db->where('orders.status', 0);
             }
         }
@@ -671,7 +732,7 @@ class Order_admin_model extends CI_Model
                         'product_total_price' => $quantity*$discounted_price+$shipping_cost+$product_vat,
                         'variation_option_ids' => '',
                         'commission_rate' => $this->general_settings->commission_rate,
-                        'order_status' => 'payment_received',
+                        'order_status' => 'awaiting_payment',
                         'is_approved' => 0,
                         'shipping_tracking_number' => "",
                         'shipping_tracking_url' => "",

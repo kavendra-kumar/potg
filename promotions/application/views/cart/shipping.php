@@ -229,7 +229,7 @@
                                                             <select id="countries" name="shipping_country_id" class="form-control" required>
                                                                 <option value="" selected><?php echo trans("select_country"); ?></option>
                                                                 <?php foreach ($this->countries as $item): ?>
-                                                                    <option data-code="<?php echo $item->code; ?>" data-length="<?php echo $item->phone_length; ?>" value="<?php echo $item->id; ?>" <?php echo ($shipping_address->shipping_country_id == $item->id) ? 'selected' : ''; ?>><?php echo html_escape($item->name); ?></option>
+                                                                    <option data-code="<?php echo $item->code; ?>" data-length="<?php echo $item->phone_length; ?>" value="<?php echo $item->id; ?>" <?php echo ($shipping_address->shipping_country_id == $item->id) ? 'selected' : ($country->id == $item->id)?'selected':''; ?>><?php echo html_escape($item->name); ?></option>
                                                                 <?php endforeach; ?>
                                                             </select>
                                                         </div>
@@ -253,10 +253,10 @@
                                                     <label><?php echo trans("phone_number"); ?>*</label>
                                                     <div class="input-group input-group-sm mb-3">
 														<div class="input-group-prepend">
-															<span class="input-group-text shipping-phone-number-code"></span>
+															<span class="input-group-text shipping-phone-number-code"><?= ($country)?$country->code:''; ?></span>
 														</div>
-														<input class="d-none" name="shipping_phone_code" hidden>
-														<input type="text" name="shipping_phone_number" class="form-control form-input numbers-only" value="<?php echo $shipping_address->shipping_phone_number; ?>" required>
+														<input class="d-none" name="shipping_phone_code" value="<?= ($country)?$country->code:''; ?>" type="hidden" />
+														<input type="text" name="shipping_phone_number" class="form-control form-input numbers-only" value="<?php echo $shipping_address->shipping_phone_number; ?>" placeholder="58 234 4567" required>
 													</div>
 												</div>
 												<div class="col-12 col-md-6">
@@ -265,7 +265,7 @@
 														<div class="input-group-prepend">
 															<span class="input-group-text shipping-phone-number-code"></span>
 														</div>
-														<input type="text" name="shipping_phone_number_confirm" class="form-control form-input numbers-only" value="" required>
+														<input type="text" name="shipping_phone_number_confirm" class="form-control form-input numbers-only" value=""  placeholder="58 234 4567" required>
 														
 														<input type="text" name="confirm_validation" class="border-0 h-0 w-0 p-0" required>
 													</div>
@@ -422,7 +422,7 @@ $( 'select[name="shipping_country_id"]' ).change(function () {
    $(".shipping-phone-number-code").html(a.attr('data-code'));
    $('input[name="shipping_phone_code"]').val(a.attr('data-code'));
    $('input[name="shipping_phone_number"]').val(mob);
-   $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":a.attr("data-length")});
+   $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":parseInt(a.attr("data-length")) + 1});
   }).change();
 $( 'select[name="billing_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="billing_phone_number"]').val();
@@ -436,25 +436,54 @@ $( 'select[name="billing_country_id"]' ).change(function () {
   $('.numbers-only').keyup(function () { 
     this.value = this.value.replace(/[^0-9]/g,'');
 });
-$( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
-	var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
-    
-	debugger;
-	if(a == b){
-		console.log("true");
+
+
+/* *********Kave function********* */
+$( 'input[name="shipping_phone_number"]' ).focusout(function() {
+	var a = $( 'input[name="shipping_phone_number"]' ).val();
+    var digit = a.toString()[0];
+	if(digit == '0') {
+        a = a.slice(1);
+        $( 'input[name="shipping_phone_number"]' ).val(a);
+    }
+});
+
+$( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
+	var k = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+    var digit = k.toString()[0];
+	if(digit == '0') {
+        k = k.slice(1);
+        $( 'input[name="shipping_phone_number_confirm"]' ).val(k);
+    }
+
+    var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+    if(a == b){
 		$( 'input[name="confirm_validation"]').val("1");
-		$('#confirm_validation-error').html('');
 	}
 	else{
-		console.log("false");
+	$( 'input[name="confirm_validation"]').val("");
+	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
+	}
+
+});
+
+
+$( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
+	var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+   // console.log(a);
+	//console.log(b);
+	//debugger;
+	if(a == b){
+		//console.log("true");
+		$( 'input[name="confirm_validation"]').val("1");
+	}
+	else{
+		//console.log("false");
 	$( 'input[name="confirm_validation"]').val("");
 	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
 	}
 });
-setInterval(function(){ if ( $( 'input[name="shipping_phone_number"]' ).val() == $( 'input[name="shipping_phone_number_confirm"]' ).val()) {
-	$('#confirm_validation-error').html('');
-}
-else{
+setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
     $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
 } }, 1000);
 

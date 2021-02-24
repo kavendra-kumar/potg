@@ -33,6 +33,9 @@ class Cart_controller extends Home_Core_Controller
         $data['cart_has_physical_product'] = $this->cart_model->check_cart_has_physical_product();
         $data['cart_current_user'] = get_current_user_session();
 
+        // $data['addon_products'] = $this->product_admin_model->addon_products();
+        $data['addon_products'] = get_addon_products(8);
+
         $this->load->view('partials/_header', $data);
         $this->load->view('cart/cart', $data);
         $this->load->view('partials/_footer');

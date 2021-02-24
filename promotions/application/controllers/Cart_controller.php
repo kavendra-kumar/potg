@@ -118,6 +118,12 @@ class Cart_controller extends Home_Core_Controller
             redirect(generate_url("cart"));
             exit();
         }
+        
+        if (!empty($this->session->userdata('mds_default_location_id'))){
+            $data['country'] = get_country($this->session->userdata('mds_default_location_id'));
+        } else {
+            $data['country'] = array();
+        }
 
         $data['cart_total'] = $this->cart_model->get_sess_cart_total();
         $data["shipping_address"] = $this->cart_model->get_sess_cart_shipping_address();
