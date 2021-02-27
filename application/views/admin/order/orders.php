@@ -81,7 +81,7 @@
 								<?php elseif ($item->status == 7): ?>
                                     <label class="label label-info"><?php echo trans("order_processing"); ?></label>
 								<?php elseif ($item->status == 8): ?>
-                                    <label class="label label-dark"><?php echo trans("scheduled"); ?></label>
+                                    <label class="label label-info"><?php echo trans("scheduled"); ?></label>
 								<?php else: ?>
 									<label class="label label-default"><?php echo trans("new"); ?></label>
                                 <?php endif; ?>

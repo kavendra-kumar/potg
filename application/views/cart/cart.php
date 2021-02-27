@@ -10,7 +10,58 @@
                             <div class="col-sm-12 col-lg-8">
                                 <div class="left">
                                     <h1 class="cart-section-title"><?php echo trans("my_cart"); ?> (<?php echo get_cart_product_count(); ?>)</h1>
+
+                                    
                                     <?php if (!empty($cart_items)):
+                                    $cart_product_ids = array();
+                                    foreach($cart_items as $cart):
+                                        $cart_product_ids[] = $cart->product_id;
+                                    endforeach;
+                                    $prod = get_available_product($cart_items[0]->product_id);
+                                    $upselling_products = ($prod->upselling_products) ? explode(",", $prod->upselling_products) : null;
+                                    // $addon_products = ($prod->addon_products) ? explode(",", $prod->addon_products) : null;
+                                    if($upselling_products):
+                                        foreach($upselling_products as $pid):
+                                            if( !in_array($pid, $cart_product_ids) ):
+                                            $product = get_available_product($pid);
+                                    ?>
+                                    <!-- Harry Start -->
+                                    <div class="item bg-light p-3">
+                                        <div class="cart-item-image" bis_skin_checked="1">
+                                            <div class="img-cart-product" bis_skin_checked="1">
+                                                <a href="<?php echo generate_product_url($product); ?>">
+                                                    <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($product->id, 'image_small'); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="cart-item-details" bis_skin_checked="1">
+                                            <div class="list-item" bis_skin_checked="1">
+                                                <a href="<?php echo generate_product_url($product); ?>">
+                                                    <?php echo html_escape($product->title); ?>
+                                                </a>
+                                            </div>
+                                            <?php $buttton = get_product_form_data($product)->button;
+                                            if (!empty($buttton)):?>
+                                                <?php echo form_open(get_product_form_data($product)->add_to_cart_url, ['id' => 'form_add_cart']); ?>
+                                                <input type="hidden" class="form-control text-center" name="product_quantity" value="1">
+                                                <input type="hidden" name="product_id" value="<?php echo $product->id; ?>">
+                                                <div class="button-container addons-btn">
+                                                    <?php echo $buttton; ?>
+                                                </div>
+                                                <?php echo form_close(); ?>
+                                            <?php endif; ?>
+                                            
+                                        </div>
+                                    </div>
+                                    <!-- Harry End -->
+                                    <?php
+                                            endif;
+                                        endforeach;
+                                    endif;
+                                    ?>
+
+                                    <?php
                                         foreach ($cart_items as $cart_item):
                                             $product = get_available_product($cart_item->product_id);
                                             if (!empty($product)): ?>
@@ -140,8 +191,9 @@
                                     </div>
                                 </div>
                             </div>
+
+
                             <!--Addon Products start-->
-                            
                             <div class="col-md-12">
                                 <div class="col-12 section section-related-products" bis_skin_checked="1">
                                     <h3 class="title mt-5"><?= trans("addon_products"); ?></h3>
@@ -156,7 +208,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <!--Addon Products else-->
 
                         </div>
@@ -173,3 +224,12 @@
     </div>
 </div>
 <!-- Wrapper End-->
+
+
+<style>
+    .addons-btn .btn{
+        width: auto;
+        background: #28a745;
+        display:initial;
+    }
+</style>

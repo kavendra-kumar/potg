@@ -35,7 +35,8 @@ class Cart_controller extends Home_Core_Controller
 
         // $data['addon_products'] = $this->product_admin_model->addon_products();
         $data['addon_products'] = get_addon_products(8);
-
+        
+        // echo "<pre>"; print_r($data['addon_products']); die;
         $this->load->view('partials/_header', $data);
         $this->load->view('cart/cart', $data);
         $this->load->view('partials/_footer');

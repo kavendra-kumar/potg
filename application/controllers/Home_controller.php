@@ -353,7 +353,7 @@ class Home_controller extends Home_Core_Controller
             $data['title'] = $data['product']->title;
             $data['description'] = character_limiter($description_text, 200, "");
             $data['keywords'] = generate_product_keywords($data['product']->title);
-//print_r($data);die();
+            //print_r($data);die();
             $this->load->view('partials/_header', $data);
             $this->load->view('product/details/product', $data);
             $this->load->view('partials/_footer');

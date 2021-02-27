@@ -197,7 +197,7 @@ if (!function_exists('get_latest_products')) {
 }
 
 
-//get latest products
+//get addon products
 if (!function_exists('get_addon_products')) {
     function get_addon_products($limit)
     {
@@ -211,6 +211,7 @@ if (!function_exists('get_addon_products')) {
             $addon_products = $ci->product_model->get_addon_products_limited($limit);
             set_cache_data($key, $addon_products);
         }
+        // echo "<pre>"; print_r($addon_products); die('koko');
         return $addon_products;
     }
 }

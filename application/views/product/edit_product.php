@@ -182,7 +182,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label class="control-label"><?php echo trans('description'); ?></label>
+                                                <label class="control-label"><?php echo trans('description'); ?> </label>
                                                 <div class="row">
                                                     <div class="col-sm-12 m-b-10">
                                                         <button type="button" class="btn btn-sm btn-secondary color-white btn_ck_add_image"><i class="icon-image"></i><?php echo trans("add_image"); ?></button>
@@ -192,6 +192,40 @@
                                                 </div>
                                                 <textarea name="description" id="ckEditor" class="text-editor"><?php echo $product->description; ?></textarea>
                                             </div>
+
+
+                                            <?php 
+                                                $addon_products = ($product->addon_products) ? explode(',', $product->addon_products) : array();
+                                                $upselling_products = ($product->upselling_products) ? explode(',', $product->upselling_products) : array();
+                                            ?>
+                                            <div class="form-group">
+                                                <label class="control-label"><?php echo trans("addon_products"); ?></label>
+                                                <div class="selectdiv">
+                                                    <select id="addon_products" name="addon_products[]" class="form-control mySelect for" multiple="multiple" style="width: 100%">
+                                                        <?php if($products) { ?>
+                                                            <?php foreach($products as $val) { ?>
+                                                                <option <?php if( in_array($val->id, $addon_products) ) echo "selected"; ?> value="<?= $val->id; ?>"><?= $val->title; ?></option>
+                                                        <?php }  } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                            <div class="form-group">
+                                                <label class="control-label"><?php echo trans("upselling_products"); ?></label>
+                                                <div class="selectdiv">
+                                                    <select id="upselling_products" name="upselling_products[]" class="form-control mySelect for" multiple="multiple" style="width: 100%">
+                                                        <?php if($products) { ?>
+                                                            <?php foreach($products as $val) { ?>
+                                                                <option <?php if( in_array($val->id, $upselling_products) ) echo "selected"; ?> value="<?= $val->id; ?>"><?= $val->title; ?></option>
+                                                        <?php }  } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
+
+
+
 
                                         </div>
                                     </div>
@@ -236,7 +270,26 @@
 </div>
 <!-- Wrapper End-->
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
+
+
 <script>
+    /* Kave code start */
+    $('#addon_products').select2();
+    $('#addon_products').on('select2:opening select2:closing', function( event ) {
+        var $searchfield = $(this).parent().find('.select2-search__field');
+        $searchfield.prop('disabled', true);
+    });
+
+    $('#upselling_products').select2();
+    $('#upselling_products').on('select2:opening select2:closing', function( event ) {
+        var $searchfield = $(this).parent().find('.select2-search__field');
+        $searchfield.prop('disabled', true);
+    });
+    /* Kave code end */
+
+
     function get_subcategories(category_id, data_select_id) {
         var subcategories = get_subcategories_array(category_id);
         var date = new Date();

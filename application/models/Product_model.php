@@ -11,6 +11,9 @@ class Product_model extends Core_Model
     //add product
     public function add_product()
     {
+        $addon_products = $this->input->post('addon_products', true);
+        $upselling_products = $this->input->post('upselling_products', true);
+
         $data = array(
             'title' => $this->input->post('title', true),
             'product_type' => $this->input->post('product_type', true),
@@ -49,7 +52,9 @@ class Product_model extends Core_Model
             'is_deleted' => 0,
             'is_draft' => 1,
             'is_free_product' => 0,
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at' => date('Y-m-d H:i:s'),
+            'addon_products' => ($addon_products) ? implode(',', $addon_products) : null,
+            'upselling_products' => ($upselling_products) ? implode(',', $upselling_products) : null
         );
 
         $data["slug"] = str_slug($data["title"]);
@@ -168,12 +173,17 @@ class Product_model extends Core_Model
     //edit product
     public function edit_product($product)
     {
+        $addon_products = $this->input->post('addon_products', true);
+        $upselling_products = $this->input->post('upselling_products', true);
+
         $data = array(
             'title' => $this->input->post('title', true),
             'product_type' => $this->input->post('product_type', true),
             'listing_type' => $this->input->post('listing_type', true),
             'sku' => $this->input->post('sku', true),
             'description' => $this->input->post('description', false),
+            'addon_products' => ($addon_products) ? implode(',', $addon_products) : null,
+            'upselling_products' => ($upselling_products) ? implode(',', $upselling_products) : null
         );
         $data["slug"] = str_slug($data["title"]);
 
@@ -620,9 +630,17 @@ class Product_model extends Core_Model
     //get addon products
 	public function get_addon_products()
 	{
-		$this->db->where('id', 1);
-		$query = $this->db->get('addon_products');
-		return $query->row();
+        $product_id_arr = array();
+        $cart_items = $this->session_cart_items;
+        if($cart_items) {
+            foreach($cart_items as $val) {
+                $product = get_available_product($val->product_id);
+                $addon_products = ($product->addon_products) ? explode(",", $product->addon_products) : array();
+                $product_id_arr = array_merge($product_id_arr, $addon_products);
+            }
+        }
+        array_unique($product_id_arr);
+        return ($product_id_arr) ? implode(',', $product_id_arr) : null;
 	}
 
 
@@ -672,9 +690,9 @@ class Product_model extends Core_Model
     public function get_addon_products_limited($limit)
     {
         $addon_products = $this->get_addon_products();
-
+        
         if($addon_products) {
-            $sql = $this->query_string_addon() . " and  FIND_IN_SET(products.id, '".$addon_products->product_ids."') ORDER BY products.created_at DESC LIMIT ?";
+            $sql = $this->query_string_addon() . " and  FIND_IN_SET(products.id, '".$addon_products."') ORDER BY products.created_at DESC LIMIT ?";
             $query = $this->db->query($sql, array(clean_number($limit)));
             return $query->result();
 

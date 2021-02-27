@@ -248,6 +248,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="form-group">
                                             <div class="row">
 												<div class="col-12 col-md-6">
                                                     <label><?php echo trans("phone_number"); ?>*</label>
@@ -277,7 +278,7 @@
                                                     </div>
                                                 </div>
 											</div>
-                                        </div>
+                                        </div></div>
                                         <div class="col-12 cart-form-billing-address d-none" <?php echo ($shipping_address->use_same_address_for_billing == 0) ? 'style="display: block;"' : ''; ?>>
                                             <h3 class="title-billing-address"><?php echo trans("billing_address") ?></h3>
                                             <div class="form-group">
