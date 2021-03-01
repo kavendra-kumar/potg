@@ -415,6 +415,104 @@
     </div>
 </div>
 <!-- Wrapper End-->
+
+
+<!-- Harry Code Start -->
+<?php if (!empty($cart_items)):
+        $cart_product_ids = array();
+        foreach($cart_items as $cart):
+            $cart_product_ids[] = $cart->product_id;
+        endforeach;
+        $prod = get_available_product($cart_items[0]->product_id);
+        $upselling_products = ($prod->upselling_products) ? explode(",", $prod->upselling_products) : null;
+        // $addon_products = ($prod->addon_products) ? explode(",", $prod->addon_products) : null;
+        if($upselling_products): ?>
+<!-- Modal -->
+<div class="modal fade" id="addonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Upselling</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+        <div class="modal-body">
+
+            <?php
+                foreach($upselling_products as $pid):
+                    if( !in_array($pid, $cart_product_ids) ):
+                    $product = get_available_product($pid);
+            ?>
+            <div class="item row bg-light p-3 p-3 m-1 mb-3">
+                
+
+                <div class="col-md-2 p-0">
+                    <div class="cart-item-image" bis_skin_checked="1">
+                        <div class="img-cart-product" bis_skin_checked="1">
+                            <a href="<?php echo generate_product_url($product); ?>">
+                                <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($product->id, 'image_small'); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 pt-4">
+                    <div class="cart-item-details" bis_skin_checked="1">
+                        <div class="list-item" bis_skin_checked="1">
+                            <a href="<?php echo generate_product_url($product); ?>">
+                                <?php echo html_escape($product->title); ?>
+                            </a>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+                <div class="col-md-3 pr-0 pt-4">
+                <?php $buttton = get_product_form_data($product)->button;
+                        if (!empty($buttton)):?>
+                            <?php echo form_open(get_product_form_data($product)->add_to_cart_url, ['id' => 'form_add_cart']); ?>
+                            <input type="hidden" class="form-control text-center" name="product_quantity" value="1">
+                            <input type="hidden" name="product_id" value="<?php echo $product->id; ?>">
+                            <div class="button-container addons-btn">
+                                <?php echo $buttton; ?>
+                            </div>
+                            <?php echo form_close(); ?>
+                        <?php endif; ?>
+                </div>
+                
+                
+            </div>
+            <?php
+                    endif;
+                endforeach;
+            ?>
+
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<?php
+    foreach($upselling_products as $pid):
+        if( !in_array($pid, $cart_product_ids) ):
+?>
+<script type="text/javascript">
+    $(window).on('load', function() {
+        $('#addonModal').modal('show');
+    });
+</script>
+<?php break;
+        endif;
+    endforeach;
+?>
+
+<!-- Harry Code End -->
+<?php endif; endif; ?>
+
+
+
 <script>
 $( 'select[name="shipping_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="shipping_phone_number"]').val();
