@@ -164,7 +164,7 @@
                                                     <select id="addon_products" name="addon_products[]" class="form-control mySelect for" multiple="multiple" style="width: 100%">
                                                         <?php if($products) { ?>
                                                             <?php foreach($products as $val) { ?>
-                                                                <option value="<?= $val->id; ?>"><?= $val->title; ?></option>
+                                                                <option value="<?= $val->id; ?>"><?= $val->title.' ('.$val->sku.')'; ?></option>
                                                         <?php }  } ?>
                                                     </select>
                                                 </div>
@@ -177,10 +177,15 @@
                                                     <select id="upselling_products" name="upselling_products[]" class="form-control mySelect for" multiple="multiple" style="width: 100%">
                                                         <?php if($products) { ?>
                                                             <?php foreach($products as $val) { ?>
-                                                                <option value="<?= $val->id; ?>"><?= $val->title; ?></option>
+                                                                <option value="<?= $val->id; ?>"><?= $val->title.' ('.$val->sku.')'; ?></option>
                                                         <?php }  } ?>
                                                     </select>
                                                 </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label"><?php echo trans("upselling_title"); ?></label>
+                                                <input type="text" name="upselling_title" class="form-control form-input" placeholder="<?php echo trans("upselling_title"); ?>" >
                                             </div>
                                             
 

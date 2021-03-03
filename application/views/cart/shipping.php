@@ -424,6 +424,7 @@
             $cart_product_ids[] = $cart->product_id;
         endforeach;
         $prod = get_available_product($cart_items[0]->product_id);
+        $upselling_title = ($prod->upselling_title) ? $prod->upselling_title : null;
         $upselling_products = ($prod->upselling_products) ? explode(",", $prod->upselling_products) : null;
         // $addon_products = ($prod->addon_products) ? explode(",", $prod->addon_products) : null;
         if($upselling_products): ?>
@@ -432,7 +433,7 @@
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Upselling</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle"><?= $upselling_title ?></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -464,8 +465,6 @@
                                 <?php echo html_escape($product->title); ?>
                             </a>
                         </div>
-                        
-                        
                     </div>
                 </div>
                 <div class="col-md-3 pr-0 pt-4">

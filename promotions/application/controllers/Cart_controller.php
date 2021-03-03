@@ -32,6 +32,8 @@ class Cart_controller extends Home_Core_Controller
         $data['cart_total'] = $this->cart_model->get_sess_cart_total();
         $data['cart_has_physical_product'] = $this->cart_model->check_cart_has_physical_product();
         $data['cart_current_user'] = get_current_user_session();
+        
+        $data['addon_products'] = get_addon_products(8);
 
         $this->load->view('partials/_header', $data);
         $this->load->view('cart/cart', $data);

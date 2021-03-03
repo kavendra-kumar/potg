@@ -54,7 +54,8 @@ class Product_model extends Core_Model
             'is_free_product' => 0,
             'created_at' => date('Y-m-d H:i:s'),
             'addon_products' => ($addon_products) ? implode(',', $addon_products) : null,
-            'upselling_products' => ($upselling_products) ? implode(',', $upselling_products) : null
+            'upselling_products' => ($upselling_products) ? implode(',', $upselling_products) : null,
+            'upselling_title' => $this->input->post('upselling_title', false)
         );
 
         $data["slug"] = str_slug($data["title"]);
@@ -183,7 +184,8 @@ class Product_model extends Core_Model
             'sku' => $this->input->post('sku', true),
             'description' => $this->input->post('description', false),
             'addon_products' => ($addon_products) ? implode(',', $addon_products) : null,
-            'upselling_products' => ($upselling_products) ? implode(',', $upselling_products) : null
+            'upselling_products' => ($upselling_products) ? implode(',', $upselling_products) : null,
+            'upselling_title' => $this->input->post('upselling_title', false)
         );
         $data["slug"] = str_slug($data["title"]);
 

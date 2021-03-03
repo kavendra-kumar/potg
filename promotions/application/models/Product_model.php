@@ -698,6 +698,81 @@ class Product_model extends Core_Model
         $query = $this->db->query($sql, array(clean_number($buyer_id), clean_number($product_id), clean_number($order_id)));
         return $query->row();
     }
+    
+    
+    //get limited products addon
+    public function get_addon_products_limited($limit)
+    {
+        $addon_products = $this->get_addon_products();
+        
+        if($addon_products) {
+            $sql = $this->query_string_addon() . " and  FIND_IN_SET(products.id, '".$addon_products."') ORDER BY products.created_at DESC LIMIT ?";
+            $query = $this->db->query($sql, array(clean_number($limit)));
+            return $query->result();
+
+        }
+		return array();
+    }
+    
+    //get addon products
+	public function get_addon_products()
+	{
+        $product_id_arr = array();
+        $cart_items = $this->session_cart_items;
+        if($cart_items) {
+            foreach($cart_items as $val) {
+                $product = get_available_product($val->product_id);
+                $addon_products = ($product->addon_products) ? explode(",", $product->addon_products) : array();
+                $product_id_arr = array_merge($product_id_arr, $addon_products);
+            }
+        }
+        array_unique($product_id_arr);
+        return ($product_id_arr) ? implode(',', $product_id_arr) : null;
+	}
+	
+	
+    //build sql query string
+    public function query_string_addon($type = "active", $return_count = false, $compile_query = true)
+    {
+        $select = "";
+        if ($return_count == true) {
+            $select = "COUNT(products.id) AS count";
+        } else {
+            $select = "products.id, products.title, products.slug, products.product_type, products.listing_type, products.category_id,  products.price, products.currency, products.discount_rate, 
+            products.user_id, products.is_promoted, products.rating, products.hit, products.is_free_product, products.promote_end_date, products.description, products.product_condition, products.created_at, 
+            users.username AS user_username, users.shop_name AS shop_name, users.role AS user_role, users.slug AS user_slug,
+            (SELECT CONCAT(storage, '::', image_small) FROM images WHERE products.id = images.product_id ORDER BY is_main DESC LIMIT 1) AS image,
+            (SELECT CONCAT(storage, '::', image_small) FROM images WHERE products.id = images.product_id ORDER BY is_main DESC LIMIT 1, 1) AS image_second,
+            (SELECT COUNT(wishlist.id) FROM wishlist WHERE products.id = wishlist.product_id) AS wishlist_count";
+            if ($this->auth_check) {
+                $select .= ", (SELECT COUNT(wishlist.id) FROM wishlist WHERE products.id = wishlist.product_id AND wishlist.user_id = " . clean_number($this->auth_user->id) . ") AS is_in_wishlist";
+            } else {
+                $select .= ", 0 AS is_in_wishlist";
+            }
+        }
+
+        $status = ($type == 'draft' || $type == 'pending') ? 0 : 1;
+        $visibility = ($type == 'hidden') ? 0 : 1;
+        $is_draft = ($type == 'draft') ? 1 : 0;
+
+        $this->db->select($select);
+        $this->db->from('products');
+        $this->db->join('users', 'products.user_id = users.id');
+        if ($type == 'wishlist') {
+            $this->db->join('wishlist', 'products.id = wishlist.product_id');
+        }
+        // $this->db->where('users.banned', 0);
+        $this->db->where('products.status', $status);
+        $this->db->where('products.visibility', $visibility);
+        $this->db->where('products.is_draft', $is_draft);
+        $this->db->where('products.is_deleted', 0);
+        
+
+        if ($compile_query == true) {
+            return $this->db->get_compiled_select() . " ";
+        }
+    }
+	
 
     //get product by id
     public function get_product_by_id($id)
