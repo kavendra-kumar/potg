@@ -802,7 +802,10 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 					<?php } ?>
 					<div class="img-wrapper">
 						<img class="product-img" alt="product image" src="<?php if($this->selected_lang->id !=1) { echo "../"; }?>../<?php echo $info->s1_product_image ?>"/>
+						
+						<?php if($info->s11_cross_sale_image){ ?>
 						<img class="cross-product-img" alt="Cross product image" src="<?php if($this->selected_lang->id !=1) { echo "../"; }?>../<?php echo $info->s11_cross_sale_image ?>"/>
+						<?php } ?>
 					</div>
 					<h2 class="product-name"><?php if($this->selected_lang->id !=2){echo $info->s11_product_title;}else{echo $info->s11_product_title_ar;} ?></h2>
 					<h2 class="product-price"><strike><?php echo price_formatted($product->price, $product->currency); ?></strike></h2>

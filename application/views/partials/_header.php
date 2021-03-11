@@ -94,18 +94,38 @@ if ($language->id == $this->site_lang->id):?>
 	fbq('init', '1995880600546492');
 	fbq('track', 'PageView');
 	<?php $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-		if(strpos($actual_link, "cart") !== false){
-			echo "fbq('track', 'AddToCart');";
-		}
-		if(strpos($actual_link, "order-completed") !== false){
-			echo "fbq('track', 'Purchase');";
-		}
-		if(strpos($actual_link, "register") !== false){
+        // echo $actual_link; die;
+        
+        if( isset($product) ) {
+            $slug = $product->slug;
+        } else {
+            $slug = 'not found';
+        }
+        
+        if(strpos($actual_link, "register") !== false){
 			echo "fbq('track', 'CompleteRegistration');";
 		}
-		if(strpos($actual_link, "promotions") !== false){
+        elseif(strpos($actual_link, $slug) !== false){
 			echo "fbq('track', 'ViewContent');";
 		}
+        elseif(strpos($actual_link, "shipping") !== false){
+            echo "fbq('track', 'ViewContent');";
+			echo "fbq('track', 'AddToCart');";
+		}
+		elseif(strpos($actual_link, "cart") !== false){
+            echo "fbq('track', 'ViewContent');";
+			echo "fbq('track', 'AddToCart');";
+		}
+		elseif(strpos($actual_link, "order-completed") !== false){
+            echo "fbq('track', 'ViewContent');";
+			echo "fbq('track', 'AddToCart');";
+			// echo "fbq('track', 'Purchase');";
+		}
+		
+		
+        // if(strpos($actual_link, "promotions") !== false){
+			// echo "fbq('track', 'ViewContent');";
+		// }
 	?>
 	</script>
 	<noscript><img height="1" width="1" style="display:none"
@@ -127,18 +147,29 @@ if ($language->id == $this->site_lang->id):?>
 
 	snaptr('track', 'PAGE_VIEW');
 	<?php $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-		if(strpos($actual_link, "cart") !== false){
-			echo "snaptr('track','ADD_CART');";
-		}
-		if(strpos($actual_link, "order-completed") !== false){
-			echo "snaptr('track','PURCHASE');";
-		}
-		if(strpos($actual_link, "register") !== false){
+        if(strpos($actual_link, "register") !== false){
 			echo "snaptr('track','SIGN_UP');";
 		}
-		if(strpos($actual_link, "promotions") !== false){
-			echo "snaptr('track','VIEW_CONTENT');";
+        elseif(strpos($actual_link, $slug) !== false){
+			echo "snaptr('track', 'VIEW_CONTENT');";
 		}
+        elseif(strpos($actual_link, "shipping") !== false){
+            echo "snaptr('track', 'VIEW_CONTENT');";
+			echo "snaptr('track', 'ADD_CART');";
+		}
+		elseif(strpos($actual_link, "cart") !== false){
+            echo "snaptr('track', 'VIEW_CONTENT');";
+			echo "snaptr('track','ADD_CART');";
+		}
+		elseif(strpos($actual_link, "order-completed") !== false){
+            echo "snaptr('track', 'VIEW_CONTENT');";
+			echo "snaptr('track', 'ADD_CART');";
+			echo "snaptr('track','PURCHASE');";
+		}
+		
+		// if(strpos($actual_link, "promotions") !== false){
+			// echo "snaptr('track','VIEW_CONTENT');";
+		// }
 	?>
 	</script> 
 	<script language="JavaScript" src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>

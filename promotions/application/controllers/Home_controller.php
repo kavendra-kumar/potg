@@ -99,6 +99,7 @@ class Home_controller extends Home_Core_Controller
      */
     public function any($slug)
     {
+        
         get_method();
         $slug = clean_slug($slug);
         //index page
