@@ -84,7 +84,7 @@
                                     <label class="label label-info"><?php echo trans("scheduled"); ?></label>
 								<?php elseif ($item->status == 9): ?>
                                 	<label class="label label-danger"><?php echo trans("returned"); ?></label>
-								<?php elseif ($item->status == 10): ?>
+									<?php elseif ($item->status == 10): ?>
                                 	<label class="label label-danger"><?php echo trans("return_and_refund_request"); ?></label>
 								<?php elseif ($item->status == 11): ?>
                                 	<label class="label label-danger"><?php echo trans("in_return_process"); ?></label>
@@ -116,7 +116,7 @@
 										</button>
 										<ul class="dropdown-menu options-dropdown" style="min-width: 190px;">
 											<li>
-												<a href="<?php echo admin_url(); ?>order-details/<?php echo html_escape($item->id); ?>"><i class="fa fa-info option-icon"></i><?php echo trans('view_details'); ?></a>
+												<a href="<?php echo admin_url(); ?>return_order_details/<?php echo html_escape($item->id); ?>"><i class="fa fa-info option-icon"></i><?php echo trans('view_details'); ?></a>
 											</li>
 											<?php /* 
 											<li>

@@ -143,6 +143,7 @@
                         <li><a href="<?php echo admin_url(); ?>transactions"> <?php echo trans("transactions"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>order-bank-transfers"> <?php echo trans("bank_transfer_notifications"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>invoices"> <?php echo trans("invoices"); ?></a></li>
+                        <li><a href="<?php echo admin_url(); ?>return_and_refund_orders"> <?php echo trans("return_and_refund_orders"); ?></a></li>
                     </ul>
                 </li>
 				<?php /*<li>

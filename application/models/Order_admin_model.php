@@ -91,11 +91,43 @@ class Order_admin_model extends CI_Model
 
             $statusscheduledcount=0;
             $statusnewcount=0;
+            $statusreturnedcount = 0;
+            $statusreturn_and_refund_requestcount = 0;
+            $statusin_return_processcount = 0;
+            $statusreturn_process_donecount = 0;
+            $statusrefund_questedcount = 0;
+            $statusrefundedcount = 0;
 
             $statuscount=0;
             foreach ($order_products as $order_product) {
             
+                if($order_product->order_status=='returned')
+                {
+                    $statusreturnedcount+=1;
+                }
+
+                if($order_product->order_status=='return_and_refund_request')
+                {
+                    $statusreturn_and_refund_requestcount+=1;
+                }
+                if($order_product->order_status=='in_return_process')
+                {
+                    $statusin_return_processcount+=1;
+                }
+                if($order_product->order_status=='return_process_done')
+                {
+                    $statusreturn_process_donecount+=1;
+                }
+                if($order_product->order_status=='refund_quested')
+                {
+                    $statusrefund_questedcount+=1;
+                }
+                if($order_product->order_status=='refunded')
+                {
+                    $statusrefundedcount+=1;
+                }
                 
+
                 if($order_product->order_status=='scheduled')
                 {
                     $statusscheduledcount+=1;
@@ -296,13 +328,130 @@ class Order_admin_model extends CI_Model
 			{
 				$updateStatus['status']=6;//awaited Payment
             }
+            /****End Of awaited Payment ***/
+
+            /********Start Of returned ***/ 
+            elseif($statusreturnedcount==$productcount)
+			{
+				$updateStatus['status']=9; //returned
+            }
+            elseif($statusreturnedcount>$statuscancelledcount && ($statuscancelledcount+$statusreturnedcount==$productcount))
+			{
+				$updateStatus['status']=9;//returned
+			}
+			elseif($statusreturnedcount==$statuscancelledcount && ($statuscancelledcount+$statusreturnedcount==$productcount))
+			{
+				$updateStatus['status']=9;//returned
+			}
+			elseif($statusreturnedcount<$statuscancelledcount && $statusreturnedcount!=0 && ($statuscancelledcount+$statusreturnedcount==$productcount))
+			{
+				$updateStatus['status']=9;//returned
+            }
+            /********End Of returned ***/
+
+            
+            /********Start Of return_and_refund_request ***/ 
+            elseif($statusreturn_and_refund_requestcount==$productcount)
+			{
+				$updateStatus['status']=10; //return_and_refund_request
+            }
+            elseif($statusreturn_and_refund_requestcount>$statuscancelledcount && ($statuscancelledcount+$statusreturn_and_refund_requestcount==$productcount))
+			{
+				$updateStatus['status']=10;//return_and_refund_request
+			}
+			elseif($statusreturn_and_refund_requestcount==$statuscancelledcount && ($statuscancelledcount+$statusreturn_and_refund_requestcount==$productcount))
+			{
+				$updateStatus['status']=10;//return_and_refund_request
+			}
+			elseif($statusreturn_and_refund_requestcount<$statuscancelledcount && $statusreturn_and_refund_requestcount!=0 && ($statuscancelledcount+$statusreturn_and_refund_requestcount==$productcount))
+			{
+				$updateStatus['status']=10;//return_and_refund_request
+            }
+            /********End Of return_and_refund_request ***/
+
+            /********Start Of in_return_process ***/ 
+            elseif($statusin_return_processcount==$productcount)
+			{
+				$updateStatus['status']=11; //in_return_process
+            }
+            elseif($statusin_return_processcount>$statuscancelledcount && ($statuscancelledcount+$statusin_return_processcount==$productcount))
+			{
+				$updateStatus['status']=11;//in_return_process
+			}
+			elseif($statusin_return_processcount==$statuscancelledcount && ($statuscancelledcount+$statusin_return_processcount==$productcount))
+			{
+				$updateStatus['status']=11;//in_return_process
+			}
+			elseif($statusin_return_processcount<$statuscancelledcount && $statusin_return_processcount!=0 && ($statuscancelledcount+$statusin_return_processcount==$productcount))
+			{
+				$updateStatus['status']=11;//in_return_process
+            }
+            /********End Of in_return_process ***/
+
+            /********Start Of return_process_done ***/ 
+            elseif($statusreturn_process_donecount==$productcount)
+			{
+				$updateStatus['status']=12; //return_process_done
+            }
+            elseif($statusreturn_process_donecount>$statuscancelledcount && ($statuscancelledcount+$statusreturn_process_donecount==$productcount))
+			{
+				$updateStatus['status']=12;//return_process_done
+			}
+			elseif($statusreturn_process_donecount==$statuscancelledcount && ($statuscancelledcount+$statusreturn_process_donecount==$productcount))
+			{
+				$updateStatus['status']=12;//return_process_done
+			}
+			elseif($statusreturn_process_donecount<$statuscancelledcount && $statusreturn_process_donecount!=0 && ($statuscancelledcount+$statusreturn_process_donecount==$productcount))
+			{
+				$updateStatus['status']=12;//return_process_done
+            }
+            /********End Of return_process_done ***/
+
+            /********Start Of refund_quested ***/ 
+            elseif($statusrefund_questedcount==$productcount)
+			{
+				$updateStatus['status']=13; //refund_quested
+            }
+            elseif($statusrefund_questedcount>$statuscancelledcount && ($statuscancelledcount+$statusrefund_questedcount==$productcount))
+			{
+				$updateStatus['status']=13;//refund_quested
+			}
+			elseif($statusrefund_questedcount==$statuscancelledcount && ($statuscancelledcount+$statusrefund_questedcount==$productcount))
+			{
+				$updateStatus['status']=13;//refund_quested
+			}
+			elseif($statusrefund_questedcount<$statuscancelledcount && $statusrefund_questedcount!=0 && ($statuscancelledcount+$statusrefund_questedcount==$productcount))
+			{
+				$updateStatus['status']=13;//refund_quested
+            }
+            /********End Of refund_quested ***/
+
+            /********Start Of refunded ***/ 
+            elseif($statusrefundedcount==$productcount)
+			{
+				$updateStatus['status']=14; //refunded
+            }
+            elseif($statusrefundedcount>$statuscancelledcount && ($statuscancelledcount+$statusrefundedcount==$productcount))
+			{
+				$updateStatus['status']=14;//refunded
+			}
+			elseif($statusrefundedcount==$statuscancelledcount && ($statuscancelledcount+$statusrefundedcount==$productcount))
+			{
+				$updateStatus['status']=14;//refunded
+			}
+			elseif($statusrefundedcount<$statuscancelledcount && $statusrefundedcount!=0 && ($statuscancelledcount+$statusrefundedcount==$productcount))
+			{
+				$updateStatus['status']=14;//refunded
+            }
+            /********End Of refunded ***/
+
+
             else{
                 if($statuscount!=0)
                 { 
-                    $updateStatus['status']=0;//processing
+                    $updateStatus['status']=0;//new
                 }
             }
-             /****End Of awaited Payment ***/
 
             // if ($order_product->order_status != "completed" && $order_product->order_status != "cancelled") {
             //     $all_complated = false;
@@ -426,6 +575,18 @@ class Order_admin_model extends CI_Model
             }
             elseif ($data['status'] == 'new') {
                 $this->db->where('orders.status', 0);
+            }elseif ($data['status'] == 'returned') {
+                $this->db->where('orders.status', 9);
+            }elseif ($data['status'] == 'return_and_refund_request') {
+                $this->db->where('orders.status', 10);
+            }elseif ($data['status'] == 'in_return_process') {
+                $this->db->where('orders.status', 11);
+            }elseif ($data['status'] == 'return_process_done') {
+                $this->db->where('orders.status', 12);
+            }elseif ($data['status'] == 'refund_quested') {
+                $this->db->where('orders.status', 13);
+            }elseif ($data['status'] == 'refunded') {
+                $this->db->where('orders.status', 14);
             }
         }
         if (!empty($data['payment_status'])) {
@@ -442,6 +603,14 @@ class Order_admin_model extends CI_Model
     public function get_orders_count()
     {
         $this->filter_orders();
+        $query = $this->db->get('orders');
+        return $query->num_rows();
+    }
+    //get return orders count
+    public function get_return_orders_count()
+    {
+        $this->filter_orders();
+        $this->db->where('orders.status >=', 10);
         $query = $this->db->get('orders');
         return $query->num_rows();
     }
@@ -467,6 +636,17 @@ class Order_admin_model extends CI_Model
     public function get_paginated_orders($per_page, $offset)
     {
         $this->filter_orders();
+        $this->db->order_by('orders.created_at', 'DESC');
+        $this->db->limit($per_page, $offset);
+        $query = $this->db->get('orders');
+        return $query->result();
+    }
+
+    //get paginated orders
+    public function get_paginated_return_orders($per_page, $offset)
+    {
+        $this->filter_orders();
+        $this->db->where('orders.status >=', 10);
         $this->db->order_by('orders.created_at', 'DESC');
         $this->db->limit($per_page, $offset);
         $query = $this->db->get('orders');

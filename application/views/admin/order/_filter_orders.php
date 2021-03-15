@@ -1,5 +1,6 @@
 <div class="row table-filter-container">
     <div class="col-sm-12">
+    
         <?php echo form_open($form_action, ['method' => 'GET']); ?>
 
         <div class="item-table-filter" style="width: 80px; min-width: 80px;">
@@ -16,12 +17,21 @@
             <label><?php echo trans("status"); ?></label>
             <select name="status" class="form-control">
                 <option value="" selected><?php echo trans("all"); ?></option>
+            <?php if($this->uri->segment(2) == orders){ ?>
+                
                 <option value="confirmed" <?php echo ($this->input->get('status', true) == 'confirmed') ? 'selected' : ''; ?>><?php echo trans("confirmed"); ?></option>
                 <option value="completed" <?php echo ($this->input->get('status', true) == 'completed') ? 'selected' : ''; ?>><?php echo trans("completed"); ?></option>
                 <option value="cancelled" <?php echo ($this->input->get('status', true) == 'cancelled') ? 'selected' : ''; ?>><?php echo trans("cancelled"); ?></option>
                 <option value="processing" <?php echo ($this->input->get('status', true) == 'processing') ? 'selected' : ''; ?>><?php echo trans("order_processing"); ?></option>
                 <option value="scheduled" <?php echo ($this->input->get('status', true) == 'scheduled') ? 'selected' : ''; ?>><?php echo trans("scheduled"); ?></option>
                 <option value="new" <?php echo ($this->input->get('status', true) == 'new') ? 'selected' : ''; ?>><?php echo trans("new"); ?></option>
+                <option value="returned" <?php echo ($this->input->get('status', true) == 'returned') ? 'selected' : ''; ?>><?php echo trans("returned"); ?></option>
+            <?php } ?>
+                <option value="return_and_refund_request" <?php echo ($this->input->get('status', true) == 'return_and_refund_request') ? 'selected' : ''; ?>><?php echo trans("return_and_refund_request"); ?></option>
+                <option value="in_return_process" <?php echo ($this->input->get('status', true) == 'in_return_process') ? 'selected' : ''; ?>><?php echo trans("in_return_process"); ?></option>
+                <option value="return_process_done" <?php echo ($this->input->get('status', true) == 'return_process_done') ? 'selected' : ''; ?>><?php echo trans("return_process_done"); ?></option>
+                <option value="refund_quested" <?php echo ($this->input->get('status', true) == 'refund_quested') ? 'selected' : ''; ?>><?php echo trans("refund_quested"); ?></option>
+                <option value="refunded" <?php echo ($this->input->get('status', true) == 'refunded') ? 'selected' : ''; ?>><?php echo trans("refunded"); ?></option>
             </select>
         </div>
 

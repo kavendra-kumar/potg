@@ -16,26 +16,16 @@
                                 <strong> <?php echo trans("status"); ?></strong>
                             </div>
                             <div class="col-sm-8">
-                            <?php if ($order->status == 1): ?>
-                                <label class="label label-success"><?php echo trans("completed"); ?></label>
-                            <?php elseif ($order->status == 2): ?>
-                                <label class="label label-warning"><?php echo trans("confirmed"); ?></label>
-                            <?php elseif ($order->status == 3): ?>
-                                <label class="label label-danger"><?php echo trans("cancelled"); ?></label>
-                            <?php elseif ($order->status == 4): ?>
-                                <label class="label label-primary"><?php echo trans("shipped"); ?></label>
-                            <?php elseif ($order->status == 5): ?>
-                                <label class="label label-success"><?php echo trans("payment_received"); ?></label>
-                            <?php elseif ($order->status == 6): ?>
-                                <label class="label label-danger"><?php echo trans("awaiting_payment"); ?></label>
-                            <?php elseif ($order->status == 7): ?>
-                                <label class="label label-info"><?php echo trans("order_processing"); ?></label>
-                            <?php elseif ($order->status == 8): ?>
-                                <label class="label label-info"><?php echo trans("scheduled"); ?></label>
-                            <?php elseif ($order->status == 9): ?>
-                                <label class="label label-danger"><?php echo trans("returned"); ?></label>
-                            <?php elseif ($order->status == 10): ?>
+                            <?php if ($order->status == 10): ?>
                                 <label class="label label-danger"><?php echo trans("return_and_refund_request"); ?></label>
+                            <?php elseif ($order->status == 11): ?>
+                                <label class="label label-danger"><?php echo trans("in_return_process"); ?></label>
+                            <?php elseif ($order->status == 12): ?>
+                                <label class="label label-danger"><?php echo trans("return_process_done"); ?></label>
+                            <?php elseif ($order->status == 13): ?>
+                                <label class="label label-danger"><?php echo trans("refund_quested"); ?></label>
+                            <?php elseif ($order->status == 14): ?>
+                                <label class="label label-danger"><?php echo trans("refunded"); ?></label>
                             
                             <?php else: ?>
                                 <label class="label label-default"><?php echo trans("new"); ?></label>
@@ -435,7 +425,7 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title"><?php echo trans("products"); ?></h3> 
-				<button  data-toggle="modal" style="margin-left:10px;" class="btn btn-xs btn-primary m-t-5" data-target="#AddProductModal">+Add Product</button>
+				<!-- <button  data-toggle="modal" style="margin-left:10px;" class="btn btn-xs btn-primary m-t-5" data-target="#AddProductModal">+Add Product</button> -->
             </div><!-- /.box-header -->
 
             <div class="box-body">
@@ -539,7 +529,7 @@
                                                     </button>
                                                     <ul class="dropdown-menu options-dropdown">
                                                         <li>
-                                                            <a href="#" data-toggle="modal" data-target="#updateStatusModal_<?php echo $item->id; ?>"><i class="fa fa-edit option-icon"></i><?php echo trans('update_order_status'); ?></a>
+                                                            <a href="#" data-toggle="modal" data-target="#updateStatusModal_<?php echo $item->id; ?>"><i class="fa fa-edit option-icon"></i><?php echo trans('update_return_order_status'); ?></a>
                                                         </li>
                                                        <?php /*
 														<li>
@@ -629,29 +619,19 @@
                 <input type="hidden" name="id" value="<?php echo $item->id; ?>">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"><?php echo trans("update_order_status"); ?></h4>
+                    <h4 class="modal-title"><?php echo trans("update_return_order_status"); ?></h4>
                 </div>
                 <div class="modal-body">
                     <div class="table-order-status">
                         <div class="form-group">
                             <label class="control-label"><?php echo trans('status'); ?></label>
                             <select name="order_status" class="form-control">
-                                <?php if ($item->product_type == 'physical'): ?>
-                                    <option value="awaiting_payment" <?php echo ($item->order_status == 'awaiting_payment') ? 'selected' : ''; ?>><?php echo trans("awaiting_payment"); ?></option>
-                                    <option value="payment_received" <?php echo ($item->order_status == 'payment_received') ? 'selected' : ''; ?>><?php echo trans("payment_received"); ?></option>
-                                    <option value="order_processing" <?php echo ($item->order_status == 'order_processing') ? 'selected' : ''; ?>><?php echo trans("order_processing"); ?></option>
-                                    <option value="shipped" <?php echo ($item->order_status == 'shipped') ? 'selected' : ''; ?>><?php echo trans("shipped"); ?></option>
-                                <?php endif; ?>
-                                <?php if ($item->buyer_id != 0 && $item->order_status != 'completed'): ?>
-                                    <option value="completed" <?php echo ($item->order_status == 'completed') ? 'selected' : ''; ?>><?php echo trans("completed"); ?></option>
-                                <?php endif; ?>
-								<option value="confirmed" <?php echo ($item->order_status == 'confirmed') ? 'selected' : ''; ?>><?php echo trans("confirmed"); ?></option>
-                                <option value="cancelled" <?php echo ($item->order_status == 'cancelled') ? 'selected' : ''; ?>><?php echo trans("cancelled"); ?></option>
-                                <option value="scheduled" <?php echo ($item->order_status == 'scheduled') ? 'selected' : ''; ?>><?php echo trans("scheduled"); ?></option>
-                                <option value="new" <?php echo ($item->order_status == 'new') ? 'selected' : ''; ?>><?php echo trans("new"); ?></option>
-                                
-                                <option value="returned" <?php echo ($item->order_status == 'returned') ? 'selected' : ''; ?>><?php echo trans("returned"); ?></option>
                                 <option value="return_and_refund_request" <?php echo ($item->order_status == 'return_and_refund_request') ? 'selected' : ''; ?>><?php echo trans("return_and_refund_request"); ?></option>
+
+                                <option value="in_return_process" <?php echo ($item->order_status == 'in_return_process') ? 'selected' : ''; ?>><?php echo trans("in_return_process"); ?></option>
+                                <option value="return_process_done" <?php echo ($item->order_status == 'return_process_done') ? 'selected' : ''; ?>><?php echo trans("return_process_done"); ?></option>
+                                <option value="refund_quested" <?php echo ($item->order_status == 'refund_quested') ? 'selected' : ''; ?>><?php echo trans("refund_quested"); ?></option>
+                                <option value="refunded" <?php echo ($item->order_status == 'refunded') ? 'selected' : ''; ?>><?php echo trans("refunded"); ?></option>
 
                             </select>
                         </div>
