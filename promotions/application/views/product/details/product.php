@@ -485,6 +485,15 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 						</a>
 					</div>
 				</div>
+				<script>
+				$(document).ready( function () {
+					$(".onpage-link").click( function () {
+						setTimeout(function(){  
+							fbq('track', 'ViewContent');
+						}, 3000);
+					});
+				});
+				</script>
 				<div class="col-12 col-md-6 order-3">
 					<div id="element-302">
 						<p><?php if($this->selected_lang->id !=2) { echo "This offer will expire in:"; } else { echo "سينتهي هذا العرض خلال";} ?></p>

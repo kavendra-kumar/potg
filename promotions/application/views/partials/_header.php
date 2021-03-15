@@ -103,21 +103,49 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 	s.parentNode.insertBefore(t,s)}(window, document,'script',
 	'https://connect.facebook.net/en_US/fbevents.js');
 	fbq('init', '1995880600546492');
+
 	fbq('track', 'PageView');
 	
 	<?php $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-		if(strpos($actual_link, "cart") !== false){
-			echo "fbq('track', 'AddToCart');";
-		}
-		/*if(strpos($actual_link, "order-completed") !== false){
-			echo "fbq('track', 'Purchase');";
-		}*/
-		if(strpos($actual_link, "register") !== false){
+        if( isset($product) ) {
+            $slug = $product->slug;
+        } else {
+            $slug = 'not found';
+        }
+        // echo $slug; die;
+        if(strpos($actual_link, "register") !== false){
 			echo "fbq('track', 'CompleteRegistration');";
 		}
-		if(strpos($actual_link, "promotions") !== false){
+        elseif(strpos($actual_link, $slug) !== false && strpos($actual_link, '#add_to_cart') == false){
 			echo "fbq('track', 'ViewContent');";
 		}
+        elseif(strpos($actual_link, "shipping") !== false){
+            echo "fbq('track', 'ViewContent');";
+			echo "fbq('track', 'AddToCart');";
+		}
+		elseif(strpos($actual_link, "cart") !== false){
+            echo "fbq('track', 'ViewContent');";
+			echo "fbq('track', 'AddToCart');";
+		}
+		elseif(strpos($actual_link, "order-completed") !== false){
+            echo "fbq('track', 'ViewContent');";
+			echo "fbq('track', 'AddToCart');";
+			// echo "fbq('track', 'Purchase');";
+		}
+
+
+		// if(strpos($actual_link, "cart") !== false){
+		// 	echo "fbq('track', 'AddToCart');";
+		// }
+		// /*if(strpos($actual_link, "order-completed") !== false){
+		// 	echo "fbq('track', 'Purchase');";
+		// }*/
+		// if(strpos($actual_link, "register") !== false){
+		// 	echo "fbq('track', 'CompleteRegistration');";
+		// }
+		// if(strpos($actual_link, "promotions") !== false){
+		// 	echo "fbq('track', 'ViewContent');";
+		// }
 	?>
 	</script>
 	<noscript><img height="1" width="1" style="display:none"
@@ -139,18 +167,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 	snaptr('track', 'PAGE_VIEW');
 	<?php $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-		if(strpos($actual_link, "cart") !== false){
-			echo "snaptr('track','ADD_CART');";
-		}
-		if(strpos($actual_link, "order-completed") !== false){
-			echo "snaptr('track','PURCHASE');";
-		}
-		if(strpos($actual_link, "register") !== false){
-			echo "snaptr('track','SIGN_UP');";
-		}
-		if(strpos($actual_link, "promotions") !== false){
-			echo "snaptr('track','VIEW_CONTENT');";
-		}
+
+        if(strpos($actual_link, "register") !== false){
+            echo "snaptr('track','SIGN_UP');";
+        }
+        elseif(strpos($actual_link, $slug) !== false){
+            echo "snaptr('track', 'VIEW_CONTENT');";
+        }
+        elseif(strpos($actual_link, "shipping") !== false){
+            echo "snaptr('track', 'VIEW_CONTENT');";
+            echo "snaptr('track', 'ADD_CART');";
+        }
+        elseif(strpos($actual_link, "cart") !== false){
+            echo "snaptr('track', 'VIEW_CONTENT');";
+            echo "snaptr('track','ADD_CART');";
+        }
+        elseif(strpos($actual_link, "order-completed") !== false){
+            echo "snaptr('track', 'VIEW_CONTENT');";
+            echo "snaptr('track', 'ADD_CART');";
+            echo "snaptr('track','PURCHASE');";
+        }
+
+		// if(strpos($actual_link, "cart") !== false){
+		// 	echo "snaptr('track','ADD_CART');";
+		// }
+		// if(strpos($actual_link, "order-completed") !== false){
+		// 	echo "snaptr('track','PURCHASE');";
+		// }
+		// if(strpos($actual_link, "register") !== false){
+		// 	echo "snaptr('track','SIGN_UP');";
+		// }
+		// if(strpos($actual_link, "promotions") !== false){
+		// 	echo "snaptr('track','VIEW_CONTENT');";
+		// }
 	?>
 	</script>
 	<script>
