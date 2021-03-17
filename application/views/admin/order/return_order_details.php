@@ -623,6 +623,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="table-order-status">
+
                         <div class="form-group">
                             <label class="control-label"><?php echo trans('status'); ?></label>
                             <select name="order_status" class="form-control">
@@ -632,9 +633,10 @@
                                 <option value="return_process_done" <?php echo ($item->order_status == 'return_process_done') ? 'selected' : ''; ?>><?php echo trans("return_process_done"); ?></option>
                                 <option value="refund_quested" <?php echo ($item->order_status == 'refund_quested') ? 'selected' : ''; ?>><?php echo trans("refund_quested"); ?></option>
                                 <option value="refunded" <?php echo ($item->order_status == 'refunded') ? 'selected' : ''; ?>><?php echo trans("refunded"); ?></option>
-
                             </select>
                         </div>
+                        
+
                     </div>
                 </div>
                 <div class="modal-footer">
