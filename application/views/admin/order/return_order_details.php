@@ -320,6 +320,15 @@
                                     <strong class="font-right"><?php echo $shipping->shipping_city; ?></strong>
                                 </div>
                             </div>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("gps_location"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->gps_location; ?></strong>
+                                </div>
+                            </div>
+
                             <div class="row row-details hidden">
                                 <div class="col-xs-12 col-sm-4 col-right">
                                     <strong> <?php echo trans("zip_code"); ?></strong>

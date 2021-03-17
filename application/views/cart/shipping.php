@@ -202,6 +202,14 @@
                                     <div class="row">
                                         <div class="col-12 cart-form-shipping-address">
                                             <div class="form-group">
+                                                <div class="row  h-300" style="height:500px;" >
+                                                    <div class="col-12 col-md-12 m-b-sm-15">
+                                                        <label><?php echo trans("gps_location"); ?></label>
+                                                        <input type="hidden" name="gps_location" id="gps_location" />
+                                                        <div id="map_canvas" style="height:90%;"></div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="row">
                                                     <div class="col-12 col-md-12 m-b-sm-15">
                                                         <label><?php echo trans("full_name"); ?>*</label>
@@ -585,4 +593,99 @@ setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
     $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
 } }, 1000);
 
+</script>
+
+
+
+
+<!-- GPS location map -->
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyDkAmiEffMR4r0r9zziv66pyEGNJSSnGN0" ></script>
+
+<script>
+var geocoder;
+var map;
+var marker;
+var infowindow = new google.maps.InfoWindow({
+  size: new google.maps.Size(150, 50)
+});
+
+function initialize() {
+  geocoder = new google.maps.Geocoder();
+
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(function (p) {
+	var latlng = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
+   geocoder.geocode({ 'latLng': latlng },  (results, status) =>{
+        if (status !== google.maps.GeocoderStatus.OK) {
+            alert(status);
+        }
+        // This is checking to see if the Geoeode Status is OK before proceeding
+        if (status == google.maps.GeocoderStatus.OK) {
+            console.log(results);
+            var address = (results[0].formatted_address);
+			document.getElementById("gps_location").value = address;
+			codeAddress(address);
+        }
+    });
+  var mapOptions = {
+    zoom: 18,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  }
+  map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+  google.maps.event.addListener(map, 'click', function() {
+    infowindow.close();
+  });
+  });
+}
+}
+
+function geocodePosition(pos) {
+  geocoder.geocode({
+    latLng: pos
+  }, function(responses) {
+    if (responses && responses.length > 0) {
+      marker.formatted_address = responses[0].formatted_address;
+    } else {
+      marker.formatted_address = 'Cannot determine address at this location.';
+    }
+    infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+    infowindow.open(map, marker);
+  });
+}
+
+function codeAddress(address) {
+  geocoder.geocode({
+    'address': address
+  }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+      if (marker) {
+        marker.setMap(null);
+        if (infowindow) infowindow.close();
+      }
+      marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        position: results[0].geometry.location
+      });
+      google.maps.event.addListener(marker, 'dragend', function() {
+        geocodePosition(marker.getPosition());
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        if (marker.formatted_address) {
+          infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        } else {
+          infowindow.setContent(address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        }
+        infowindow.open(map, marker);
+      });
+      google.maps.event.trigger(marker, 'click');
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+google.maps.event.addDomListener(window, "load", initialize);
 </script>

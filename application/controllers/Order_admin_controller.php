@@ -123,8 +123,16 @@ class Order_admin_controller extends Admin_Core_Controller
 		if(!empty($shipping))
 		{
 			$locationDetails=$this->location_model->get_country_byname($shipping->shipping_country);
+		}else{
+			$locationDetails = array();
 		}
-		$data['listproducts'] = $this->product_admin_model->get_productsbycountryid($locationDetails->id);
+
+		if($locationDetails){
+			$data['listproducts'] = $this->product_admin_model->get_productsbycountryid($locationDetails->id);
+		} else {
+			$data['listproducts'] = array();
+		}
+		
 		//get_user($order->buyer_id)
 		$data['order_products'] = $this->order_admin_model->get_order_products($id);
 		$data['order_productss'] = $this->order_admin_model->get_order_productsvalid($id);
