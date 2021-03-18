@@ -231,7 +231,7 @@ class Order_controller extends Home_Core_Controller
                 exit();
             }
         }
-		
+		// echo "<pre>"; print_r($data["order"]); die;
         $this->load->view('order/invoice', $data);
     }
 

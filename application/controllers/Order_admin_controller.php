@@ -298,6 +298,23 @@ class Order_admin_controller extends Admin_Core_Controller
 		}
 		redirect($this->agent->referrer(),'refresh');
 	}
+	
+
+	/**
+	 * Update Order refund values Post
+	 */
+	public function update_order_refund_values_post()
+	{
+		$id = $this->input->post('id', true);
+		
+		if ($this->order_admin_model->update_order_refund_values()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
 
 	/**
 	 * Delete Order Product Post

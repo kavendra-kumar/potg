@@ -72,6 +72,24 @@ class Order_admin_model extends CI_Model
         }
         return false;
     }
+    
+    //update order refund values
+    public function update_order_refund_values()
+    {
+        $order_id = $this->input->post('id', true);
+
+        $data = array(
+            'sent_shipping_cost' => $this->input->post('sent_shipping_cost', true)*100,
+            'return_shipping_cost' => $this->input->post('return_shipping_cost', true)*100,
+            'additional_cost' => $this->input->post('additional_cost', true)*100,
+            'vat_deduction' => $this->input->post('vat_deduction', true),
+            'updated_at' => date('Y-m-d H:i:s'),
+        );
+
+        $this->db->where('id', $order_id);
+        return $this->db->update('orders', $data);
+        return false;
+    }
 
     //check order products status / update if all suborders completed
     public function update_order_status_if_completed($order_id)

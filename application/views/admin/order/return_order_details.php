@@ -434,7 +434,7 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title"><?php echo trans("products"); ?></h3> 
-				<!-- <button  data-toggle="modal" style="margin-left:10px;" class="btn btn-xs btn-primary m-t-5" data-target="#AddProductModal">+Add Product</button> -->
+				<button  data-toggle="modal" style="margin-left:10px;" class="btn btn-xs btn-primary m-t-5" data-target="#AddRefundValuesModal"><?php echo trans("update_refund_order_values"); ?></button>
             </div><!-- /.box-header -->
 
             <div class="box-body">
@@ -575,52 +575,134 @@
             </div><!-- /.box-body -->
         </div>
     </div>
-    <div class="col-sm-12">
-        <div class="box-payment-total">
 
-            <div class="row row-details">
-                <div class="col-xs-12 col-sm-6 col-right">
-                    <strong> <?php echo trans("subtotal"); ?></strong>
+
+
+    <div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="box-payment-total">
+                <h4><b> <?php echo trans("order_total"); ?></b></h4>
+                <div class="row row-details">
+                    <div class="col-xs-12 col-sm-6 col-right">
+                        <strong> <?php echo trans("subtotal"); ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong class="font-right"><?php echo price_formatted($order->price_subtotal, $order->price_currency); ?></strong>
+                    </div>
                 </div>
-                <div class="col-sm-6">
-                    <strong class="font-right"><?php echo price_formatted($order->price_subtotal, $order->price_currency); ?></strong>
+                <?php if (!empty($order->price_vat)): ?>
+                    <div class="row row-details">
+                        <div class="col-xs-12 col-sm-6 col-right">
+                            <strong> <?php echo trans("vat"); ?></strong>
+                        </div>
+                        <div class="col-sm-6">
+                            <strong class="font-right"><?php echo price_formatted($order->price_vat, $order->price_currency); ?></strong>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <?php if ($is_order_has_physical_product): ?>
+                    <div class="row row-details">
+                        <div class="col-xs-12 col-sm-6 col-right">
+                            <strong> <?php echo trans("shipping"); ?></strong>
+                        </div>
+                        <div class="col-sm-6">
+                            <strong class="font-right"><?php echo price_formatted($order->price_shipping, $order->price_currency); ?></strong>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <hr>
+                <div class="row row-details">
+                    <div class="col-xs-12 col-sm-6 col-right">
+                        <strong> <?php echo trans("total"); ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong class="font-right"><?php echo price_formatted($order->price_total, $order->price_currency); ?></strong>
+                    </div>
                 </div>
             </div>
-            <?php if (!empty($order->price_vat)): ?>
+        </div>
+
+        <!-- Refund Total Box -->
+        <div class="col-sm-4">
+            <div class="box-payment-total">
+                <h4><b> <?php echo trans("order_refund_total"); ?></b></h4>
                 <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
-                        <strong> <?php echo trans("vat"); ?></strong>
+                        <strong> <?php echo trans("paid"); ?></strong>
                     </div>
                     <div class="col-sm-6">
-                        <strong class="font-right"><?php echo price_formatted($order->price_vat, $order->price_currency); ?></strong>
+                        <strong class="font-right"><?php echo price_formatted($order->price_total, $order->price_currency); ?></strong>
                     </div>
                 </div>
-            <?php endif; ?>
-            <?php if ($is_order_has_physical_product): ?>
+                <?php if ($order->vat_deduction == 1){
+                    $vat_deduction = $order->price_vat;
+                ?>
+                    <div class="row row-details">
+                        <div class="col-xs-12 col-sm-6 col-right">
+                            <strong> <?php echo trans("vat"); ?></strong>
+                        </div>
+                        <div class="col-sm-6">
+                            <strong class="font-right">-<?php echo price_formatted($order->price_vat, $order->price_currency); ?></strong>
+                        </div>
+                    </div>
+                <?php } else {
+                    $vat_deduction = 0;
+                }
+                ?>
+                
                 <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
-                        <strong> <?php echo trans("shipping"); ?></strong>
+                        <strong> <?php echo trans("sent_shipping_cost"); ?></strong>
                     </div>
                     <div class="col-sm-6">
-                        <strong class="font-right"><?php echo price_formatted($order->price_shipping, $order->price_currency); ?></strong>
+                        <strong class="font-right">-<?php echo price_formatted($order->sent_shipping_cost, $order->price_currency); ?></strong>
                     </div>
                 </div>
-            <?php endif; ?>
-            <hr>
-            <div class="row row-details">
-                <div class="col-xs-12 col-sm-6 col-right">
-                    <strong> <?php echo trans("total"); ?></strong>
+                
+                <div class="row row-details">
+                    <div class="col-xs-12 col-sm-6 col-right">
+                        <strong> <?php echo trans("return_shipping_cost"); ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong class="font-right">-<?php echo price_formatted($order->return_shipping_cost, $order->price_currency); ?></strong>
+                    </div>
                 </div>
-                <div class="col-sm-6">
-                    <strong class="font-right"><?php echo price_formatted($order->price_total, $order->price_currency); ?></strong>
+
+                <div class="row row-details">
+                    <div class="col-xs-12 col-sm-6 col-right">
+                        <strong> <?php echo trans("additional_cost"); ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong class="font-right">-<?php echo price_formatted($order->additional_cost, $order->price_currency); ?></strong>
+                    </div>
+                </div>
+                
+                <?php
+                    $total_refund = $order->price_total - ($vat_deduction + $order->sent_shipping_cost + $order->return_shipping_cost + $order->additional_cost);
+                ?>
+                
+                <hr>
+                <div class="row row-details">
+                    <div class="col-xs-12 col-sm-6 col-right">
+                        <strong> <?php echo trans("total"); ?></strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong class="font-right"><?php echo price_formatted($total_refund, $order->price_currency); ?></strong>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    </div>
+    
+
+
+
 </div>
 
 <?php foreach ($order_products as $item): ?>
-    <!-- Modal -->
+    <!--update product status Modal -->
     <div id="updateStatusModal_<?php echo $item->id; ?>" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -658,8 +740,8 @@
     </div>
 <?php endforeach; ?>
 
-
-<div id="AddProductModal" class="modal fade" role="dialog">
+    <!--Add product Modal -->
+    <div id="AddProductModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <?php echo form_open('order_admin_controller/add_product_to_existingorder'); ?>
@@ -707,6 +789,50 @@
         </div>
     </div>
 
+    <!--add refund valuesin order Modal -->
+    <div id="AddRefundValuesModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <?php echo form_open('order_admin_controller/update_order_refund_values_post'); ?>
+                <input type="hidden" name="id" value="<?php echo $order->id; ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><?php echo trans("update_refund_order_values"); ?></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-order-status">
+
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('sent_shipping_cost'); ?></label>
+                            <input type="text" name="sent_shipping_cost" class="form-control" value="<?= ($order->sent_shipping_cost) ? $order->sent_shipping_cost/100 : 0 ?>" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('return_shipping_cost'); ?></label>
+                            <input type="text" name="return_shipping_cost" class="form-control" value="<?= ($order->return_shipping_cost) ? $order->return_shipping_cost/100 : 0 ?>" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('additional_cost'); ?></label>
+                            <input type="text" name="additional_cost" class="form-control" value="<?= ($order->additional_cost) ? $order->additional_cost/100 : 0 ?>" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('vat_deduction'); ?></label>
+                            <select name="vat_deduction" class="form-control">
+                                <option <?= ($order->vat_deduction == 0)?'selected':'' ?> value="0">No</option>
+                                <option <?= ($order->vat_deduction == 1)?'selected':'' ?> value="1">Yes</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+                <?php echo form_close(); ?>
+            </div>
+        </div>
+    </div>
+    
 
 <style>
     .sec-title {
