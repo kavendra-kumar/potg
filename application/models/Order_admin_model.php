@@ -90,6 +90,24 @@ class Order_admin_model extends CI_Model
         return $this->db->update('orders', $data);
         return false;
     }
+    
+    //create order task
+    public function create_order_task()
+    {
+        $reminder_date = date("Y-m-d", strtotime($this->input->post('reminder_date', true)));
+        
+        $data = array(
+            'order_id' => $this->input->post('id', true),
+            'task' => $this->input->post('task', true),
+            'comment' => $this->input->post('comment', true),
+            'reminder_date' => $reminder_date,
+            'created_at' => date('Y-m-d H:i:s'),
+            'created_by' => $this->session->userdata['modesy_sess_user_id'],
+        );
+
+        return $this->db->insert('order_tasks',$data);
+        return false;
+    }
 
     //check order products status / update if all suborders completed
     public function update_order_status_if_completed($order_id)
@@ -679,6 +697,15 @@ class Order_admin_model extends CI_Model
         $query = $this->db->get('order_products');
         return $query->result();
     }
+
+    //get order task
+    public function get_order_task($order_id)
+    {
+        $order_id = clean_number($order_id);
+        $this->db->where('order_id', $order_id);
+        $query = $this->db->get('order_tasks');
+        return $query->result();
+    }
 	//get order products
     public function get_order_productsvalid($order_id)
     {
@@ -897,6 +924,34 @@ class Order_admin_model extends CI_Model
         $this->db->order_by('created_at', 'DESC');
         $this->db->limit($per_page, $offset);
         $query = $this->db->get('invoices');
+        return $query->result();
+    }
+
+
+     //task filter by values
+     public function filter_task()
+     {
+         $order_number = $this->input->get('order_number', true);
+         if (!empty($order_number)) {
+             $this->db->like('order_id', $order_number);
+         }
+         $this->db->where('reminder_date', date('Y-m-d'));
+     }
+
+    //get task count
+    public function get_today_task_count()
+    {
+        $this->filter_task();
+        $query = $this->db->get('order_tasks');
+        return $query->num_rows();
+    }
+
+    //get paginated invoices
+    public function get_paginated_today_task($per_page, $offset)
+    {
+        $this->filter_task();
+        $this->db->limit($per_page, $offset);
+        $query = $this->db->get('order_tasks');
         return $query->result();
     }
 	

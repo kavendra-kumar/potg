@@ -4,7 +4,8 @@
     <div class="col-sm-12">
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title" style="width:100%;"><?php echo trans("order_details"); ?> <?php if ($order->status != 3): ?> <a href="<?php echo base_url(); ?>invoice/<?php echo $order->order_number; ?>" class="btn btn-sm btn-success" target="_blank" style="float:right;"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<?php echo trans("view_invoice"); ?></a> <?php endif; ?> </h3>
+                <h3 class="box-title" style="width:100%;"><?php echo trans("order_details"); ?>
+                 <?php if ($order->status != 3): ?> <a href="<?php echo base_url(); ?>invoice/<?php echo $order->order_number; ?>" class="btn btn-sm btn-success" target="_blank" style="float:right;"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<?php echo trans("view_invoice"); ?></a> <?php endif; ?> </h3>
             </div><!-- /.box-header -->
 
             <div class="box-body">
@@ -442,6 +443,50 @@
             </div><!-- /.box-body -->
         </div>
     </div>
+
+    <!-- Order Task List Start -->
+    <div class="col-sm-12">
+        <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><?php echo trans("order_follw_up"); ?></h3> 
+                    <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateTaskModal"><i class="fa fa-plus"></i> Create Task</button>
+                </div><!-- /.box-header -->
+
+                <div class="box-body">
+                    <div class="row">
+                        <!-- include message block -->
+                        <?php
+                        if($order_tasks) {
+                            foreach($order_tasks as $order_task) {
+                        ?>
+                        <div class="col-sm-6">
+                            <div class="col-md-12 box" style="min-height:150px;">
+                                <div class="row">
+                                    <!-- include message block -->
+                                    <div class="col-sm-4">
+                                        <label><?php echo trans("task"); ?></label>
+                                        <p><?php echo $order_task->task; ?></p>
+                                        <label><?php echo trans("reminder_date"); ?></label>
+                                        <p><?php echo $order_task->reminder_date; ?></p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <label><?php echo trans("comment"); ?></label>
+                                        <p><?php echo $order_task->comment; ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>    
+        </div>   
+    </div>
+    <!-- Order Task List End -->
+
+
     <div class="col-sm-12">
         <div class="box">
             <div class="box-header with-border">
@@ -679,7 +724,7 @@
 <?php endforeach; ?>
 
 
-<div id="AddProductModal" class="modal fade" role="dialog">
+    <div id="AddProductModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <?php echo form_open('order_admin_controller/add_product_to_existingorder'); ?>
@@ -727,6 +772,44 @@
         </div>
     </div>
 
+
+    <!--create task Modal -->
+    <div id="CreateTaskModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <?php echo form_open('order_admin_controller/create_task_post'); ?>
+                <input type="hidden" name="id" value="<?php echo $order->id; ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><?php echo trans("order_follw_up"); ?></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-order-status">
+
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('task'); ?></label>
+                            <input type="text" name="task" class="form-control" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('comment'); ?></label>
+                            <textarea name="comment" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('reminder_date'); ?></label>
+                            <input type="text" name="reminder_date"id="datepicker" class="form-control" value="" required />
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+                <?php echo form_close(); ?>
+            </div>
+        </div>
+    </div>
+    
 
 <style>
     .sec-title {
@@ -788,4 +871,12 @@ $("#productId").on('change',function(){
 
             });
 })
-    </script>
+</script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script>
+$('form').attr('autocomplete', 'off');
+  $( function() {
+    $( "#datepicker" ).datepicker();
+  } );
+  </script>

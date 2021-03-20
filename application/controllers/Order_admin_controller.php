@@ -163,6 +163,9 @@ class Order_admin_controller extends Admin_Core_Controller
 			$datas['price_total']=0;
 			$this->order_model->update_order($datas,$id);
 		}
+
+		$data['order_tasks'] = $this->order_admin_model->get_order_task($id);
+		// echo "<pre>"; print_r($data['order_tasks']); die;
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
 		$this->load->view('admin/includes/_header', $data);
@@ -317,6 +320,20 @@ class Order_admin_controller extends Admin_Core_Controller
 	}
 
 	/**
+	 * create task Post
+	 */
+	public function create_task_post()
+	{		
+		if ($this->order_admin_model->create_order_task()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
+
+	/**
 	 * Delete Order Product Post
 	 */
 	public function delete_order_product_post()
@@ -450,6 +467,23 @@ class Order_admin_controller extends Admin_Core_Controller
 
         $this->load->view('admin/includes/_header', $data);
         $this->load->view('admin/order/invoices', $data);
+        $this->load->view('admin/includes/_footer');
+    }
+
+    /**
+     * Task List
+     */
+    public function order_follw_up()
+    {
+        $data['title'] = trans("order_follw_up");
+        $data['form_action'] = admin_url() . "order_follw_up";
+
+        $pagination = $this->paginate(admin_url() . 'order_follw_up', $this->order_admin_model->get_today_task_count());
+        $data['order_follw_up'] = $this->order_admin_model->get_paginated_today_task($pagination['per_page'], $pagination['offset']);
+        $data['panel_settings'] = $this->settings_model->get_panel_settings();
+
+        $this->load->view('admin/includes/_header', $data);
+        $this->load->view('admin/order/order_follw_up', $data);
         $this->load->view('admin/includes/_footer');
     }
 
