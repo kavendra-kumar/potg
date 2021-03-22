@@ -5,6 +5,9 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title" style="width:100%;"><?php echo trans("order_details"); ?>
+                <?php if(count($recent_orders) > 0) { ?>
+                <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#RecentOrdersModal"><b><?php echo count($recent_orders); ?></b> Recent Orders</button>
+                <?php } ?>
                  <?php if ($order->status != 3): ?> <a href="<?php echo base_url(); ?>invoice/<?php echo $order->order_number; ?>" class="btn btn-sm btn-success" target="_blank" style="float:right;"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<?php echo trans("view_invoice"); ?></a> <?php endif; ?> </h3>
             </div><!-- /.box-header -->
 
@@ -810,7 +813,38 @@
         </div>
     </div>
     
+    <?php if($recent_orders) { ?>
+    <!--Recent Orders Modal -->
+    <div id="RecentOrdersModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <input type="hidden" name="id" value="<?php echo $order->id; ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Recent Orders</h4>
+                </div>
+                <div class="modal-body" style="min-height:200px;">
+                    <div class="table-order-status">
 
+                        <div class="col-md-12">
+                            <?php foreach($recent_orders as $val) { ?>
+                            <div class="col-md-3">
+                                <a target="_blank" href="<?php echo base_url(); ?>admin/order-details/<?php echo $val->id; ?>">#<?php echo $val->id; ?></a>
+                            </div>
+                            <?php } ?>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php } ?>
+
+    
 <style>
     .sec-title {
         margin-bottom: 20px;

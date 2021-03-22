@@ -163,9 +163,10 @@ class Order_admin_controller extends Admin_Core_Controller
 			$datas['price_total']=0;
 			$this->order_model->update_order($datas,$id);
 		}
-
+		
+		$data['recent_orders'] = $this->order_admin_model->get_order_by_userid($data['order']->buyer_id, $id);
 		$data['order_tasks'] = $this->order_admin_model->get_order_task($id);
-		// echo "<pre>"; print_r($data['order_tasks']); die;
+		// echo "<pre>"; print_r($data['recent_orders']); die;
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
 		$this->load->view('admin/includes/_header', $data);

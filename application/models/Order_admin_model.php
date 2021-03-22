@@ -1009,5 +1009,16 @@ class Order_admin_model extends CI_Model
 
                     $this->db->insert('order_products', $data);
 	}
+
+
+    //get completed orders count
+    public function get_order_by_userid($user_id, $id)
+    {
+        $user_id = clean_number($user_id);
+        $this->db->where('buyer_id', $user_id);
+        $this->db->where('id !=', $id);
+        $query = $this->db->get('orders');
+        return $query->result();
+    }
 	
 }
