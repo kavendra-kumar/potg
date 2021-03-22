@@ -600,8 +600,7 @@ setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
 
 
 <!-- GPS location map -->
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyDkAmiEffMR4r0r9zziv66pyEGNJSSnGN0" ></script>
-
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyDokZ9yr2DNr6W_Gpq39VJKMg1C-ob9ya4" ></script>
 <script>
 var geocoder;
 var map;
