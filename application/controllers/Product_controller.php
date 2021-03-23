@@ -6,6 +6,12 @@ class Product_controller extends Home_Core_Controller
     public function __construct()
     {
         parent::__construct();
+
+        if (empty($this->session->userdata('mds_default_location_id'))){
+            $this->session->set_userdata('mds_default_location_id', 228);
+        }
+        $this->default_location_id = $this->location_model->get_default_location();
+        
         $this->review_limit = 5;
         $this->product_per_page = 18;
     }

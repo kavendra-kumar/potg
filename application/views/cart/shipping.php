@@ -202,13 +202,6 @@
                                     <div class="row">
                                         <div class="col-12 cart-form-shipping-address">
                                             <div class="form-group">
-                                                <div class="row  h-300" style="height:500px;" >
-                                                    <div class="col-12 col-md-12 m-b-sm-15">
-                                                        <label><?php echo trans("gps_location"); ?></label>
-                                                        <input type="hidden" name="gps_location" id="gps_location" />
-                                                        <div id="map_canvas" style="height:90%;"></div>
-                                                    </div>
-                                                </div>
 
                                                 <div class="row">
                                                     <div class="col-12 col-md-12 m-b-sm-15">
@@ -360,6 +353,20 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <div class="row  h-300" style="height:500px;" >
+                                                    <div class="col-12 col-md-12 m-b-sm-15">
+                                                        <label><?php echo trans("gps_location"); ?></label>
+                                                        <input type="hidden" name="gps_location" id="gps_location" />
+                                                        <div id="map_canvas" style="height:90%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                         <div class="col-12 d-none">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
@@ -605,6 +612,7 @@ setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
 var geocoder;
 var map;
 var marker;
+var address;
 var infowindow = new google.maps.InfoWindow({
   size: new google.maps.Size(150, 50)
 });
@@ -622,7 +630,7 @@ navigator.geolocation.getCurrentPosition(function (p) {
         // This is checking to see if the Geoeode Status is OK before proceeding
         if (status == google.maps.GeocoderStatus.OK) {
             console.log(results);
-            var address = (results[0].formatted_address);
+            address = (results[0].formatted_address);
 			document.getElementById("gps_location").value = address;
 			codeAddress(address);
         }
@@ -646,6 +654,7 @@ function geocodePosition(pos) {
   }, function(responses) {
     if (responses && responses.length > 0) {
       marker.formatted_address = responses[0].formatted_address;
+      document.getElementById("gps_location").value = responses[0].formatted_address;
     } else {
       marker.formatted_address = 'Cannot determine address at this location.';
     }
@@ -681,6 +690,7 @@ function codeAddress(address) {
         infowindow.open(map, marker);
       });
       google.maps.event.trigger(marker, 'click');
+      
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
