@@ -335,6 +335,20 @@ class Order_admin_controller extends Admin_Core_Controller
 	}
 
 	/**
+	 * update task Post
+	 */
+	public function update_task_post()
+	{		
+		if ($this->order_admin_model->update_order_task()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
+
+	/**
 	 * Delete Order Product Post
 	 */
 	public function delete_order_product_post()
@@ -479,13 +493,22 @@ class Order_admin_controller extends Admin_Core_Controller
         $data['title'] = trans("order_follw_up");
         $data['form_action'] = admin_url() . "order_follw_up";
 
-        $pagination = $this->paginate(admin_url() . 'order_follw_up', $this->order_admin_model->get_today_task_count());
+        $pagination = $this->paginate(admin_url() . 'order-follw-up', $this->order_admin_model->get_today_task_count());
         $data['order_follw_up'] = $this->order_admin_model->get_paginated_today_task($pagination['per_page'], $pagination['offset']);
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
         $this->load->view('admin/includes/_header', $data);
         $this->load->view('admin/order/order_follw_up', $data);
         $this->load->view('admin/includes/_footer');
+    }
+	
+	/**
+     * Task List
+     */
+    public function get_task_by_id($id=0)
+    {
+        $result = $this->order_admin_model->get_task_by_id($id);
+		echo json_encode($result);
     }
 
 	/**

@@ -95,18 +95,39 @@ class Order_admin_model extends CI_Model
     public function create_order_task()
     {
         $reminder_date = date("Y-m-d", strtotime($this->input->post('reminder_date', true)));
-        
+        $reminder_time = $this->input->post('reminder_time', true);
         $data = array(
             'order_id' => $this->input->post('id', true),
             'task' => $this->input->post('task', true),
             'comment' => $this->input->post('comment', true),
             'reminder_date' => $reminder_date,
+            'reminder_time' => $reminder_time,
+            'status' => 0,
             'created_at' => date('Y-m-d H:i:s'),
             'created_by' => $this->session->userdata['modesy_sess_user_id'],
         );
 
         return $this->db->insert('order_tasks',$data);
         return false;
+    }
+        
+    //update order task
+    public function update_order_task()
+    {
+        $reminder_date = date("Y-m-d", strtotime($this->input->post('reminder_date', true)));
+
+        $id = $this->input->post('task_id', true);
+
+        $data = array(
+            'task' => $this->input->post('task', true),
+            'comment' => $this->input->post('comment', true),
+            'reminder_date' => $reminder_date,
+            'status' => $this->input->post('status', true),
+        );
+
+        $this->db->where('id', $id);
+        return $this->db->update('order_tasks', $data);
+        return true;
     }
 
     //check order products status / update if all suborders completed
@@ -703,6 +724,7 @@ class Order_admin_model extends CI_Model
     {
         $order_id = clean_number($order_id);
         $this->db->where('order_id', $order_id);
+        $this->db->order_by('id', 'DESC');
         $query = $this->db->get('order_tasks');
         return $query->result();
     }
@@ -935,8 +957,16 @@ class Order_admin_model extends CI_Model
          if (!empty($order_number)) {
              $this->db->like('order_id', $order_number);
          }
-         $this->db->where('reminder_date', date('Y-m-d'));
+         $this->db->where('status', 0);
      }
+
+    //get task by id
+    public function get_task_by_id($id)
+    {
+        $this->db->where('id', $id);
+        $query = $this->db->get('order_tasks');
+        return $query->row();
+    }
 
     //get task count
     public function get_today_task_count()

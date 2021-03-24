@@ -5,9 +5,16 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title" style="width:100%;"><?php echo trans("order_details"); ?>
+
                 <?php if(count($recent_orders) > 0) { ?>
-                <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#RecentOrdersModal"><b><?php echo count($recent_orders); ?></b> Recent Orders</button>
+                <div class="btn btn-sm btn-info m-l-5 recent-orders1"> Recent Orders: 
+                    <?php foreach($recent_orders as $val) { ?>
+                        <a class="recent-links" target="_blank" href="<?php echo base_url(); ?>admin/order-details/<?php echo $val->id; ?>">#<?php echo $val->id; ?></a>
+                    <?php } ?>
+                </div>
+                
                 <?php } ?>
+
                  <?php if ($order->status != 3): ?> <a href="<?php echo base_url(); ?>invoice/<?php echo $order->order_number; ?>" class="btn btn-sm btn-success" target="_blank" style="float:right;"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<?php echo trans("view_invoice"); ?></a> <?php endif; ?> </h3>
             </div><!-- /.box-header -->
 
@@ -460,28 +467,70 @@
                         <!-- include message block -->
                         <?php
                         if($order_tasks) {
-                            foreach($order_tasks as $order_task) {
+                            
                         ?>
-                        <div class="col-sm-6">
-                            <div class="col-md-12 box" style="min-height:150px;">
-                                <div class="row">
-                                    <!-- include message block -->
-                                    <div class="col-sm-4">
-                                        <label><?php echo trans("task"); ?></label>
-                                        <p><?php echo $order_task->task; ?></p>
-                                        <label><?php echo trans("reminder_date"); ?></label>
-                                        <p><?php echo $order_task->reminder_date; ?></p>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <label><?php echo trans("comment"); ?></label>
-                                        <p><?php echo $order_task->comment; ?></p>
-                                    </div>
-                                </div>
+                        <div class="col-md-12">
+                            <div class="table-responsive" id="t_product">
+                                <table class="table table-bordered table-striped" role="grid">
+                                    <thead>
+                                    <tr role="row">
+                                        <th><?php echo trans('task'); ?></th>
+                                        <th><?php echo trans('reminder_date'); ?></th>
+                                        <th><?php echo trans('reminder_time'); ?></th>
+                                        <th width="500"><?php echo trans('comment'); ?></th>
+                                        <th><?php echo trans('status'); ?></th>
+                                        <th><?php echo trans('created_by'); ?></th>
+                                        <th class="max-width-120"><?php echo trans('options'); ?></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php $is_order_has_physical_product = false; ?>
+                                    <?php foreach($order_tasks as $order_task) : ?>
+                                        
+                                        <tr>
+                                        <td>
+                                                <?php echo html_escape($order_task->task); ?>
+                                            </td>
+                                            <td>
+                                                <?php echo html_escape($order_task->reminder_date); ?>
+                                                <?php if($order_task->status == 0 && strtotime($order_task->reminder_date) < strtotime(date('Y-m-d')) ) { ?><p><small class="btn bg-danger" style="color:#ffff">Overdue</small></p> <?php } ?>
+                                            </td>
+                                            <td>
+                                                <?php echo html_escape($order_task->reminder_time); ?>
+                                            </td>
+                                            <td>
+                                                <?php echo html_escape($order_task->comment); ?>
+                                            </td>
+                                            <td>
+                                                <?php echo ($order_task->status == 0)?"Open":"Closed"; ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $inf = get_user($order_task->created_by);
+                                                echo $inf->first_name.' '.$inf->last_name; ?>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0)" alt="<?php echo $order_task->id; ?>" id="" class="btn btn-sm btn-info m-l-5 update_task" ><i class="fa fa-edit"></i></a>
+                                            </td>
+                                            
+                                        </tr>
+
+                                    <?php endforeach; ?>
+
+                                    </tbody>
+                                </table>
+
+                                <?php if (empty($order_tasks)): ?>
+                                    <p class="text-center">
+                                        <?php echo trans("no_records_found"); ?>
+                                    </p>
+                                <?php endif; ?>
+
                             </div>
                         </div>
+
                         <?php
                             }
-                        }
                         ?>
                     </div>
                 </div>    
@@ -799,7 +848,59 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label"><?php echo trans('reminder_date'); ?></label>
-                            <input type="text" name="reminder_date"id="datepicker" class="form-control" value="" required />
+                            <input type="text" name="reminder_date"id="datepicker" class="form-control datepicker" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('reminder_time'); ?></label>
+                            <input placeholder="Select time" type="text" name="reminder_time" id="reminder_time" class="form-control timepicker">
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+                <?php echo form_close(); ?>
+            </div>
+        </div>
+    </div>
+    
+
+    <!--update task Modal -->
+    <div id="UpdateTaskModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <?php echo form_open('order_admin_controller/update_task_post'); ?>
+                <input type="hidden" name="task_id" id="task_id" value="">
+                <input type="hidden" name="order_id" value="<?php echo $order->id; ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><?php echo trans("order_follw_up"); ?></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-order-status">
+
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('task'); ?></label>
+                            <input type="text" name="task" id="task" class="form-control" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('comment'); ?></label>
+                            <textarea name="comment" id="comment" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('reminder_date'); ?></label>
+                            <input type="text" name="reminder_date" id="datepicker2" class="form-control reminder_date datepicker" value="" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('status'); ?></label>
+                            <select class="form-control" name="status" id="status" required>
+                                <option value="">Select Status</option>
+                                <option value="1">Close</option>
+                                <option value="0">Open</option>
+                            </select>
                         </div>
                         
                     </div>
@@ -846,6 +947,9 @@
 
     
 <style>
+    .ui-timepicker-standard {
+        z-index:999999999999 !important;
+    }
     .sec-title {
         margin-bottom: 20px;
         padding-bottom: 10px;
@@ -882,6 +986,22 @@
         padding: 30px;
     }
 
+    .recent-links{
+        color: #fff;
+    text-decoration: underline;
+    padding: 0px 10px;
+    font-size: 18px;
+    }
+    .recent-orders1, .recent-orders1:hover{
+        background-color: #ff9800a6 !important;
+        border-color: #ff9800 !important;
+        cursor: initial;
+        
+    }
+    .recent-orders1{
+        padding: 5px 15px;
+        font-size:24px;
+    }
     @media (max-width: 768px) {
         .col-right {
             width: 100%;
@@ -904,13 +1024,55 @@ $("#productId").on('change',function(){
                 }
 
             });
-})
+});
+</script>
+<script>
+$(document).ready(function(){
+    $( ".update_task" ).on( "click", function() {
+        var task_id = $(this).attr('alt');
+        
+        $.ajax({
+            url:"<?=base_url('order_admin_controller/get_task_by_id')?>/"+task_id,
+            success:function(obj){
+                var result = JSON.parse(obj);
+                console.log(result);
+
+                $('#task_id').val(result.id);
+                $('#comment').val(result.comment);
+
+                var date= result.reminder_date;
+                var d=new Date(date);
+                var dd=d.getDate();
+                var mm=d.getMonth()+1;
+                var yy=d.getFullYear();
+                var newdate=mm+"/"+dd+"/"+yy;
+                $('.reminder_date').val(newdate);
+
+                $('#task').val(result.task);
+
+                $('#UpdateTaskModal').modal('show'); 
+            }
+        });
+    });
+});
 </script>
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 <script>
-$('form').attr('autocomplete', 'off');
-  $( function() {
-    $( "#datepicker" ).datepicker();
-  } );
+    $('form').attr('autocomplete', 'off');
+
+    $( function() {
+        $( "#datepicker" ).datepicker();
+    });
+    $( function() {
+        $( "#datepicker2" ).datepicker();
+    });
+
+    $(document).ready(function(){
+        $('input.timepicker').timepicker({});
+    });
   </script>
+

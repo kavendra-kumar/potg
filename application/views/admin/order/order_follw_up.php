@@ -48,7 +48,10 @@
                             <th><?php echo trans('order_id'); ?></th>
                             <th><?php echo trans('task'); ?></th>
                             <th><?php echo trans('comment'); ?></th>
+                            <th><?php echo trans('status'); ?></th>
+                            <th><?php echo trans('created_by'); ?></th>
                             <th><?php echo trans('reminder_date'); ?></th>
+                            <th><?php echo trans('reminder_time'); ?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -59,7 +62,16 @@
                                 <td><a href="<?php echo base_url(); ?>admin/order-details/<?php echo $item->order_id; ?>"  target="_blank"><?php echo $item->order_id; ?></a></td>
                                 <td><?php echo $item->task; ?></td>
                                 <td><?php echo $item->comment; ?></td>
-                                <td><?php echo $item->reminder_date; ?></td>
+                                <td>
+                                    <?php echo ($item->status == 0)?"Open":"Closed"; ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $inf = get_user($item->created_by);
+                                    echo $inf->first_name.' '.$inf->last_name; ?>
+                                </td>
+                                <td><?php echo $item->reminder_date; ?><?php if( strtotime($item->reminder_date) < strtotime(date('Y-m-d')) ) { ?><p><small class="btn bg-danger" style="color:#ffff">Overdue</small></p> <?php } ?></td>
+                                <td><?php echo $item->reminder_time; ?></td>
                             </tr>
 
                         <?php endforeach; ?>
