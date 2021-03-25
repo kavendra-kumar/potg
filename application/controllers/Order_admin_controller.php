@@ -166,7 +166,8 @@ class Order_admin_controller extends Admin_Core_Controller
 		
 		$data['recent_orders'] = $this->order_admin_model->get_order_by_userid($data['order']->buyer_id, $id);
 		$data['order_tasks'] = $this->order_admin_model->get_order_task($id);
-		// echo "<pre>"; print_r($data['recent_orders']); die;
+		$data['admin_users'] = $this->order_admin_model->get_user_by_role();
+		// echo "<pre>"; print_r($data['admin_users']); die;
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
 		$this->load->view('admin/includes/_header', $data);
@@ -486,7 +487,7 @@ class Order_admin_controller extends Admin_Core_Controller
     }
 
     /**
-     * Task List
+     * Order Follow Up
      */
     public function order_follw_up()
     {
@@ -502,6 +503,24 @@ class Order_admin_controller extends Admin_Core_Controller
         $this->load->view('admin/includes/_footer');
     }
 	
+    /**
+     * My Task List
+     */
+    public function my_task()
+    {
+		
+        $data['title'] = trans("my_task");
+        $data['form_action'] = admin_url() . "my_task";
+
+        $pagination = $this->paginate(admin_url() . 'my_task', $this->order_admin_model->get_today_mytask_count());
+        $data['order_follw_up'] = $this->order_admin_model->get_paginated_today_mytask($pagination['per_page'], $pagination['offset']);
+        $data['panel_settings'] = $this->settings_model->get_panel_settings();
+
+        $this->load->view('admin/includes/_header', $data);
+        $this->load->view('admin/order/my_task', $data);
+        $this->load->view('admin/includes/_footer');
+    }
+
 	/**
      * Task List
      */

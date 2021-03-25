@@ -96,12 +96,16 @@ class Order_admin_model extends CI_Model
     {
         $reminder_date = date("Y-m-d", strtotime($this->input->post('reminder_date', true)));
         $reminder_time = $this->input->post('reminder_time', true);
+        $assign_to_arr = $this->input->post('assign_to', true);
+        $assign_to = ($assign_to_arr) ? implode(',', $assign_to_arr) : null;
+        // echo $assign_to; die;
         $data = array(
             'order_id' => $this->input->post('id', true),
             'task' => $this->input->post('task', true),
             'comment' => $this->input->post('comment', true),
             'reminder_date' => $reminder_date,
             'reminder_time' => $reminder_time,
+            'assign_to' => $assign_to,
             'status' => 0,
             'created_at' => date('Y-m-d H:i:s'),
             'created_by' => $this->session->userdata['modesy_sess_user_id'],
@@ -728,6 +732,17 @@ class Order_admin_model extends CI_Model
         $query = $this->db->get('order_tasks');
         return $query->result();
     }
+    
+    
+    //get order task
+    public function get_user_by_role()
+    {
+        $this->db->select('id, first_name, last_name');
+        $this->db->where('role', 'admin');
+        $query = $this->db->get('users');
+        return $query->result();
+    }
+
 	//get order products
     public function get_order_productsvalid($order_id)
     {
@@ -949,6 +964,13 @@ class Order_admin_model extends CI_Model
         return $query->result();
     }
 
+    //get task by id
+    public function get_task_by_id($id)
+    {
+        $this->db->where('id', $id);
+        $query = $this->db->get('order_tasks');
+        return $query->row();
+    }
 
      //task filter by values
      public function filter_task()
@@ -959,14 +981,6 @@ class Order_admin_model extends CI_Model
          }
          $this->db->where('status', 0);
      }
-
-    //get task by id
-    public function get_task_by_id($id)
-    {
-        $this->db->where('id', $id);
-        $query = $this->db->get('order_tasks');
-        return $query->row();
-    }
 
     //get task count
     public function get_today_task_count()
@@ -984,6 +998,45 @@ class Order_admin_model extends CI_Model
         $query = $this->db->get('order_tasks');
         return $query->result();
     }
+
+    ####### KKKKKKK #########
+    
+     //task filter by values
+     public function filter_mytask()
+     {
+        $login_id = $this->session->userdata['modesy_sess_user_id'];
+        
+         $order_number = $this->input->get('order_number', true);
+
+         $where = "FIND_IN_SET('".$login_id."', assign_to)";
+         $this->db->group_start();
+         $this->db->where($where);
+         $this->db->or_where('created_by', $login_id);
+         $this->db->group_end();
+         if (!empty($order_number)) {
+             $this->db->like('order_id', $order_number);
+         }
+         $this->db->where('status', 0);
+     }
+
+    //get task count
+    public function get_today_mytask_count()
+    {
+        $this->filter_mytask();
+        $query = $this->db->get('order_tasks');
+        return $query->num_rows();
+    }
+
+    //get paginated invoices
+    public function get_paginated_today_mytask($per_page, $offset)
+    {
+        $this->filter_mytask();
+        $this->db->limit($per_page, $offset);
+        $query = $this->db->get('order_tasks');
+        return $query->result();
+    }
+    ####### KKKKKKK #########
+
 	
 	public function add_order_products_to_existing_order($order_id,$countofsameproducts,$quantity,$details=array(),$appended_items)
 	{
