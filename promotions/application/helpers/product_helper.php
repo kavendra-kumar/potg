@@ -99,6 +99,27 @@ if (!function_exists('get_category_image_url')) {
     }
 }
 
+//get addon products
+if (!function_exists('get_addon_products')) {
+    function get_addon_products($limit)
+    {
+        $ci =& get_instance();
+        $key = "addon_products";
+        if ($ci->default_location_id != 0) {
+            $key = "addon_products_location_" . $ci->default_location_id;
+        }
+        $addon_products = get_cached_data($key);
+        if (empty($addon_products)) {
+            $addon_products = $ci->product_model->get_addon_products_limited($limit);
+            set_cache_data($key, $addon_products);
+        }
+        // echo "<pre>"; print_r($addon_products); die('koko');
+        return $addon_products;
+    }
+}
+
+
+
 //generate ids string
 if (!function_exists('generate_ids_string')) {
     function generate_ids_string($array)

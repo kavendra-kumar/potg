@@ -54,6 +54,11 @@
 </script>
 <?php if (!empty($this->session->userdata('mds_send_email_data'))): ?>
 	<script>
+		// $('button[name="submit"]').click(function() {
+			fbq('track', 'Purchase', {currency: "<?php echo $order->price_currency ?>", value: <?php echo $order->price_total/100 ?>});
+		// });
+	</script>
+	<script>
         $(document).ready(function () {
             var data = JSON.parse(<?php echo json_encode($this->session->userdata("mds_send_email_data"));?>);
             if (data) {

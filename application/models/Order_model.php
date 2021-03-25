@@ -161,6 +161,7 @@ class Order_model extends CI_Model
                 'shipping_last_name' => $shipping_address->shipping_last_name,
                 'shipping_email' => $shipping_address->shipping_email,
                 'shipping_phone_number' => $shipping_address->shipping_phone_number,
+                'gps_location' => $shipping_address->gps_location,
                 'shipping_address_1' => $shipping_address->shipping_address_1,
                 'shipping_address_2' => $shipping_address->shipping_address_2,
                 'shipping_country' => $shipping_address->shipping_country_id,

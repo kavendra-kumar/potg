@@ -64,6 +64,7 @@
 								</td>
 								<td><strong><?php echo price_formatted($item->price_total, $item->price_currency); ?></strong></td>
 								<td><?php echo $item->price_currency; ?></td>
+
 								<td>
 								<?php if ($item->status == 1): ?>
                                     <label class="label label-success"><?php echo trans("completed"); ?></label>
@@ -77,10 +78,28 @@
                                     <label class="label label-success"><?php echo trans("payment_received"); ?></label>
                                 <?php elseif ($item->status == 6): ?>
                                     <label class="label label-danger"><?php echo trans("awaiting_payment"); ?></label>
+								<?php elseif ($item->status == 7): ?>
+                                    <label class="label label-info"><?php echo trans("order_processing"); ?></label>
+								<?php elseif ($item->status == 8): ?>
+                                    <label class="label label-info"><?php echo trans("scheduled"); ?></label>
+								<?php elseif ($item->status == 9): ?>
+                                	<label class="label label-danger"><?php echo trans("returned"); ?></label>
+								<?php elseif ($item->status == 10): ?>
+                                	<label class="label label-danger"><?php echo trans("return_and_refund_request"); ?></label>
+								<?php elseif ($item->status == 11): ?>
+                                	<label class="label label-danger"><?php echo trans("in_return_process"); ?></label>
+								<?php elseif ($item->status == 12): ?>
+                                	<label class="label label-danger"><?php echo trans("return_process_done"); ?></label>
+								<?php elseif ($item->status == 13): ?>
+                                	<label class="label label-danger"><?php echo trans("refund_quested"); ?></label>
+								<?php elseif ($item->status == 14): ?>
+                                	<label class="label label-danger"><?php echo trans("refunded"); ?></label>
+								
 								<?php else: ?>
-									<label class="label label-default"><?php echo trans("order_processing"); ?></label>
+									<label class="label label-default"><?php echo trans("new"); ?></label>
                                 <?php endif; ?>
 								</td>
+
 								<td>
 									<?php echo trans($item->payment_status); ?>
 								</td>

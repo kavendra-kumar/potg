@@ -6,6 +6,12 @@ class Product_controller extends Home_Core_Controller
     public function __construct()
     {
         parent::__construct();
+
+        if (empty($this->session->userdata('mds_default_location_id'))){
+            $this->session->set_userdata('mds_default_location_id', 228);
+        }
+        $this->default_location_id = $this->location_model->get_default_location();
+        
         $this->review_limit = 5;
         $this->product_per_page = 18;
     }
@@ -111,16 +117,21 @@ class Product_controller extends Home_Core_Controller
         $data["active_product_system_array"] = $this->get_activated_product_system();
         $data['index_settings'] = $this->settings_model->get_index_settings();
 
+        // Added by kk for get product list.
+        $data['products'] = $this->product_admin_model->get_products_for_addon();
+
         $this->load->view('partials/_header', $data);
         $this->load->view('product/add_product', $data);
         $this->load->view('partials/_footer');
     }
+
 
     /**
      * Add Product Post
      */
     public function add_product_post()
     {
+
         //check auth
         if (!$this->auth_check) {
             redirect(lang_base_url());
@@ -225,6 +236,9 @@ class Product_controller extends Home_Core_Controller
         $data["file_manager_images"] = $this->file_model->get_user_file_manager_images();
         $data["active_product_system_array"] = $this->get_activated_product_system();
         $data['index_settings'] = $this->settings_model->get_index_settings();
+
+        // Added by kk for get product list.
+        $data['products'] = $this->product_admin_model->get_products_for_addon();
 
         $this->load->view('partials/_header', $data);
         $this->load->view('product/edit_product');

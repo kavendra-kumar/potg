@@ -13,26 +13,26 @@ class Order_admin_controller extends Admin_Core_Controller
 	}
 
 	/**
-	 * Orders
+	 * return_and_refund_orders
 	 */
-	public function orders()
+	public function return_and_refund_orders()
 	{
-		$data['title'] = trans("orders");
-		$data['form_action'] = admin_url() . "orders";
+		$data['title'] = trans("return_and_refund_orders");
+		$data['form_action'] = admin_url() . "return_and_refund_orders";
 
-		$pagination = $this->paginate(admin_url() . 'orders', $this->order_admin_model->get_orders_count());
-		$data['orders'] = $this->order_admin_model->get_paginated_orders($pagination['per_page'], $pagination['offset']);
+		$pagination = $this->paginate(admin_url() . 'return_and_refund_orders', $this->order_admin_model->get_return_orders_count());
+		$data['orders'] = $this->order_admin_model->get_paginated_return_orders($pagination['per_page'], $pagination['offset']);
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
 		$this->load->view('admin/includes/_header', $data);
-		$this->load->view('admin/order/orders', $data);
+		$this->load->view('admin/order/return_and_refund_orders', $data);
 		$this->load->view('admin/includes/_footer');
 	}
 
 	/**
 	 * Order Details
 	 */
-	public function order_details($id)
+	public function return_order_details($id)
 	{
 		$data['title'] = trans("order");
 
@@ -45,7 +45,13 @@ class Order_admin_controller extends Admin_Core_Controller
 		{
 			$locationDetails=$this->location_model->get_country_byname($shipping->shipping_country);
 		}
-		$data['listproducts'] = $this->product_admin_model->get_productsbycountryid($locationDetails->id);
+		if($locationDetails){
+			$data['listproducts'] = $this->product_admin_model->get_productsbycountryid($locationDetails->id);
+		} else {
+			$data['listproducts'] = array();
+		}
+		
+
 		//get_user($order->buyer_id)
 		$data['order_products'] = $this->order_admin_model->get_order_products($id);
 		$data['order_productss'] = $this->order_admin_model->get_order_productsvalid($id);
@@ -79,6 +85,91 @@ class Order_admin_controller extends Admin_Core_Controller
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
 		$this->load->view('admin/includes/_header', $data);
+		$this->load->view('admin/order/return_order_details', $data);
+		$this->load->view('admin/includes/_footer');
+	}
+
+
+
+	/**
+	 * Orders
+	 */
+	public function orders()
+	{
+		$data['title'] = trans("orders");
+		$data['form_action'] = admin_url() . "orders";
+
+		$pagination = $this->paginate(admin_url() . 'orders', $this->order_admin_model->get_orders_count());
+		$data['orders'] = $this->order_admin_model->get_paginated_orders($pagination['per_page'], $pagination['offset']);
+        $data['panel_settings'] = $this->settings_model->get_panel_settings();
+
+		$this->load->view('admin/includes/_header', $data);
+		$this->load->view('admin/order/orders', $data);
+		$this->load->view('admin/includes/_footer');
+	}
+
+	/**
+	 * Order Details
+	 */
+	public function order_details($id)
+	{
+		$data['title'] = trans("order");
+
+		$data['order'] = $this->order_admin_model->get_order($id);
+		if (empty($data['order'])) {
+			redirect(admin_url() . "orders");
+		}
+		$shipping = get_order_shipping($data['order']->id);
+		if(!empty($shipping))
+		{
+			$locationDetails=$this->location_model->get_country_byname($shipping->shipping_country);
+		}else{
+			$locationDetails = array();
+		}
+
+		if($locationDetails){
+			$data['listproducts'] = $this->product_admin_model->get_productsbycountryid($locationDetails->id);
+		} else {
+			$data['listproducts'] = array();
+		}
+		
+		//get_user($order->buyer_id)
+		$data['order_products'] = $this->order_admin_model->get_order_products($id);
+		$data['order_productss'] = $this->order_admin_model->get_order_productsvalid($id);
+		
+		if($data["order_productss"])
+		{
+			$datas['price_subtotal']=0;
+			$datas['price_vat']=0;
+			$datas['price_shipping']=0;
+			$datas['price_total']=0;
+			foreach($data["order_productss"] as $products)
+			{
+				
+				$datas['price_subtotal']+= $products->product_unit_price*$products->product_quantity;
+                $datas['price_vat']+= $products->product_vat;
+                $datas['price_shipping']+= $products->product_shipping_cost;
+                $datas['price_total']+=$products->product_total_price;
+				
+			}
+			$this->order_model->update_order($datas,$id);
+		
+		}
+		else
+		{
+			$datas['price_subtotal']=0;
+			$datas['price_vat']=0;
+			$datas['price_shipping']=0;
+			$datas['price_total']=0;
+			$this->order_model->update_order($datas,$id);
+		}
+		
+		$data['recent_orders'] = $this->order_admin_model->get_order_by_userid($data['order']->buyer_id, $id);
+		$data['order_tasks'] = $this->order_admin_model->get_order_task($id);
+		// echo "<pre>"; print_r($data['recent_orders']); die;
+        $data['panel_settings'] = $this->settings_model->get_panel_settings();
+
+		$this->load->view('admin/includes/_header', $data);
 		$this->load->view('admin/order/order_details', $data);
 		$this->load->view('admin/includes/_footer');
 	}
@@ -92,12 +183,13 @@ class Order_admin_controller extends Admin_Core_Controller
 		$product_id = $this->input->post('product_id', true);
 		$quantity = $this->input->post('quantity', true);
 		if($product_id)
-		{	
+		{
 			$data=$this->product_model->get_product_by_id($product_id);
 			$appended_variations = $this->cart_model->get_selected_variations($product_id)->str;
 			$options_array = $this->cart_model->get_selected_variations($product_id)->options_array;
-			
-			$optionData=$this->variation_model->get_variation_option($options_array[0]);
+			if($options_array){
+				$optionData=$this->variation_model->get_variation_option($options_array[0]);
+			}
 			
 			$checkextrashippingcharge=$this->order_admin_model->get_order_productswithproduct($order_id,$product_id);
 			$this->order_admin_model->add_order_products_to_existing_order($order_id,count($checkextrashippingcharge),$quantity,$data,$appended_variations);
@@ -207,6 +299,51 @@ class Order_admin_controller extends Admin_Core_Controller
 
 			$this->order_admin_model->update_payment_status_if_all_received($order_product->order_id);
 			$this->order_admin_model->update_order_status_if_completed($order_product->order_id);
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
+	
+
+	/**
+	 * Update Order refund values Post
+	 */
+	public function update_order_refund_values_post()
+	{
+		$id = $this->input->post('id', true);
+		
+		if ($this->order_admin_model->update_order_refund_values()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
+
+	/**
+	 * create task Post
+	 */
+	public function create_task_post()
+	{		
+		if ($this->order_admin_model->create_order_task()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
+
+	/**
+	 * update task Post
+	 */
+	public function update_task_post()
+	{		
+		if ($this->order_admin_model->update_order_task()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
 		}
 		redirect($this->agent->referrer(),'refresh');
 	}
@@ -346,6 +483,32 @@ class Order_admin_controller extends Admin_Core_Controller
         $this->load->view('admin/includes/_header', $data);
         $this->load->view('admin/order/invoices', $data);
         $this->load->view('admin/includes/_footer');
+    }
+
+    /**
+     * Task List
+     */
+    public function order_follw_up()
+    {
+        $data['title'] = trans("order_follw_up");
+        $data['form_action'] = admin_url() . "order_follw_up";
+
+        $pagination = $this->paginate(admin_url() . 'order-follw-up', $this->order_admin_model->get_today_task_count());
+        $data['order_follw_up'] = $this->order_admin_model->get_paginated_today_task($pagination['per_page'], $pagination['offset']);
+        $data['panel_settings'] = $this->settings_model->get_panel_settings();
+
+        $this->load->view('admin/includes/_header', $data);
+        $this->load->view('admin/order/order_follw_up', $data);
+        $this->load->view('admin/includes/_footer');
+    }
+	
+	/**
+     * Task List
+     */
+    public function get_task_by_id($id=0)
+    {
+        $result = $this->order_admin_model->get_task_by_id($id);
+		echo json_encode($result);
     }
 
 	/**

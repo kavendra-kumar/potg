@@ -383,6 +383,7 @@ class Cart_model extends CI_Model
         $std->shipping_last_name = $this->input->post('shipping_last_name', true);
         $std->shipping_email = $this->input->post('shipping_email', true);
         $std->shipping_phone_number = $this->input->post('shipping_phone_code', true) . $this->input->post('shipping_phone_number', true);
+        $std->gps_location = $this->input->post('gps_location', true);
         $std->shipping_address_1 = $this->input->post('shipping_address_1', true);
         $std->shipping_address_2 = $this->input->post('shipping_address_2', true);
         $std->shipping_country_id = $this->input->post('shipping_country_id', true);
@@ -468,6 +469,7 @@ class Cart_model extends CI_Model
         $std->shipping_last_name = $row->shipping_last_name;
         $std->shipping_email = $row->shipping_email;
         $std->shipping_phone_number = $row->shipping_phone_number;
+        // $std->gps_location = $row->gps_location;
         $std->shipping_address_1 = $row->shipping_address_1;
         $std->shipping_address_2 = $row->shipping_address_2;
         $std->shipping_country_id = $row->shipping_country_id;

@@ -32,6 +32,8 @@ class Cart_controller extends Home_Core_Controller
         $data['cart_total'] = $this->cart_model->get_sess_cart_total();
         $data['cart_has_physical_product'] = $this->cart_model->check_cart_has_physical_product();
         $data['cart_current_user'] = get_current_user_session();
+        
+        $data['addon_products'] = get_addon_products(8);
 
         $this->load->view('partials/_header', $data);
         $this->load->view('cart/cart', $data);
@@ -117,6 +119,12 @@ class Cart_controller extends Home_Core_Controller
         if ($this->cart_model->check_cart_has_physical_product() == false) {
             redirect(generate_url("cart"));
             exit();
+        }
+        
+        if (!empty($this->session->userdata('mds_default_location_id'))){
+            $data['country'] = get_country($this->session->userdata('mds_default_location_id'));
+        } else {
+            $data['country'] = array();
         }
 
         $data['cart_total'] = $this->cart_model->get_sess_cart_total();

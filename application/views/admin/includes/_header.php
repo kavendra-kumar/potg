@@ -140,9 +140,12 @@
                     </a>
                     <ul class="treeview-menu">
                         <li><a href="<?php echo admin_url(); ?>orders"> <?php echo trans("orders"); ?></a></li>
+                        <li><a href="<?php echo admin_url(); ?>return_and_refund_orders"> <?php echo trans("return_and_refund_orders"); ?></a></li>
+                        <li><a href="<?php echo admin_url(); ?>order-follw-up"> <?php echo trans("order_follw_up"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>transactions"> <?php echo trans("transactions"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>order-bank-transfers"> <?php echo trans("bank_transfer_notifications"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>invoices"> <?php echo trans("invoices"); ?></a></li>
+                        
                     </ul>
                 </li>
 				<?php /*<li>
@@ -167,6 +170,7 @@
                         <li><a href="<?php echo generate_url("sell_now"); ?>" target="_blank"> <?php echo trans("add_product"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>products"> <?php echo trans("products"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>pending-products"> <?php echo trans("pending_products"); ?></a></li>
+                        <!--<li><a href="<?php echo admin_url(); ?>addon-products"> <?php echo trans("addon_products"); ?></a></li>-->
                         <li><a href="<?php echo admin_url(); ?>hidden-products"> <?php echo trans("hidden_products"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>drafts"> <?php echo trans("drafts"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>deleted-products"> <?php echo trans("deleted_products"); ?></a></li>

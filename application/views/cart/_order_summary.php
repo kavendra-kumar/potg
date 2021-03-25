@@ -63,11 +63,7 @@
                 endforeach;
 			//print_r(json_encode($product_ids));
 			?>
-			<script>
-			$('button[name="submit"]').click(function() {
-				fbq('track', 'Purchase', {currency: "<?php echo $myCurrency ?>", value: <?php echo $cart_total->total/100 ?>});
-			});
-			</script>
+			
 			<?php
             endif; /*
             <div class="form-group">

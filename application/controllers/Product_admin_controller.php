@@ -48,6 +48,42 @@ class Product_admin_controller extends Admin_Core_Controller
         $this->load->view('admin/includes/_footer');
     }
 
+    public function addon_products()
+    {
+        $data['title'] = trans("addon_products");
+        $data['form_action'] = admin_url() . "addon-products";
+        $data['list_type'] = "addon_products";        
+        
+        //get paginated products
+        $data['products'] = $this->product_admin_model->get_products_for_addon();
+        $data['panel_settings'] = $this->settings_model->get_panel_settings();
+
+        $addon_products = $this->product_admin_model->get_addon_products();
+        if($addon_products) {
+            $data['addon'] = explode(",", $addon_products->product_ids);
+        } else {
+            $data['addon'] = array();
+        }
+        
+        $this->load->view('admin/includes/_header', $data);
+        $this->load->view('admin/product/addon_products', $data);
+        $this->load->view('admin/includes/_footer');
+    }
+    
+    public function save_addon_products()
+    {
+        $product_ids = $this->input->post('product_id', true);
+        $products = implode(",", $product_ids);
+        if( $this->product_admin_model->save_addon_products($products) ) {
+            $this->session->set_flashdata('success', trans("msg_updated"));
+            redirect($this->agent->referrer());
+        } else {
+            $this->session->set_flashdata('error', trans("msg_error"));
+            redirect($this->agent->referrer());
+        }
+        die($products);
+    }
+
     /**
      * Hidden Products
      */

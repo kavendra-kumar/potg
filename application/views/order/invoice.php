@@ -27,6 +27,20 @@
                                 </div>
                             </div>
 
+                            <?php
+                            if($order->status == 3){
+                                $status = "Cancelled";
+                            }elseif($order->status == 9){
+                                $status = "Returned";
+                            }elseif($order->status < 10 and $order->payment_status =='payment_received') {
+                                $status = "Paid";
+                            } elseif($order->status < 10 and $order->payment_status =='awaiting_payment') {
+                                $status = "UnPaid";
+                            } elseif($order->status >= 10 and $order->status <= 14) {
+                                $status = "Refunded";
+                            }
+                            ?>
+
                             <div class="col-md-6">
                                 <div class="float-right">
                                     <?php $show_all_products = true;
@@ -37,6 +51,8 @@
                                     } ?>
                                     <p class="font-weight-bold mb-1"><span style="display: inline-block;width: 100px;"><?php echo trans("invoice"); ?>:</span>#<?php echo $prefix . $order->order_number; ?></p>
                                     <p class="font-weight-bold"><span style="display: inline-block;width: 100px;"><?php echo trans("date"); ?>:</span><?php echo helper_date_format($order->created_at); ?></p>
+                                    <p class="font-weight-bold"><span style="display: inline-block;width: 100px;"><?php echo trans("status"); ?>:</span><?php echo $status; ?></p>
+
                                 </div>
                             </div>
                         </div>
@@ -141,7 +157,83 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <?php if($order->status >= 10 and $order->status <= 14) { ?>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="order-total float-right">
+                                    <div class="row mb-2">
+                                        <div class="col-6 col-left">
+                                            <?php echo trans("paid"); ?>
+                                        </div>
+                                        <div class="col-6 col-right">
+                                            <strong class="font-600"><?php echo price_formatted($sale_total, $order->price_currency); ?></strong>
+                                        </div>
+                                    </div>
+                                    <?php if ($order->vat_deduction == 1){
+                                        $vat_deduction = $sale_vat;
+                                    ?>
+                                        <div class="row mb-2">
+                                            <div class="col-6 col-left">
+                                                <?php echo trans("vat"); ?>
+                                            </div>
+                                            <div class="col-6 col-right">
+                                                <strong class="font-600">-<?php echo price_formatted($sale_vat, $order->price_currency); ?></strong>
+                                            </div>
+                                        </div>
+                                        <?php } else {
+                                                $vat_deduction = 0;
+                                            }
+                                        ?>
+                                    
+                                    <?php if ($is_order_has_physical_product): ?>
+                                        <div class="row mb-2">
+                                            <div class="col-6 col-left">
+                                                <?php echo trans("sent_shipping_cost"); ?>
+                                            </div>
+                                            <div class="col-6 col-right">
+                                                <strong class="font-600">-<?php echo price_formatted($order->sent_shipping_cost, $order->price_currency); ?></strong>
+                                            </div>
+                                        </div>
 
+                                        <div class="row mb-2">
+                                            <div class="col-6 col-left">
+                                                <?php echo trans("return_shipping_cost"); ?>
+                                            </div>
+                                            <div class="col-6 col-right">
+                                                <strong class="font-600">-<?php echo price_formatted($order->return_shipping_cost, $order->price_currency); ?></strong>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="row mb-2">
+                                            <div class="col-6 col-left">
+                                                <?php echo trans("additional_cost"); ?>
+                                            </div>
+                                            <div class="col-6 col-right">
+                                                <strong class="font-600">-<?php echo price_formatted($order->additional_cost, $order->price_currency); ?></strong>
+                                            </div>
+                                        </div>
+                                    
+                                    <?php
+                                        $total_refund = $order->price_total - ($vat_deduction + $order->sent_shipping_cost + $order->return_shipping_cost + $order->additional_cost);
+                                    ?>
+
+                                    <div class="row mb-2">
+                                        <div class="col-6 col-left">
+                                            <?php echo trans("order_refund_total"); ?>
+                                        </div>
+                                        <div class="col-6 col-right">
+                                            <strong class="font-600"><?php echo price_formatted($total_refund, $order->price_currency); ?></strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <?php } else { ?>
+                        
                         <div class="row">
                             <div class="col-12">
                                 <div class="order-total float-right">
@@ -184,6 +276,11 @@
                                 </div>
                             </div>
                         </div>
+
+                        <?php } ?>
+
+
+
                         <div class="row">
                             <div class="col-12 pb-3">
                                 Thank you for Shopping

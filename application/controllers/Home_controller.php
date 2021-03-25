@@ -6,6 +6,12 @@ class Home_controller extends Home_Core_Controller
     public function __construct()
     {
         parent::__construct();
+
+        if (empty($this->session->userdata('mds_default_location_id'))){
+            $this->session->set_userdata('mds_default_location_id', 228);
+        }
+        $this->default_location_id = $this->location_model->get_default_location();
+        
         $this->comment_limit = 6;
         $this->blog_paginate_per_page = 12;
         $this->promoted_products_limit = $this->general_settings->index_promoted_products_count;
@@ -17,11 +23,13 @@ class Home_controller extends Home_Core_Controller
      */
     public function index()
     {
+        // echo "<pre>"; print_r($this->session->all_userdata()); die;
+
         get_method();
         $data['title'] = $this->settings->homepage_title;
         $data['description'] = $this->settings->site_description;
         $data['keywords'] = $this->settings->keywords;
-
+        
         //products
         $data["latest_products"] = get_latest_products($this->general_settings->index_latest_products_count);
         $data["promoted_products"] = get_promoted_products(0, $this->promoted_products_limit);
@@ -39,7 +47,7 @@ class Home_controller extends Home_Core_Controller
             $data["blog_slider_posts"] = $this->blog_model->get_latest_posts(8);
             set_cache_data($key, $data["blog_slider_posts"]);
         }
-
+        
         $this->load->view('partials/_header', $data);
         $this->load->view('index', $data);
         $this->load->view('partials/_footer');
@@ -353,7 +361,7 @@ class Home_controller extends Home_Core_Controller
             $data['title'] = $data['product']->title;
             $data['description'] = character_limiter($description_text, 200, "");
             $data['keywords'] = generate_product_keywords($data['product']->title);
-//print_r($data);die();
+            //print_r($data);die();
             $this->load->view('partials/_header', $data);
             $this->load->view('product/details/product', $data);
             $this->load->view('partials/_footer');

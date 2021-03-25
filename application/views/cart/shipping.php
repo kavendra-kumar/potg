@@ -202,6 +202,7 @@
                                     <div class="row">
                                         <div class="col-12 cart-form-shipping-address">
                                             <div class="form-group">
+
                                                 <div class="row">
                                                     <div class="col-12 col-md-12 m-b-sm-15">
                                                         <label><?php echo trans("full_name"); ?>*</label>
@@ -229,7 +230,7 @@
                                                             <select id="countries" name="shipping_country_id" class="form-control" required>
                                                                 <option value="" selected><?php echo trans("select_country"); ?></option>
                                                                 <?php foreach ($this->countries as $item): ?>
-                                                                    <option data-code="<?php echo $item->code; ?>" data-length="<?php echo $item->phone_length; ?>" value="<?php echo $item->id; ?>" <?php echo ($shipping_address->shipping_country_id == $item->id) ? 'selected' : ''; ?>><?php echo html_escape($item->name); ?></option>
+                                                                    <option data-code="<?php echo $item->code; ?>" data-length="<?php echo $item->phone_length; ?>" value="<?php echo $item->id; ?>" <?php echo ($shipping_address->shipping_country_id == $item->id) ? 'selected' : ($country->id == $item->id)?'selected':''; ?>><?php echo html_escape($item->name); ?></option>
                                                                 <?php endforeach; ?>
                                                             </select>
                                                         </div>
@@ -248,15 +249,16 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="form-group">
                                             <div class="row">
 												<div class="col-12 col-md-6">
                                                     <label><?php echo trans("phone_number"); ?>*</label>
                                                     <div class="input-group input-group-sm mb-3">
 														<div class="input-group-prepend">
-															<span class="input-group-text shipping-phone-number-code"></span>
+															<span class="input-group-text shipping-phone-number-code"><?= ($country)?$country->code:''; ?></span>
 														</div>
-														<input class="d-none" name="shipping_phone_code" hidden>
-														<input type="text" name="shipping_phone_number" class="form-control form-input numbers-only" value="<?php echo $shipping_address->shipping_phone_number; ?>" required>
+														<input class="d-none" name="shipping_phone_code" value="<?= ($country)?$country->code:''; ?>" type="hidden" />
+														<input type="text" name="shipping_phone_number" class="form-control form-input numbers-only" value="<?php echo $shipping_address->shipping_phone_number; ?>" placeholder="58 234 4567" required>
 													</div>
 												</div>
 												<div class="col-12 col-md-6">
@@ -265,7 +267,7 @@
 														<div class="input-group-prepend">
 															<span class="input-group-text shipping-phone-number-code"></span>
 														</div>
-														<input type="text" name="shipping_phone_number_confirm" class="form-control form-input numbers-only" value="" required>
+														<input type="text" name="shipping_phone_number_confirm" class="form-control form-input numbers-only" value=""  placeholder="58 234 4567" required>
 														
 														<input type="text" name="confirm_validation" class="border-0 h-0 w-0 p-0" required>
 													</div>
@@ -277,7 +279,7 @@
                                                     </div>
                                                 </div>
 											</div>
-                                        </div>
+                                        </div></div>
                                         <div class="col-12 cart-form-billing-address d-none" <?php echo ($shipping_address->use_same_address_for_billing == 0) ? 'style="display: block;"' : ''; ?>>
                                             <h3 class="title-billing-address"><?php echo trans("billing_address") ?></h3>
                                             <div class="form-group">
@@ -351,6 +353,20 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <div class="row  h-300" style="height:500px;" >
+                                                    <div class="col-12 col-md-12 m-b-sm-15">
+                                                        <label><?php echo trans("gps_location"); ?></label>
+                                                        <input type="hidden" name="gps_location" id="gps_location" />
+                                                        <div id="map_canvas" style="height:90%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                         <div class="col-12 d-none">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
@@ -414,6 +430,103 @@
     </div>
 </div>
 <!-- Wrapper End-->
+
+
+<!-- Harry Code Start -->
+<?php if (!empty($cart_items)):
+        $cart_product_ids = array();
+        foreach($cart_items as $cart):
+            $cart_product_ids[] = $cart->product_id;
+        endforeach;
+        $prod = get_available_product($cart_items[0]->product_id);
+        $upselling_title = ($prod->upselling_title) ? $prod->upselling_title : null;
+        $upselling_products = ($prod->upselling_products) ? explode(",", $prod->upselling_products) : null;
+        // $addon_products = ($prod->addon_products) ? explode(",", $prod->addon_products) : null;
+        if($upselling_products): ?>
+<!-- Modal -->
+<div class="modal fade" id="addonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle"><?= $upselling_title ?></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+        <div class="modal-body">
+
+            <?php
+                foreach($upselling_products as $pid):
+                    if( !in_array($pid, $cart_product_ids) ):
+                    $product = get_available_product($pid);
+            ?>
+            <div class="item row bg-light p-3 p-3 m-1 mb-3">
+                
+
+                <div class="col-md-2 p-0">
+                    <div class="cart-item-image" bis_skin_checked="1">
+                        <div class="img-cart-product" bis_skin_checked="1">
+                            <a href="<?php echo generate_product_url($product); ?>">
+                                <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($product->id, 'image_small'); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7 pt-4">
+                    <div class="cart-item-details" bis_skin_checked="1">
+                        <div class="list-item" bis_skin_checked="1">
+                            <a href="<?php echo generate_product_url($product); ?>">
+                                <?php echo html_escape($product->title); ?>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 pr-0 pt-4">
+                <?php $buttton = get_product_form_data($product)->button;
+                        if (!empty($buttton)):?>
+                            <?php echo form_open(get_product_form_data($product)->add_to_cart_url, ['id' => 'form_add_cart']); ?>
+                            <input type="hidden" class="form-control text-center" name="product_quantity" value="1">
+                            <input type="hidden" name="product_id" value="<?php echo $product->id; ?>">
+                            <div class="button-container addons-btn">
+                                <?php echo $buttton; ?>
+                            </div>
+                            <?php echo form_close(); ?>
+                        <?php endif; ?>
+                </div>
+                
+                
+            </div>
+            <?php
+                    endif;
+                endforeach;
+            ?>
+
+        </div>
+
+    </div>
+  </div>
+</div>
+
+<?php
+    foreach($upselling_products as $pid):
+        if( !in_array($pid, $cart_product_ids) ):
+?>
+<script type="text/javascript">
+    $(window).on('load', function() {
+        $('#addonModal').modal('show');
+    });
+</script>
+<?php break;
+        endif;
+    endforeach;
+?>
+
+<!-- Harry Code End -->
+<?php endif; endif; ?>
+
+
+
 <script>
 $( 'select[name="shipping_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="shipping_phone_number"]').val();
@@ -422,7 +535,7 @@ $( 'select[name="shipping_country_id"]' ).change(function () {
    $(".shipping-phone-number-code").html(a.attr('data-code'));
    $('input[name="shipping_phone_code"]').val(a.attr('data-code'));
    $('input[name="shipping_phone_number"]').val(mob);
-   $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":a.attr("data-length")});
+   $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":parseInt(a.attr("data-length")) + 1});
   }).change();
 $( 'select[name="billing_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="billing_phone_number"]').val();
@@ -436,6 +549,38 @@ $( 'select[name="billing_country_id"]' ).change(function () {
   $('.numbers-only').keyup(function () { 
     this.value = this.value.replace(/[^0-9]/g,'');
 });
+
+
+/* *********Kave function********* */
+$( 'input[name="shipping_phone_number"]' ).focusout(function() {
+	var a = $( 'input[name="shipping_phone_number"]' ).val();
+    var digit = a.toString()[0];
+	if(digit == '0') {
+        a = a.slice(1);
+        $( 'input[name="shipping_phone_number"]' ).val(a);
+    }
+});
+
+$( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
+	var k = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+    var digit = k.toString()[0];
+	if(digit == '0') {
+        k = k.slice(1);
+        $( 'input[name="shipping_phone_number_confirm"]' ).val(k);
+    }
+
+    var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+    if(a == b){
+		$( 'input[name="confirm_validation"]').val("1");
+	}
+	else{
+	$( 'input[name="confirm_validation"]').val("");
+	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
+	}
+
+});
+
+
 $( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 	var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
    // console.log(a);
@@ -455,4 +600,102 @@ setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
     $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
 } }, 1000);
 
+</script>
+
+
+
+
+<!-- GPS location map -->
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyDokZ9yr2DNr6W_Gpq39VJKMg1C-ob9ya4" ></script>
+
+<script>
+var geocoder;
+var map;
+var marker;
+var address;
+var infowindow = new google.maps.InfoWindow({
+  size: new google.maps.Size(150, 50)
+});
+
+function initialize() {
+  geocoder = new google.maps.Geocoder();
+
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(function (p) {
+	var latlng = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
+   geocoder.geocode({ 'latLng': latlng },  (results, status) =>{
+        if (status !== google.maps.GeocoderStatus.OK) {
+            alert(status);
+        }
+        // This is checking to see if the Geoeode Status is OK before proceeding
+        if (status == google.maps.GeocoderStatus.OK) {
+            console.log(results);
+            address = (results[0].formatted_address);
+			document.getElementById("gps_location").value = address;
+			codeAddress(address);
+        }
+    });
+  var mapOptions = {
+    zoom: 18,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  }
+  map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+  google.maps.event.addListener(map, 'click', function() {
+    infowindow.close();
+  });
+  });
+}
+}
+
+function geocodePosition(pos) {
+  geocoder.geocode({
+    latLng: pos
+  }, function(responses) {
+    if (responses && responses.length > 0) {
+      marker.formatted_address = responses[0].formatted_address;
+      document.getElementById("gps_location").value = responses[0].formatted_address;
+    } else {
+      marker.formatted_address = 'Cannot determine address at this location.';
+    }
+    infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+    infowindow.open(map, marker);
+  });
+}
+
+function codeAddress(address) {
+  geocoder.geocode({
+    'address': address
+  }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+      if (marker) {
+        marker.setMap(null);
+        if (infowindow) infowindow.close();
+      }
+      marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        position: results[0].geometry.location
+      });
+      google.maps.event.addListener(marker, 'dragend', function() {
+        geocodePosition(marker.getPosition());
+      });
+      google.maps.event.addListener(marker, 'click', function() {
+        if (marker.formatted_address) {
+          infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        } else {
+          infowindow.setContent(address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+        }
+        infowindow.open(map, marker);
+      });
+      google.maps.event.trigger(marker, 'click');
+      
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+google.maps.event.addDomListener(window, "load", initialize);
 </script>
