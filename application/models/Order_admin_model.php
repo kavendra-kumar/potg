@@ -615,10 +615,25 @@ class Order_admin_model extends CI_Model
     //filter by values
     public function filter_orders()
     {
+
+        $date_range = $this->input->get('date_range', true);
+        if($date_range){
+			$date_range_arr = explode(" - ", $date_range);
+            $from = date("Y-m-d", strtotime(str_replace('/', '-', $date_range_arr[0]))); 
+			$to = date("Y-m-d", strtotime(str_replace('/', '-', $date_range_arr[1])));
+		} else {
+            $from = null;
+            $to =null;
+        }
+        
         $data = array(
             'status' => $this->input->get('status', true),
             'payment_status' => $this->input->get('payment_status', true),
             'q' => $this->input->get('q', true),
+            'search_phone' => $this->input->get('search_phone', true),
+            'country' => $this->input->get('country', true),
+            'from' => $from,
+            'to' => $to,
         );
         if (!empty($data['status'])) {
             if ($data['status'] == 'completed') {
@@ -653,10 +668,25 @@ class Order_admin_model extends CI_Model
         if (!empty($data['payment_status'])) {
             $this->db->where('orders.payment_status', $data['payment_status']);
         }
+        
+        if ( !empty($data['from']) && !empty($data['to']) ) {
+            $this->db->where('date(orders.created_at) >=', $from);
+			$this->db->where('date(orders.created_at) <=', $to);
+        }
+        
         $data['q'] = trim($data['q']);
+        $data['search_phone'] = trim($data['search_phone']);
+        
         if (!empty($data['q'])) {
             $data['q'] = str_replace("#", "", $data['q']);
             $this->db->where('orders.order_number', $data['q']);
+        }
+        
+        if (!empty($data['search_phone'])) {
+            $this->db->like('order_shipping.shipping_phone_number', $data['search_phone']);
+        }
+        if (!empty($data['country'])) {
+            $this->db->like('order_shipping.shipping_country', $data['country']);
         }
     }
 
@@ -664,9 +694,28 @@ class Order_admin_model extends CI_Model
     public function get_orders_count()
     {
         $this->filter_orders();
-        $query = $this->db->get('orders');
+        $this->db->from('orders');
+        $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
+        $query = $this->db->get();
+        // $query = $this->db->get('orders');
         return $query->num_rows();
     }
+
+     //get paginated orders
+     public function get_paginated_orders($per_page, $offset)
+     {
+         $this->filter_orders();
+         $this->db->select('orders.*, order_shipping.order_id');
+         $this->db->order_by('orders.created_at', 'DESC');
+         $this->db->limit($per_page, $offset);
+         $this->db->from('orders');
+         $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
+        //  print_r($this->db->last_query()); die;
+         $query = $this->db->get();
+         // $query = $this->db->get('orders');
+         return $query->result();
+     }
+     
     //get return orders count
     public function get_return_orders_count()
     {
@@ -693,15 +742,7 @@ class Order_admin_model extends CI_Model
         return $query->result();
     }
 
-    //get paginated orders
-    public function get_paginated_orders($per_page, $offset)
-    {
-        $this->filter_orders();
-        $this->db->order_by('orders.created_at', 'DESC');
-        $this->db->limit($per_page, $offset);
-        $query = $this->db->get('orders');
-        return $query->result();
-    }
+   
 
     //get paginated orders
     public function get_paginated_return_orders($per_page, $offset)
@@ -1101,6 +1142,14 @@ class Order_admin_model extends CI_Model
         $this->db->where('buyer_id', $user_id);
         $this->db->where('id !=', $id);
         $query = $this->db->get('orders');
+        return $query->result();
+    }
+
+    //get orders count
+    public function get_countries()
+    {
+        $this->db->where('status', 1);
+        $query = $this->db->get('location_countries');
         return $query->result();
     }
 	

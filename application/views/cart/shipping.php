@@ -385,7 +385,7 @@
 														<li>
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
-																	<input type="radio" class="custom-control-input" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" checked required>
+																	<input type="radio" class="custom-control-input" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" required>
 																	<label class="custom-control-label label-payment-option" for="option_cash_on_delivery"><?php echo trans("cash_on_delivery"); ?><br><small><?php echo trans("cash_on_delivery_exp"); ?></small></label>
 																</div>
 															</div>
@@ -572,6 +572,7 @@ $( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
     var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
     if(a == b){
 		$( 'input[name="confirm_validation"]').val("1");
+        $('#confirm_validation-error').hide();
 	}
 	else{
 	$( 'input[name="confirm_validation"]').val("");
@@ -589,6 +590,7 @@ $( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 	if(a == b){
 		//console.log("true");
 		$( 'input[name="confirm_validation"]').val("1");
+        $('#confirm_validation-error').hide();
 	}
 	else{
 		//console.log("false");
@@ -598,7 +600,7 @@ $( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 });
 setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
     $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
-} }, 1000);
+} }, 100);
 
 </script>
 

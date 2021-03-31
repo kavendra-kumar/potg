@@ -99,10 +99,20 @@ class Order_admin_controller extends Admin_Core_Controller
 		$data['title'] = trans("orders");
 		$data['form_action'] = admin_url() . "orders";
 
+		$date_range = $this->input->get('date_range', true);
+		if($date_range){
+			$date_range_arr = explode(" - ", $date_range);
+			$data['start'] = $date_range_arr[0];
+			$data['to'] = $date_range_arr[1];
+		}
+
+
 		$pagination = $this->paginate(admin_url() . 'orders', $this->order_admin_model->get_orders_count());
 		$data['orders'] = $this->order_admin_model->get_paginated_orders($pagination['per_page'], $pagination['offset']);
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
+		$data['countries'] = $this->order_admin_model->get_countries();
+		// echo "<pre>"; print_r($data['countries']); die;
 		$this->load->view('admin/includes/_header', $data);
 		$this->load->view('admin/order/orders', $data);
 		$this->load->view('admin/includes/_footer');
