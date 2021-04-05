@@ -1995,4 +1995,145 @@ if (!function_exists('iyzico_create_submerchant')) {
         return $data;
     }
 }
+
+
+//generate Point checkout payment URL
+if (!function_exists('get_point_checkout_payment_url')) {
+    function get_point_checkout_payment_url($order_id)
+    {
+        $ci =& get_instance();
+
+        $order_id = clean_number($order_id);
+
+        $cart_items = $ci->cart_model->get_sess_cart_items();
+
+		$cart_total = $ci->cart_model->get_sess_cart_total();
+
+        $shipping_address = $ci->cart_model->get_sess_cart_shipping_address();
+
+		$buyer_id=$ci->auth_model->get_user_data();
+        
+        $items_arr = array();
+        if (!empty($cart_items)) {
+            foreach ($cart_items as $cart_item) {
+                $items_arr[] = array(
+                    "name" => $cart_item->product_title,
+                    "sku" => $cart_item->sku,
+                    "quantity" => $cart_item->quantity,
+                    "total" => $cart_item->total_price/100          
+                );
+            }
+         }
+
+         $shippingAddress = array(
+            "name" => $shipping_address->shipping_first_name.' '.$shipping_address->shipping_last_name,
+            "address1" => $shipping_address->shipping_address_1,
+            "address2" => $shipping_address->shipping_address_2,
+            "city" => $shipping_address->shipping_city,
+            "country" => $shipping_address->shipping_country_id,
+         );
+
+         $billingAddress = array(
+            "name" => $shipping_address->billing_first_name.' '.$shipping_address->billing_last_name,
+            "address1" => $shipping_address->billing_address_1,
+            "address2" => $shipping_address->billing_address_2,
+            "city" => $shipping_address->billing_city,
+            "country" => $shipping_address->billing_country_id,
+         );
+
+        $json_arr = array(
+                    "transactionId" => $order_id,
+                    "orderId" => $order_id,
+                    "resultUrl" => generate_url("order_completed") . "/1".$order_id,
+                    "currency" => $cart_total->currency,
+                    "amount" => $cart_total->total/100,
+                    "subtotal" => $cart_total->subtotal/100,
+                    "shipping" => $cart_total->shipping_cost/100,
+                    "tax" => $cart_total->vat/100,
+                    "discount" => "0.0",
+                    "defaultPaymentMethod" => "CARD",
+                    "paymentMethods" => array("POINTCHECKOUT", "CARD"),
+                    "deviceReference" => "POS-01",
+                    "expiryInMinutes" => 1440,
+                    "items" => $items_arr,
+                    "customer" => array(
+                            "id" => $buyer_id,
+                            "firstName" => $shipping_address->shipping_first_name,
+                            "lastName" => $shipping_address->shipping_last_name,
+                            "email" => $shipping_address->shipping_email,
+                            "phone" => $shipping_address->shipping_phone_number,
+                            "billingAddress" => array($billingAddress),
+                            "shippingAddress" => array($shippingAddress)
+                        ),
+                    "generateQR" => false,
+                    "sendCustomerEmail" => false,
+                    "sendCustomerSms" => false
+                    );
+        
+        // echo json_encode($json_arr); die;
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.test.pointcheckout.com/mer/v1.2/checkouts',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => json_encode($json_arr),
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'X-PointCheckout-Api-Key: 17882b8076601635',
+            'X-PointCheckout-Api-Secret: mer_4554608eab7b2a7cac59f5dc3d25a4e2aa5cc871f196fb16e3967a0996251874'
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $response_data = json_decode($response);
+        return $response_data;
+
+    }
+}
+
+//generate Point checkout payment URL
+if (!function_exists('get_point_checkout_payment_status')) {
+    function get_point_checkout_payment_status($transaction_id)
+    {
+        $ci =& get_instance();
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.test.pointcheckout.com/mer/v1.2/checkouts/'.$transaction_id,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'X-PointCheckout-Api-Key: 17882b8076601635',
+            'X-PointCheckout-Api-Secret: mer_4554608eab7b2a7cac59f5dc3d25a4e2aa5cc871f196fb16e3967a0996251874'
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $response_data = json_decode($response);
+        return $response_data;
+
+    }
+}
+
+
+
 ?>

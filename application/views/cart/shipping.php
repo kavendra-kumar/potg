@@ -375,10 +375,12 @@
                                                 </div>
                                             </div>
                                         </div>
+
 										<div class="col-12">
 											<h2 class="title mb-3">
 												<?php echo trans("payment_method"); ?>
 											</h2>
+
 											<div class="form-group">
 												<ul class="payment-options-list">
 													<?php if ($this->payment_settings->cash_on_delivery_enabled && empty($cart_has_digital_product) && $mds_payment_type != 'promote'): ?>
@@ -391,6 +393,14 @@
 															</div>
 														</li>
 													<?php endif; ?>
+                                                        <li>
+															<div class="option-payment">
+																<div class="custom-control custom-radio">
+																	<input type="radio" class="custom-control-input" id="option_point_checkout" name="payment_option" value="point_checkout" required>
+																	<label class="custom-control-label label-payment-option" for="option_point_checkout"><?php echo trans("point_checkout"); ?><br><small><?php echo trans("point_checkout"); ?></small></label>
+																</div>
+															</div>
+														</li>
 												</ul>
 											</div>
 											<div>
@@ -398,6 +408,8 @@
 													<?php echo trans("cash_on_delivery_warning"); ?>
 												</p>
 											</div>
+
+
 											<div class="form-group">
 												<div class="custom-control custom-checkbox custom-control-validate-input">
 													<input type="checkbox" class="custom-control-input" name="terms" id="checkbox_terms" required>
