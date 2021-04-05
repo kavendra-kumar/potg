@@ -144,6 +144,9 @@ class Cart_controller extends Home_Core_Controller
         $this->cart_model->set_sess_cart_shipping_address();
 		$this->cart_model->set_sess_cart_payment_method();
         $mds_payment_type = $this->input->post('mds_payment_type', true);
+
+        $payment_option = $this->input->post('payment_option', true);
+
 		$location_id = $this->input->post('shipping_country_id', true);
         if (!empty($location_id)) {
             $this->session->set_userdata('mds_default_location_id', $location_id);
@@ -151,7 +154,7 @@ class Cart_controller extends Home_Core_Controller
             @$this->session->unset_userdata('mds_default_location_id');
         }
         //add order
-        $order_id = $this->order_model->add_order_offline_payment("Cash On Delivery");
+        $order_id = $this->order_model->add_order_offline_payment($payment_option);
         $order = $this->order_model->get_order($order_id);
         if (!empty($order)) {
             //decrease product quantity after sale
@@ -164,8 +167,28 @@ class Cart_controller extends Home_Core_Controller
                 );
                 $this->session->set_userdata('mds_send_email_data', json_encode($email_data));
             }
-             $this->session->set_userdata('mds_show_order_completed_page', 1);
+            
+
+            /* redirect to point_checkout payment gateway code start */
+            if($payment_option == 'point_checkout') {
+                $response = get_point_checkout_payment_url($order_id, $order->order_number);
+                
+                if($response->success == true){
+                    $this->session->set_userdata('mds_show_order_completed_page', 1);
+                    $transcation_id = $response->result->id;
+                    $redirectUrl = $response->result->redirectUrl;
+                    
+                    return redirect($redirectUrl);
+                }
+            }
+            /* redirect to point_checkout payment gateway code end */
+
+
+            $this->session->set_userdata('mds_show_order_completed_page', 1);
             redirect(generate_url("order_completed") . "/" . $order->order_number);
+            
+
+
             /*if ($order->buyer_id == 0) {
                 $this->session->set_userdata('mds_show_order_completed_page', 1);
                 redirect(generate_url("order_completed") . "/" . $order->order_number);
@@ -174,7 +197,6 @@ class Cart_controller extends Home_Core_Controller
                 redirect(generate_url("order_details") . "/" . $order->order_number);
             }*/
         }
-
         $this->session->set_flashdata('error', trans("msg_error"));
         redirect(generate_url("cart", "payment"));
     }
@@ -786,6 +808,23 @@ class Cart_controller extends Home_Core_Controller
      */
     public function order_completed($order_number)
     {
+        $order_id = $this->input->get('reference');
+        $transaction_id = $this->input->get('checkout');
+        
+        if($transaction_id){
+            $response = get_point_checkout_payment_status($transaction_id);
+            // echo "<pre>"; print_r($response); die;
+            if($response->success == true) {
+                $status = $response->result->status;
+                $this->order_model->update_order_status($order_id, $status);
+            }
+        }
+        
+        $this->session->unset_userdata('mds_cart_shipping_address');
+        $this->cart_model->clear_cart();
+
+        
+        // echo get_point_checkout_payment_url($order_number); die;
         $data['title'] = trans("msg_order_completed");
         $data['description'] = trans("msg_order_completed") . " - " . $this->app_name;
         $data['keywords'] = trans("msg_order_completed") . "," . $this->app_name;
@@ -795,11 +834,11 @@ class Cart_controller extends Home_Core_Controller
         if (empty($data['order'])) {
             redirect(lang_base_url());
         }
-
+        
         if (empty($this->session->userdata('mds_show_order_completed_page'))) {
             redirect(lang_base_url());
         }
-
+        //die('ppppppkkkkkkk');
         $this->load->view('partials/_header', $data);
         $this->load->view('cart/order_completed', $data);
         $this->load->view('partials/_footer');
