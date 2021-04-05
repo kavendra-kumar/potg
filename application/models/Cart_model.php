@@ -327,6 +327,7 @@ class Cart_model extends CI_Model
                         $item = new stdClass();
                         $item->cart_item_id = $cart_item->cart_item_id;
                         $item->product_id = $product->id;
+                        $item->sku = $product->sku;
                         $item->product_type = $cart_item->product_type;
                         $item->product_title = $cart_item->product_title;
                         $item->options_array = $cart_item->options_array;
@@ -351,6 +352,7 @@ class Cart_model extends CI_Model
                     $item = new stdClass();
                     $item->cart_item_id = $cart_item->cart_item_id;
                     $item->product_id = $product->id;
+                    $item->sku = $product->sku;
                     $item->product_type = $cart_item->product_type;
                     $item->product_title = $cart_item->product_title;
                     $item->options_array = $cart_item->options_array;
@@ -487,7 +489,7 @@ class Cart_model extends CI_Model
         $std->billing_city = $row->shipping_city;
         $std->billing_zip_code = $row->shipping_zip_code;
         $std->use_same_address_for_billing = 1;
-        $this->session->unset_userdata('mds_cart_shipping_address');
+        //$this->session->unset_userdata('mds_cart_shipping_address');
         return $std;
     }
 

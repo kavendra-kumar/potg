@@ -96,12 +96,16 @@ class Order_admin_model extends CI_Model
     {
         $reminder_date = date("Y-m-d", strtotime($this->input->post('reminder_date', true)));
         $reminder_time = $this->input->post('reminder_time', true);
+        $assign_to_arr = $this->input->post('assign_to', true);
+        $assign_to = ($assign_to_arr) ? implode(',', $assign_to_arr) : null;
+        // echo $assign_to; die;
         $data = array(
             'order_id' => $this->input->post('id', true),
             'task' => $this->input->post('task', true),
             'comment' => $this->input->post('comment', true),
             'reminder_date' => $reminder_date,
             'reminder_time' => $reminder_time,
+            'assign_to' => $assign_to,
             'status' => 0,
             'created_at' => date('Y-m-d H:i:s'),
             'created_by' => $this->session->userdata['modesy_sess_user_id'],
@@ -611,10 +615,25 @@ class Order_admin_model extends CI_Model
     //filter by values
     public function filter_orders()
     {
+
+        $date_range = $this->input->get('date_range', true);
+        if($date_range){
+			$date_range_arr = explode(" - ", $date_range);
+            $from = date("Y-m-d", strtotime(str_replace('/', '-', $date_range_arr[0]))); 
+			$to = date("Y-m-d", strtotime(str_replace('/', '-', $date_range_arr[1])));
+		} else {
+            $from = null;
+            $to =null;
+        }
+        
         $data = array(
             'status' => $this->input->get('status', true),
             'payment_status' => $this->input->get('payment_status', true),
             'q' => $this->input->get('q', true),
+            'search_phone' => $this->input->get('search_phone', true),
+            'country' => $this->input->get('country', true),
+            'from' => $from,
+            'to' => $to,
         );
         if (!empty($data['status'])) {
             if ($data['status'] == 'completed') {
@@ -649,10 +668,25 @@ class Order_admin_model extends CI_Model
         if (!empty($data['payment_status'])) {
             $this->db->where('orders.payment_status', $data['payment_status']);
         }
+        
+        if ( !empty($data['from']) && !empty($data['to']) ) {
+            $this->db->where('date(orders.created_at) >=', $from);
+			$this->db->where('date(orders.created_at) <=', $to);
+        }
+        
         $data['q'] = trim($data['q']);
+        $data['search_phone'] = trim($data['search_phone']);
+        
         if (!empty($data['q'])) {
             $data['q'] = str_replace("#", "", $data['q']);
             $this->db->where('orders.order_number', $data['q']);
+        }
+        
+        if (!empty($data['search_phone'])) {
+            $this->db->like('order_shipping.shipping_phone_number', $data['search_phone']);
+        }
+        if (!empty($data['country'])) {
+            $this->db->like('order_shipping.shipping_country', $data['country']);
         }
     }
 
@@ -660,9 +694,28 @@ class Order_admin_model extends CI_Model
     public function get_orders_count()
     {
         $this->filter_orders();
-        $query = $this->db->get('orders');
+        $this->db->from('orders');
+        $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
+        $query = $this->db->get();
+        // $query = $this->db->get('orders');
         return $query->num_rows();
     }
+
+     //get paginated orders
+     public function get_paginated_orders($per_page, $offset)
+     {
+         $this->filter_orders();
+         $this->db->select('orders.*, order_shipping.order_id');
+         $this->db->order_by('orders.created_at', 'DESC');
+         $this->db->limit($per_page, $offset);
+         $this->db->from('orders');
+         $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
+        //  print_r($this->db->last_query()); die;
+         $query = $this->db->get();
+         // $query = $this->db->get('orders');
+         return $query->result();
+     }
+     
     //get return orders count
     public function get_return_orders_count()
     {
@@ -689,15 +742,7 @@ class Order_admin_model extends CI_Model
         return $query->result();
     }
 
-    //get paginated orders
-    public function get_paginated_orders($per_page, $offset)
-    {
-        $this->filter_orders();
-        $this->db->order_by('orders.created_at', 'DESC');
-        $this->db->limit($per_page, $offset);
-        $query = $this->db->get('orders');
-        return $query->result();
-    }
+   
 
     //get paginated orders
     public function get_paginated_return_orders($per_page, $offset)
@@ -728,6 +773,17 @@ class Order_admin_model extends CI_Model
         $query = $this->db->get('order_tasks');
         return $query->result();
     }
+    
+    
+    //get order task
+    public function get_user_by_role()
+    {
+        $this->db->select('id, first_name, last_name');
+        $this->db->where('role', 'admin');
+        $query = $this->db->get('users');
+        return $query->result();
+    }
+
 	//get order products
     public function get_order_productsvalid($order_id)
     {
@@ -949,6 +1005,13 @@ class Order_admin_model extends CI_Model
         return $query->result();
     }
 
+    //get task by id
+    public function get_task_by_id($id)
+    {
+        $this->db->where('id', $id);
+        $query = $this->db->get('order_tasks');
+        return $query->row();
+    }
 
      //task filter by values
      public function filter_task()
@@ -959,14 +1022,6 @@ class Order_admin_model extends CI_Model
          }
          $this->db->where('status', 0);
      }
-
-    //get task by id
-    public function get_task_by_id($id)
-    {
-        $this->db->where('id', $id);
-        $query = $this->db->get('order_tasks');
-        return $query->row();
-    }
 
     //get task count
     public function get_today_task_count()
@@ -984,6 +1039,45 @@ class Order_admin_model extends CI_Model
         $query = $this->db->get('order_tasks');
         return $query->result();
     }
+
+    ####### KKKKKKK #########
+    
+     //task filter by values
+     public function filter_mytask()
+     {
+        $login_id = $this->session->userdata['modesy_sess_user_id'];
+        
+         $order_number = $this->input->get('order_number', true);
+
+         $where = "FIND_IN_SET('".$login_id."', assign_to)";
+         $this->db->group_start();
+         $this->db->where($where);
+         $this->db->or_where('created_by', $login_id);
+         $this->db->group_end();
+         if (!empty($order_number)) {
+             $this->db->like('order_id', $order_number);
+         }
+         $this->db->where('status', 0);
+     }
+
+    //get task count
+    public function get_today_mytask_count()
+    {
+        $this->filter_mytask();
+        $query = $this->db->get('order_tasks');
+        return $query->num_rows();
+    }
+
+    //get paginated invoices
+    public function get_paginated_today_mytask($per_page, $offset)
+    {
+        $this->filter_mytask();
+        $this->db->limit($per_page, $offset);
+        $query = $this->db->get('order_tasks');
+        return $query->result();
+    }
+    ####### KKKKKKK #########
+
 	
 	public function add_order_products_to_existing_order($order_id,$countofsameproducts,$quantity,$details=array(),$appended_items)
 	{
@@ -1048,6 +1142,14 @@ class Order_admin_model extends CI_Model
         $this->db->where('buyer_id', $user_id);
         $this->db->where('id !=', $id);
         $query = $this->db->get('orders');
+        return $query->result();
+    }
+
+    //get orders count
+    public function get_countries()
+    {
+        $this->db->where('status', 1);
+        $query = $this->db->get('location_countries');
         return $query->result();
     }
 	

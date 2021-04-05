@@ -72,13 +72,19 @@ class Order_model extends CI_Model
     }
 
     //add order offline payment
-    public function add_order_offline_payment($payment_method)
+    public function add_order_offline_payment($payment_option)
     {
+        if($payment_option == 'cash_on_delivery') {
+            $payment_method = 'Cash On Delivery';
+        } else {
+            $payment_method = 'Point Checkout';
+        }
 		$buyer_id=$this->auth_model->get_user_data();
 		$buyer_type='registered';		
 		
-        $order_status = "gawaiting_payment";
+        $order_status = "awaiting_payment";
         $payment_status = "awaiting_payment";
+
         if ($payment_method == 'Cash On Delivery') {
             $order_status = "order_processing";
         }
@@ -127,7 +133,7 @@ class Order_model extends CI_Model
 					$this->add_invoice($order_id);
 
 					//clear cart
-					$this->cart_model->clear_cart();
+					// $this->cart_model->clear_cart();
 
 					return $order_id;
 				}
@@ -147,6 +153,28 @@ class Order_model extends CI_Model
         );
         $this->db->where('id', $order_id);
         $this->db->update('orders', $data);
+    }
+
+    //update order number
+    public function update_order_status($order_id, $status)
+    {
+        if($status == 'PAID') {
+            $final_status = 'payment_received';
+        } else {
+            $final_status = 'awaiting_payment';
+        }
+        $order_id = clean_number($order_id);
+        $data = array(
+            'payment_status' => $final_status
+        );
+        $this->db->where('id', $order_id);
+        $this->db->update('orders', $data);
+
+        $data2 = array(
+            'order_status' => $final_status
+        );
+        $this->db->where('order_id', $order_id);
+        $this->db->update('order_products', $data2);
     }
 
     //add order shipping

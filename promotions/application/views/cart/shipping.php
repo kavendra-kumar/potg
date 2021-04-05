@@ -379,18 +379,29 @@
 											<h2 class="title mb-3">
 												<?php echo trans("payment_method"); ?>
 											</h2>
+
 											<div class="form-group">
 												<ul class="payment-options-list">
 													<?php if ($this->payment_settings->cash_on_delivery_enabled && empty($cart_has_digital_product) && $mds_payment_type != 'promote'): ?>
 														<li>
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
-																	<input type="radio" class="custom-control-input" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" checked required>
+																	<input type="radio" class="custom-control-input" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" required>
 																	<label class="custom-control-label label-payment-option" for="option_cash_on_delivery"><?php echo trans("cash_on_delivery"); ?><br><small><?php echo trans("cash_on_delivery_exp"); ?></small></label>
 																</div>
 															</div>
 														</li>
 													<?php endif; ?>
+                                                    <?php if ($this->payment_settings->point_checkout_enabled && empty($cart_has_digital_product)): ?>
+                                                        <li>
+															<div class="option-payment">
+																<div class="custom-control custom-radio">
+																	<input type="radio" class="custom-control-input" id="option_point_checkout" name="payment_option" value="point_checkout" required>
+																	<label class="custom-control-label label-payment-option" for="option_point_checkout"><?php echo trans("point_checkout"); ?><br><small><?php echo trans("point_checkout"); ?></small></label>
+																</div>
+															</div>
+														</li>
+                                                    <?php endif; ?>
 												</ul>
 											</div>
 											<div>
@@ -398,6 +409,8 @@
 													<?php echo trans("cash_on_delivery_warning"); ?>
 												</p>
 											</div>
+
+
 											<div class="form-group">
 												<div class="custom-control custom-checkbox custom-control-validate-input">
 													<input type="checkbox" class="custom-control-input" name="terms" id="checkbox_terms" required>
@@ -574,6 +587,7 @@ $( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
     var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
     if(a == b){
 		$( 'input[name="confirm_validation"]').val("1");
+        $('#confirm_validation-error').hide();
 	}
 	else{
 	$( 'input[name="confirm_validation"]').val("");
@@ -591,6 +605,7 @@ $( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 	if(a == b){
 		//console.log("true");
 		$( 'input[name="confirm_validation"]').val("1");
+        $('#confirm_validation-error').hide();
 	}
 	else{
 		//console.log("false");
@@ -600,7 +615,7 @@ $( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 });
 setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
     $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
-} }, 1000);
+} }, 100);
 
 </script>
 

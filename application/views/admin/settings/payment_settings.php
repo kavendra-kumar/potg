@@ -577,6 +577,81 @@
             <!-- /.box -->
             <?php echo form_close(); ?><!-- form end -->
         </div>
+
+        
+
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title"><?php echo trans('point_checkout'); ?></h3>
+            </div>
+            <!-- /.box-header -->
+
+            <!-- form start -->
+            <?php echo form_open('settings_controller/point_checkout_settings_post'); ?>
+            <div class="box-body">
+                <img src="<?php echo base_url(); ?>assets/img/payment/point_checkout.png" alt="Point Checkout" class="img-payment-logo">
+                <!-- include message block -->
+                <?php if (!empty($this->session->flashdata("mes_point_checkout"))):
+                    $this->load->view('admin/includes/_messages');
+                endif; ?>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-12">
+                            <label><?php echo trans("status"); ?></label>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12 col-option">
+                            <input type="radio" name="point_checkout_enabled" value="1" id="point_checkout_enabled_1"
+                                   class="square-purple" <?php echo ($this->payment_settings->point_checkout_enabled == 1) ? 'checked' : ''; ?>>
+                            <label for="point_checkout_enabled_1" class="option-label"><?php echo trans('enable'); ?></label>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12 col-option">
+                            <input type="radio" name="point_checkout_enabled" value="0" id="point_checkout_enabled_2"
+                                   class="square-purple" <?php echo ($this->payment_settings->point_checkout_enabled != 1) ? 'checked' : ''; ?>>
+                            <label for="point_checkout_enabled_2" class="option-label"><?php echo trans('disable'); ?></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-12">
+                            <label><?php echo trans("mode"); ?></label>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12 col-option">
+                            <input type="radio" name="point_checkout_mode" value="live" id="point_checkout_mode_1"
+                                   class="square-purple" <?php echo ($this->payment_settings->point_checkout_mode == 'live') ? 'checked' : ''; ?>>
+                            <label for="point_checkout_mode_1" class="option-label"><?php echo trans("production"); ?></label>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12 col-option">
+                            <input type="radio" name="point_checkout_mode" value="sandbox" id="point_checkout_mode_2"
+                                   class="square-purple" <?php echo ($this->payment_settings->point_checkout_mode == 'sandbox') ? 'checked' : ''; ?>>
+                            <label for="point_checkout_mode_2" class="option-label"><?php echo trans("sandbox"); ?></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"><?php echo trans('api_key'); ?></label>
+                    <input type="text" class="form-control" name="point_checkout_api_key" placeholder="<?php echo trans('api_key'); ?>"
+                           value="<?php echo $this->payment_settings->point_checkout_api_key; ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"><?php echo trans('secret_key'); ?></label>
+                    <input type="text" class="form-control" name="point_checkout_secret_key" placeholder="<?php echo trans('secret_key'); ?>"
+                           value="<?php echo $this->payment_settings->point_checkout_secret_key; ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary pull-right"><?php echo trans('save_changes'); ?></button>
+            </div>
+            <!-- /.box-footer -->
+            <!-- /.box -->
+            <?php echo form_close(); ?><!-- form end -->
+        </div>
+
+
+
+
     </div>
 </div>
 

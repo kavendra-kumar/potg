@@ -3,7 +3,7 @@
     
         <?php echo form_open($form_action, ['method' => 'GET']); ?>
 
-        <div class="item-table-filter" style="width: 80px; min-width: 80px;">
+        <div class="item-table-filter col-md-1" style="width: 100px; min-width: 100px;">
             <label><?php echo trans("show"); ?></label>
             <select name="show" class="form-control">
                 <option value="15" <?php echo ($this->input->get('show', true) == '15') ? 'selected' : ''; ?>>15</option>
@@ -13,7 +13,7 @@
             </select>
         </div>
 
-        <div class="item-table-filter">
+        <div class="item-table-filter col-md-2">
             <label><?php echo trans("status"); ?></label>
             <select name="status" class="form-control">
                 <option value="" selected><?php echo trans("all"); ?></option>
@@ -34,8 +34,7 @@
                 <option value="refunded" <?php echo ($this->input->get('status', true) == 'refunded') ? 'selected' : ''; ?>><?php echo trans("refunded"); ?></option>
             </select>
         </div>
-
-        <div class="item-table-filter">
+        <div class="item-table-filter col-md-2">
             <label><?php echo trans("payment_status"); ?></label>
             <select name="payment_status" class="form-control">
                 <option value="" selected><?php echo trans("all"); ?></option>
@@ -44,10 +43,41 @@
             </select>
         </div>
 
-        <div class="item-table-filter">
-            <label><?php echo trans("search"); ?></label>
+
+        <?php if($this->uri->segment(2) == orders){ ?>
+
+        <div class="item-table-filter col-md-2">
+            <label><?php echo trans("country"); ?></label>
+            <select name="country" class="form-control">
+                <option value="">Select Country</option>
+                <?php if($countries){
+                    foreach($countries as $obj){ ?>
+                        <option value="<?php echo $obj->name; ?>" <?php echo ($this->input->get('country', true) == $obj->name) ? 'selected' : ''; ?>><?php echo $obj->name; ?></option>
+                <?php } } ?>
+            </select>
+        </div>
+
+        <div class="item-table-filter col-md-2">
+            <label><?php echo trans("date"); ?></label>
+            <div class="input-group" bis_skin_checked="1">
+                <input name="date_range" class="form-control" id="reportrange">
+                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+            </div>
+        </div>
+
+        <div class="item-table-filter col-md-1">
+            <label><?php echo trans("search").' '.trans("phone"); ?></label>
+            <input name="search_phone" class="form-control" placeholder="<?php echo trans("phone"); ?>" type="search" value="<?php echo html_escape($this->input->get('search_phone', true)); ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
+        </div>
+        
+        <?php } ?>
+
+        
+        <div class="item-table-filter col-md-1">
+            <label><?php echo trans("search").' '.trans("order_id"); ?></label>
             <input name="q" class="form-control" placeholder="<?php echo trans("order_id"); ?>" type="search" value="<?php echo html_escape($this->input->get('q', true)); ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
         </div>
+
 
         <div class="item-table-filter md-top-10" style="width: 65px; min-width: 65px;">
             <label style="display: block">&nbsp;</label>
@@ -56,3 +86,57 @@
         <?php echo form_close(); ?>
     </div>
 </div>
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<script>
+$(function() {
+    <?php if($start){ ?>
+	    var start = '<?php echo $start; ?>';
+	    var to = '<?php echo $to; ?>';
+	<?php } else { ?>
+        var start = moment().subtract(29, 'days');
+        var to = moment();
+    <?php } ?>
+	function cb(start, to) {
+		$('#reportrange input').val(start + ' - ' + to);
+	}
+
+	$('#reportrange').daterangepicker({
+        autoUpdateInput: <?php echo ($start) ? 'true' : 'false'; ?>,
+		startDate: start,
+		endDate: to,
+		ranges: {
+		   'Today': [moment(), moment()],
+		   'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+		   'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+		   'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+		   'This Month': [moment().startOf('month'), moment().endOf('month')],
+		   'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+		},
+		"alwaysShowCalendars": true,
+		locale: {
+		  format: 'DD/MM/YYYY'
+		}
+	}, cb);
+
+    $('input[name="date_range"]').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+    });
+	
+	cb(start, to);
+	
+});
+$('form').attr('autocomplete', 'off');
+</script>
+
+<style>
+.item-table-filter {
+    margin-right: 0px;
+    padding: 0px 5px;
+    min-width: 120px;
+}
+</style>

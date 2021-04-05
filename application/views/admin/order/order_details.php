@@ -480,6 +480,7 @@
                                         <th width="500"><?php echo trans('comment'); ?></th>
                                         <th><?php echo trans('status'); ?></th>
                                         <th><?php echo trans('created_by'); ?></th>
+                                        <th><?php echo trans('assign_to'); ?></th>
                                         <th class="max-width-120"><?php echo trans('options'); ?></th>
                                     </tr>
                                     </thead>
@@ -508,6 +509,18 @@
                                                 <?php
                                                 $inf = get_user($order_task->created_by);
                                                 echo $inf->first_name.' '.$inf->last_name; ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                if($order_task->assign_to){
+                                                    $assign_to = explode(',', $order_task->assign_to);
+                                                    $name_arr = array();
+                                                    foreach($assign_to as $uid){
+                                                        $inf = get_user($uid);
+                                                        echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
+                                                    }
+                                                }
+                                                ?>
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0)" alt="<?php echo $order_task->id; ?>" id="" class="btn btn-sm btn-info m-l-5 update_task" ><i class="fa fa-edit"></i></a>
@@ -855,6 +868,19 @@
                             <input placeholder="Select time" type="text" name="reminder_time" id="reminder_time" class="form-control timepicker">
                         </div>
                         
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('assign_to'); ?></label>
+                            
+                            <select id="assign_to" name="assign_to[]" class="form-control mySelect for" multiple="multiple" style="width: 100%" required>
+                                <?php
+                                if($admin_users) {
+                                    foreach($admin_users as $obj){
+                                ?>
+                                <option value="<?php echo $obj->id; ?>"><?php echo $obj->first_name.' '.$obj->last_name; ?></option>
+                                <?php } } ?>
+                            </select>
+                        </div>
+                        
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -947,6 +973,7 @@
 
     
 <style>
+    .select2-container.select2-container--default,
     .ui-timepicker-standard {
         z-index:999999999999 !important;
     }
@@ -1056,11 +1083,13 @@ $(document).ready(function(){
     });
 });
 </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css">
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
 <script>
     $('form').attr('autocomplete', 'off');
 
@@ -1073,6 +1102,13 @@ $(document).ready(function(){
 
     $(document).ready(function(){
         $('input.timepicker').timepicker({});
+    });
+
+
+    $('#assign_to').select2();
+    $('#assign_to').on('select2:opening select2:closing', function( event ) {
+        var $searchfield = $(this).parent().find('.select2-search__field');
+        $searchfield.prop('disabled', true);
     });
   </script>
 

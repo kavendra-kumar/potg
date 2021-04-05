@@ -773,7 +773,7 @@ class Auth_model extends CI_Model
                 $datas['email']=$shipping_address->shipping_email;
                 $datas['first_name'] = remove_special_characters($shipping_address->shipping_first_name);
                 $datas['last_name'] = remove_special_characters($shipping_address->shipping_last_name);
-                $datas['address'] = $shipping_address->shipping_address_1.", ".$shipping_address->shipping_address_2.", ".$shipping_address->shipping_zip_code.", ".$shipping_address->shipping_city.", ".$shipping_address->shipping_state.", ".$shipping_address->shipping_country;
+                $datas['address'] = $shipping_address->shipping_address_1.", ".$shipping_address->shipping_address_2.", ".$shipping_address->shipping_zip_code.", ".$shipping_address->shipping_city.", ".$shipping_address->shipping_state.", ".$shipping_address->shipping_country_id;
 				//secure password
 				$datas['password'] = $this->bcrypt->hash_password('Test@123');
 				$datas['role'] = "member";

@@ -760,34 +760,37 @@ class Auth_model extends CI_Model
 	
 	public function get_user_data()
     {
-			$shipping_address = $this->cart_model->get_sess_cart_shipping_address();
-			$user=$this->get_user_by_email($shipping_address->shipping_email);
-			if (!empty($user)) {
-				$buyer_id=$user->id;
-				$buyer_type= "registered";
-			}
-			else
-			{
-				$this->load->library('bcrypt');        
-				$datas['username'] = remove_special_characters($shipping_address->shipping_first_name);
-				$datas['email']=$shipping_address->shipping_email;
-				//secure password
-				$datas['password'] = $this->bcrypt->hash_password('Test@123');
-				$datas['role'] = "member";
-				$datas['user_type'] = "registered";
-				$datas["slug"] = $this->generate_uniqe_slug($datas["username"]);
-				$datas['banned'] = 0;
-				$datas['created_at'] = date('Y-m-d H:i:s');
-				$datas['token'] = generate_token();
-				$datas['email_status'] = 1;
-				if ($this->db->insert('users', $datas))
-				{
-					$last_id = $this->db->insert_id();
-					$buyer_id=$last_id;
-					$buyer_type= "registered";
-				}
-			}
-			
+        $shipping_address = $this->cart_model->get_sess_cart_shipping_address();
+        $user=$this->get_user_by_email($shipping_address->shipping_email);
+        if (!empty($user)) {
+            $buyer_id=$user->id;
+            $buyer_type= "registered";
+        }
+        else
+        {
+            $this->load->library('bcrypt');        
+            $datas['username'] = remove_special_characters($shipping_address->shipping_first_name);
+            $datas['email']=$shipping_address->shipping_email;
+            $datas['first_name'] = remove_special_characters($shipping_address->shipping_first_name);
+            $datas['last_name'] = remove_special_characters($shipping_address->shipping_last_name);
+            $datas['address'] = $shipping_address->shipping_address_1.", ".$shipping_address->shipping_address_2.", ".$shipping_address->shipping_zip_code.", ".$shipping_address->shipping_city.", ".$shipping_address->shipping_state.", ".$shipping_address->shipping_country_id;
+            //secure password
+            $datas['password'] = $this->bcrypt->hash_password('Test@123');
+            $datas['role'] = "member";
+            $datas['user_type'] = "registered";
+            $datas["slug"] = $this->generate_uniqe_slug($datas["username"]);
+            $datas['banned'] = 0;
+            $datas['created_at'] = date('Y-m-d H:i:s');
+            $datas['token'] = generate_token();
+            $datas['email_status'] = 1;
+            if ($this->db->insert('users', $datas))
+            {
+                $last_id = $this->db->insert_id();
+                $buyer_id=$last_id;
+                $buyer_type= "registered";
+            }
+        }
+        return $buyer_id;
     }
 
 }
