@@ -63,6 +63,23 @@ class Settings_controller extends Admin_Core_Controller
         }
     }
 
+
+    /**
+     * point checkout Settings Post
+     */
+    public function point_checkout_settings_post()
+    {
+        if ($this->settings_model->update_point_checkout_settings()) {
+            $this->session->set_flashdata('success', trans("msg_updated"));
+            $this->session->set_flashdata("mes_point_checkout", 1);
+            redirect($this->agent->referrer());
+        } else {
+            $this->session->set_flashdata('error', trans("msg_error"));
+            $this->session->set_flashdata("mes_point_checkout", 1);
+            redirect($this->agent->referrer());
+        }
+    }
+
     /**
      * Stripe Settings Post
      */

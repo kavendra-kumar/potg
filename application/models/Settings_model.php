@@ -184,6 +184,19 @@ class Settings_model extends CI_Model
         return $this->db->update('payment_settings', $data);
     }
 
+    //update point checkout settings
+    public function update_point_checkout_settings()
+    {
+        $data = array(
+            'point_checkout_enabled' => $this->input->post('point_checkout_enabled', true),
+            'point_checkout_mode' => $this->input->post('point_checkout_mode', true),
+            'point_checkout_api_key' => trim($this->input->post('point_checkout_api_key', true)),
+            'point_checkout_secret_key' => trim($this->input->post('point_checkout_secret_key', true))
+        );
+        $this->db->where('id', 1);
+        return $this->db->update('payment_settings', $data);
+    }
+
     //update stripe settings
     public function update_stripe_settings()
     {

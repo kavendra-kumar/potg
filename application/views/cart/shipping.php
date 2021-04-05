@@ -393,6 +393,7 @@
 															</div>
 														</li>
 													<?php endif; ?>
+                                                    <?php if ($this->payment_settings->point_checkout_enabled && empty($cart_has_digital_product)): ?>
                                                         <li>
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
@@ -401,6 +402,7 @@
 																</div>
 															</div>
 														</li>
+                                                    <?php endif; ?>
 												</ul>
 											</div>
 											<div>

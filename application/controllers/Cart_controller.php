@@ -173,9 +173,10 @@ class Cart_controller extends Home_Core_Controller
 
             /* redirect to point_checkout payment gateway code start */
             if($payment_option == 'point_checkout') {
-                $response = get_point_checkout_payment_url($order_id);
+                $response = get_point_checkout_payment_url($order_id, $order->order_number);
                 
                 if($response->success == true){
+                    $this->session->set_userdata('mds_show_order_completed_page', 1);
                     $transcation_id = $response->result->id;
                     $redirectUrl = $response->result->redirectUrl;
                     
@@ -821,11 +822,10 @@ class Cart_controller extends Home_Core_Controller
             }
         }
         
-
         $this->session->unset_userdata('mds_cart_shipping_address');
         $this->cart_model->clear_cart();
 
-
+        
         // echo get_point_checkout_payment_url($order_number); die;
         $data['title'] = trans("msg_order_completed");
         $data['description'] = trans("msg_order_completed") . " - " . $this->app_name;
@@ -836,11 +836,11 @@ class Cart_controller extends Home_Core_Controller
         if (empty($data['order'])) {
             redirect(lang_base_url());
         }
-
+        
         if (empty($this->session->userdata('mds_show_order_completed_page'))) {
             redirect(lang_base_url());
         }
-
+        //die('ppppppkkkkkkk');
         $this->load->view('partials/_header', $data);
         $this->load->view('cart/order_completed', $data);
         $this->load->view('partials/_footer');
