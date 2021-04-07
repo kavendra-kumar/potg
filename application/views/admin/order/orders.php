@@ -1,4 +1,10 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<style>
+input.checkbox {
+    width: 20px;
+    height: 20px;
+}
+</style>
 
 <div class="box">
 	<div class="box-header with-border">
@@ -15,10 +21,12 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="table-responsive">
+
 					<table class="table table-bordered table-striped" role="grid">
 						<?php $this->load->view('admin/order/_filter_orders'); ?>
 						<thead>
 						<tr role="row">
+							<th><input type="checkbox" name="all" value="1" id="all" class="checkbox all" />All</th>
 							<th><?php echo trans('order'); ?></th>
 							<th><?php echo trans('buyer'); ?></th>
 							<th><?php echo trans('total'); ?></th>
@@ -31,9 +39,13 @@
 						</tr>
 						</thead>
 						<tbody>
-
+						<?php echo form_open('order_admin_controller/orders_export'); ?>
 						<?php foreach ($orders as $item): ?>
 							<tr>
+								<td>
+									<input type="checkbox" name="order_ids[]" value="<?php echo html_escape($item->id); ?>" class="checkbox orders_export" />
+								</td>
+
 								<td class="order-number-table">
 									<a href="<?php echo admin_url(); ?>order-details/<?php echo html_escape($item->id); ?>" class="table-link">
 										#<?php echo html_escape($item->order_number); ?>
@@ -132,7 +144,7 @@
 											*/ ?>
 										</ul>
 									</div>
-									<?php echo form_close(); ?><!-- form end -->
+									<?php //echo form_close(); ?><!-- form end -->
 								</td>
 							</tr>
 
@@ -148,14 +160,34 @@
 					<?php endif; ?>
 					<div class="col-sm-12 table-ft">
 						<div class="row">
+							<div class="pull-left">
+								<button type="submit" class="btn bg-purple export"><?php echo trans("export"); ?></button>
+							</div>
 							<div class="pull-right">
 								<?php echo $this->pagination->create_links(); ?>
 							</div>
 						</div>
 					</div>
 
+					<?php echo form_close(); ?>
+
 				</div>
 			</div>
 		</div>
 	</div><!-- /.box-body -->
 </div>
+
+<script>
+$('#all').click(function(event) {   
+    if(this.checked) {
+        // Iterate each checkbox
+        $(':checkbox').each(function() {
+            this.checked = true;                        
+        });
+    } else {
+        $(':checkbox').each(function() {
+            this.checked = false;                       
+        });
+    }
+});
+</script>

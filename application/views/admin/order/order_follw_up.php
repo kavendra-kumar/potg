@@ -68,8 +68,9 @@
                                 </td>
                                 <td>
                                     <?php
+                                    if($item->created_by){
                                     $inf = get_user($item->created_by);
-                                    echo $inf->first_name.' '.$inf->last_name; ?>
+                                    echo $inf->first_name.' '.$inf->last_name; } ?>
                                 </td>
                                 <td>
                                     <?php
@@ -80,7 +81,7 @@
                                             $inf = get_user($uid);
                                             echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
                                         }
-                                    }
+                                    } else {}
                                     ?>
                                 </td>
                                 <td><?php echo $item->reminder_date; ?><?php if( strtotime($item->reminder_date) < strtotime(date('Y-m-d')) ) { ?><p><small class="btn bg-danger" style="color:#ffff">Overdue</small></p> <?php } ?></td>
