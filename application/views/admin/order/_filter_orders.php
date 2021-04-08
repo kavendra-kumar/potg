@@ -10,6 +10,7 @@
                 <option value="30" <?php echo ($this->input->get('show', true) == '30') ? 'selected' : ''; ?>>30</option>
                 <option value="60" <?php echo ($this->input->get('show', true) == '60') ? 'selected' : ''; ?>>60</option>
                 <option value="100" <?php echo ($this->input->get('show', true) == '100') ? 'selected' : ''; ?>>100</option>
+                <option value="100000" <?php echo ($this->input->get('show', true) == '100000') ? 'selected' : ''; ?>>All</option>
             </select>
         </div>
 
@@ -65,7 +66,7 @@
             </div>
         </div>
 
-        <div class="item-table-filter col-md-1">
+        <div class="item-table-filter col-md-2">
             <label><?php echo trans("search").' '.trans("phone"); ?></label>
             <input name="search_phone" class="form-control" placeholder="<?php echo trans("phone"); ?>" type="search" value="<?php echo html_escape($this->input->get('search_phone', true)); ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
         </div>
@@ -73,8 +74,8 @@
         <?php } ?>
 
         
-        <div class="item-table-filter col-md-1">
-            <label><?php echo trans("search").' '.trans("order_id"); ?></label>
+        <div class="item-table-filter col-md-3">
+            <label><?php echo trans("search").' '.trans("order_number"); ?>s</label>
             <input name="q" class="form-control" placeholder="<?php echo trans("order_id"); ?>" type="search" value="<?php echo html_escape($this->input->get('q', true)); ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
         </div>
 

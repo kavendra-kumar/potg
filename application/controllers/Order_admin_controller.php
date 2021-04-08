@@ -98,6 +98,7 @@ class Order_admin_controller extends Admin_Core_Controller
 	{
 		$data['title'] = trans("orders");
 		$data['form_action'] = admin_url() . "orders";
+		$data['form_action_export'] = admin_url() . "order_admin_controller/orders_export";
 
 		$date_range = $this->input->get('date_range', true);
 		if($date_range){
@@ -116,6 +117,216 @@ class Order_admin_controller extends Admin_Core_Controller
 		$this->load->view('admin/includes/_header', $data);
 		$this->load->view('admin/order/orders', $data);
 		$this->load->view('admin/includes/_footer');
+	}
+
+
+	/**
+	 * Orders export
+	 */
+	public function orders_export()
+	{
+		$order_ids = $this->input->post('order_ids', true);
+		
+		if($order_ids) {
+
+			$orders = $this->order_admin_model->get_orders_export($order_ids);
+
+			if($orders) {
+				$data = array();
+				$i = 0;
+				$data[] = array(
+					'order_number' => 'Order Number',
+					'name' => 'Name',
+					'shipping_phone_number' => 'Phone Number',
+					'shipping_email' => 'Email',
+					'shipping_address_1' => 'Address',
+					'shipping_city' => 'City',
+					'shipping_country' => 'Country',
+					'gps_location' => 'GPS Location',
+					'product_title' => 'products title',
+					'sku' => 'SKU',
+					'product_quantity' => 'Qty',
+					'price_vat' => 'Vat',
+					'price_shipping' => 'shipping cost',
+					'price_total' => 'Total Amount',
+					'custom_value' => 'Custom Value',
+					'payment_status' => 'Payment Status',
+					'price_currency' => 'Currency'
+				);
+				foreach($orders as $obj) {
+					//echo "<pre>";  print_r($obj); die;
+					$minus_per = $obj->price_total * 30 / 100;
+					$custom_value = ($obj->price_total - $minus_per)/100;
+
+					$products = $this->order_admin_model->get_order_products_by_order_id($obj->id);
+					$product_title = '';
+					$product_quantity = '';
+					$sku = '';
+
+					$product_title_arr = array();
+					$product_quantity_arr = array();
+					$sku_arr = array();
+					if($products){
+						foreach($products as $prod){
+							$product_title_arr[] = $prod->product_title;
+							$product_quantity_arr[] = $prod->product_quantity;
+							$sku_arr[] = $prod->sku;
+						}
+						$product_title = implode(' | ', $product_title_arr);
+						$product_quantity = implode(' | ', $product_quantity_arr);
+						$sku = implode(' | ', $sku_arr);
+					}
+
+					$data[] = array(
+						'order_number' => ($obj->order_number)?$obj->order_number:'',
+						'name' => ($obj->shipping_first_name ? $obj->shipping_first_name:'').' '.($obj->shipping_last_name ?$obj->shipping_last_name:''),
+						'shipping_phone_number' => ($obj->shipping_phone_number)?$obj->shipping_phone_number:'',
+						'shipping_email' => ($obj->shipping_email)?$obj->shipping_email:'',
+						'shipping_address_1' => ($obj->shipping_address_1 ? $obj->shipping_address_1:'') . ($obj->shipping_address_2 ? ' | '.$obj->shipping_address_2:''),
+						'shipping_city' => ($obj->shipping_city)?$obj->shipping_city:'',
+						'shipping_country' => ($obj->shipping_country)?$obj->shipping_country:'',
+						'gps_location' => ($obj->gps_location)?$obj->gps_location:'',
+						'product_title' => $product_title,
+						'sku' => $sku,
+						'product_quantity' => $product_quantity,
+						'price_vat' => ($obj->price_vat)?$obj->price_vat/100:'0',
+						'price_shipping' => ($obj->price_shipping)?$obj->price_shipping/100:'0',
+						'price_total' => ($obj->price_total)?$obj->price_total/100:'0',
+						'custom_value' => number_format($custom_value, 2),
+						'payment_status' => trans($obj->payment_status),
+						'price_currency' => ($obj->price_currency)?$obj->price_currency:''
+					);
+					$i++;
+				}
+				//echo "<pre>";  print_r($data); die;
+				
+				// header("Content-type: application/csv");
+				// header("Content-Disposition: attachment; filename=\"orders_export".".csv\"");
+				// header("Pragma: no-cache");
+				// header("Expires: 0");
+				
+				header('Content-Encoding: UTF-8');
+				header('Content-type: text/csv; charset=UTF-8');
+				header('Content-Disposition: attachment; filename=orders_export.csv');
+				echo "\xEF\xBB\xBF"; // UTF-8 BOM
+				
+
+				$handle = fopen('php://output', 'w');
+
+				foreach ($data as $data_array) {
+					fputcsv($handle, $data_array);
+				}
+					fclose($handle);
+				
+				exit;
+				
+			}
+			
+		}
+		
+		redirect($this->agent->referrer(),'refresh');
+	}
+
+
+	/**
+	 * all Orders export
+	 */
+	public function all_orders_export()
+	{
+		$orders = $this->order_admin_model->get_all_orders_export();
+
+		if($orders) {
+			$data = array();
+			$i = 0;
+			$data[] = array(
+				'order_number' => 'Order Number',
+				'name' => 'Name',
+				'shipping_phone_number' => 'Phone Number',
+				'shipping_email' => 'Email',
+				'shipping_address_1' => 'Address',
+				'shipping_city' => 'City',
+				'shipping_country' => 'Country',
+				'gps_location' => 'GPS Location',
+				'product_title' => 'products title',
+				'sku' => 'SKU',
+				'product_quantity' => 'Qty',
+				'price_vat' => 'Vat',
+				'price_shipping' => 'shipping cost',
+				'price_total' => 'Total Amount',
+				'custom_value' => 'Custom Value',
+				'payment_status' => 'Payment Status',
+				'price_currency' => 'Currency'
+			);
+			foreach($orders as $obj) {
+				//echo "<pre>";  print_r($obj); die;
+				$minus_per = $obj->price_total * 30 / 100;
+				$custom_value = ($obj->price_total - $minus_per)/100;
+
+				$products = $this->order_admin_model->get_order_products_by_order_id($obj->id);
+				$product_title = '';
+				$product_quantity = '';
+				$sku = '';
+
+				$product_title_arr = array();
+				$product_quantity_arr = array();
+				$sku_arr = array();
+				if($products){
+					foreach($products as $prod){
+						$product_title_arr[] = $prod->product_title;
+						$product_quantity_arr[] = $prod->product_quantity;
+						$sku_arr[] = $prod->sku;
+					}
+					$product_title = implode(' | ', $product_title_arr);
+					$product_quantity = implode(' | ', $product_quantity_arr);
+					$sku = implode(' | ', $sku_arr);
+				}
+
+				$data[] = array(
+					'order_number' => ($obj->order_number)?$obj->order_number:'',
+					'name' => ($obj->shipping_first_name ? $obj->shipping_first_name:'').' '.($obj->shipping_last_name ?$obj->shipping_last_name:''),
+					'shipping_phone_number' => ($obj->shipping_phone_number)?$obj->shipping_phone_number:'',
+					'shipping_email' => ($obj->shipping_email)?$obj->shipping_email:'',
+					'shipping_address_1' => ($obj->shipping_address_1 ? $obj->shipping_address_1:'') . ($obj->shipping_address_2 ? ' | '.$obj->shipping_address_2:''),
+					'shipping_city' => ($obj->shipping_city)?$obj->shipping_city:'',
+					'shipping_country' => ($obj->shipping_country)?$obj->shipping_country:'',
+					'gps_location' => ($obj->gps_location)?$obj->gps_location:'',
+					'product_title' => $product_title,
+					'sku' => $sku,
+					'product_quantity' => $product_quantity,
+					'price_vat' => ($obj->price_vat)?$obj->price_vat/100:'0',
+					'price_shipping' => ($obj->price_shipping)?$obj->price_shipping/100:'0',
+					'price_total' => ($obj->price_total)?$obj->price_total/100:'0',
+					'custom_value' => number_format($custom_value, 2),
+					'payment_status' => trans($obj->payment_status),
+					'price_currency' => ($obj->price_currency)?$obj->price_currency:''
+				);
+				$i++;
+			}
+			//echo "<pre>";  print_r($data); die;
+			
+			// header("Content-type: application/csv");
+			// header("Content-Disposition: attachment; filename=\"orders_export".".csv\"");
+			// header("Pragma: no-cache");
+			// header("Expires: 0");
+			
+			header('Content-Encoding: UTF-8');
+			header('Content-type: text/csv; charset=UTF-8');
+			header('Content-Disposition: attachment; filename=all_orders_export.csv');
+			echo "\xEF\xBB\xBF"; // UTF-8 BOM
+			
+
+			$handle = fopen('php://output', 'w');
+
+			foreach ($data as $data_array) {
+				fputcsv($handle, $data_array);
+			}
+				fclose($handle);
+			
+			exit;
+			
+		}
+				
+		redirect($this->agent->referrer(),'refresh');
 	}
 
 	/**

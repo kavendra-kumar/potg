@@ -674,12 +674,12 @@ class Order_admin_model extends CI_Model
 			$this->db->where('date(orders.created_at) <=', $to);
         }
         
-        $data['q'] = trim($data['q']);
         $data['search_phone'] = trim($data['search_phone']);
         
         if (!empty($data['q'])) {
             $data['q'] = str_replace("#", "", $data['q']);
-            $this->db->where('orders.order_number', $data['q']);
+            $order_numbers = explode(',', $data['q']);
+            $this->db->where_in('orders.order_number', $order_numbers);
         }
         
         if (!empty($data['search_phone'])) {
@@ -715,6 +715,51 @@ class Order_admin_model extends CI_Model
          // $query = $this->db->get('orders');
          return $query->result();
      }
+
+    // get orders for export
+    public function get_all_orders_export()
+    {
+        $this->db->select('orders.id, orders.order_number, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->order_by('orders.id', 'ASC');
+        $this->db->from('orders');
+        $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
+        
+        $query = $this->db->get();
+        // echo "<pre>"; print_r($query->result()); die;
+        return $query->result();
+    }
+
+    // get orders for export
+    public function get_orders_export($order_ids)
+    {
+        $this->db->select('orders.id, orders.order_number, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->order_by('orders.id', 'ASC');
+        $this->db->from('orders');
+        $this->db->where_in('orders.id', $order_ids);
+        $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
+        
+        $query = $this->db->get();
+        // echo "<pre>"; print_r($query->result()); die;
+        return $query->result();
+    }
+
+    // get order products for export
+    public function get_order_products_by_order_id($order_id)
+    {
+        $this->db->select('order_products.product_id, order_products.product_title, order_products.product_quantity, products.sku');
+        $this->db->from('order_products');
+        $this->db->where('order_products.order_id', $order_id);
+        $this->db->join('products', 'products.id = order_products.product_id');
+        
+        $query = $this->db->get();
+        // echo "<pre>"; print_r($query->result()); die;
+        return $query->result();
+    }
+
+    
+
+
+
      
     //get return orders count
     public function get_return_orders_count()

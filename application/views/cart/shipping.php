@@ -269,7 +269,9 @@
 														</div>
 														<input type="text" name="shipping_phone_number_confirm" class="form-control form-input numbers-only" value=""  placeholder="58 234 4567" required>
 														
-														<input type="text" name="confirm_validation" class="border-0 h-0 w-0 p-0" required>
+														<input type="text" name="confirm_validation" class="border-0 h-0 w-0 p-0" >
+
+                                                        <label id="confirm_validation-error" class="error" for="confirm_validation" style="display: none;"></label>
 													</div>
 												</div>
                                                 <div class="col-12 col-md-6 m-b-sm-15">
@@ -354,6 +356,7 @@
                                             </div>
                                         </div>
 
+                                        <!--
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <div class="row  h-300" style="height:500px;" >
@@ -364,7 +367,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> 
+                                        -->
 
 
                                         <div class="col-12 d-none">
@@ -424,7 +428,7 @@
                                     </div>
                                     <div class="form-group m-t-15">
                                         <a href="<?php echo generate_url("cart"); ?>" class="link-underlined link-return-cart"><&nbsp;<?php echo trans("return_to_cart"); ?></a>
-                                        <button type="submit" name="submit" value="update" class="btn btn-lg btn-custom float-right"><?php echo trans("place_order") ?></button>
+                                        <button type="submit" name="submit" id="place_order" value="update" class="btn btn-lg btn-custom float-right"><?php echo trans("place_order") ?></button>
                                     </div>
                                     <?php echo form_close(); ?>
                                 </div>
@@ -566,7 +570,7 @@ $( 'select[name="billing_country_id"]' ).change(function () {
 
 
 /* *********Kave function********* */
-$( 'input[name="shipping_phone_number"]' ).focusout(function() {
+$( 'input[name="shipping_phone_number"]' ).keyup(function() {
 	var a = $( 'input[name="shipping_phone_number"]' ).val();
     var digit = a.toString()[0];
 	if(digit == '0') {
@@ -575,7 +579,7 @@ $( 'input[name="shipping_phone_number"]' ).focusout(function() {
     }
 });
 
-$( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
+$( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 	var k = $( 'input[name="shipping_phone_number_confirm"]' ).val();
     var digit = k.toString()[0];
 	if(digit == '0') {
@@ -584,11 +588,13 @@ $( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
     }
 
     var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+    console.log('ab', a,b);
     if(a == b){
 		$( 'input[name="confirm_validation"]').val("1");
         $('#confirm_validation-error').hide();
 	}
 	else{
+        $('#confirm_validation-error').show();
 	$( 'input[name="confirm_validation"]').val("");
 	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
 	}
@@ -612,9 +618,28 @@ $( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
 	}
 });
-setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
-    $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
-} }, 100);
+
+$( '#place_order' ).click(function() {
+	var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+   // console.log(a);
+	//console.log(b);
+	//debugger;
+	if(a == b){
+		//console.log("true");
+		$( 'input[name="confirm_validation"]').val("1");
+        $('#confirm_validation-error').hide();
+	}
+	else{
+		//console.log("false");
+    $('#confirm_validation-error').show();
+	$( 'input[name="confirm_validation"]').val("");
+	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
+    return false;
+	}
+});
+// setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
+//     $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
+// } }, 100);
 
 </script>
 
@@ -713,5 +738,5 @@ function codeAddress(address) {
   });
 }
 
-google.maps.event.addDomListener(window, "load", initialize);
+// google.maps.event.addDomListener(window, "load", initialize);
 </script>
