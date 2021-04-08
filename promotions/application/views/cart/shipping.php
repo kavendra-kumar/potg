@@ -354,6 +354,7 @@
                                             </div>
                                         </div>
 
+                                        <!--
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <div class="row  h-300" style="height:500px;" >
@@ -365,7 +366,7 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        -->
                                         
                                         <div class="col-12 d-none">
                                             <div class="form-group">
@@ -710,5 +711,5 @@ function codeAddress(address) {
   });
 }
 
-google.maps.event.addDomListener(window, "load", initialize);
+// google.maps.event.addDomListener(window, "load", initialize);
 </script>

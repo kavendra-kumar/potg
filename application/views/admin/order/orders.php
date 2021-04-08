@@ -162,14 +162,22 @@ input.checkbox {
 						<div class="row">
 							<div class="pull-left">
 								<button type="submit" class="btn bg-purple export"><?php echo trans("export"); ?></button>
+								<?php echo form_close(); ?>
 							</div>
+
+							<div class="pull-left" style="margin-left: 10px;">
+								<?php echo form_open('order_admin_controller/all_orders_export'); ?>
+									<button type="submit" class="btn bg-purple export"><?php echo trans("export"); ?> All Orders</button>
+								<?php echo form_close(); ?>
+							</div>
+
 							<div class="pull-right">
 								<?php echo $this->pagination->create_links(); ?>
 							</div>
 						</div>
 					</div>
-
-					<?php echo form_close(); ?>
+					
+					
 
 				</div>
 			</div>
