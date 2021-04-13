@@ -387,7 +387,7 @@
 														<li>
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
-																	<input type="radio" class="custom-control-input" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" required>
+																	<input type="radio" class="custom-control-input payment_method" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" required>
 																	<label class="custom-control-label label-payment-option" for="option_cash_on_delivery"><?php echo trans("cash_on_delivery"); ?><br><small><?php echo trans("cash_on_delivery_exp"); ?></small></label>
 																</div>
 															</div>
@@ -397,7 +397,7 @@
                                                         <li>
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
-																	<input type="radio" class="custom-control-input" id="option_point_checkout" name="payment_option" value="point_checkout" required>
+																	<input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
 																	<label class="custom-control-label label-payment-option" for="option_point_checkout"><?php echo trans("point_checkout"); ?><br><small><?php echo trans("point_checkout"); ?></small></label>
 																</div>
 															</div>
@@ -405,7 +405,8 @@
                                                     <?php endif; ?>
 												</ul>
 											</div>
-											<div>
+
+											<div class="cod_msg" style="display:none;">
 												<p class="m-b-30">
 													<?php echo trans("cash_on_delivery_warning"); ?>
 												</p>
@@ -457,14 +458,15 @@
         $upselling_products = ($prod->upselling_products) ? explode(",", $prod->upselling_products) : null;
         // $addon_products = ($prod->addon_products) ? explode(",", $prod->addon_products) : null;
         if($upselling_products): ?>
+        
 <!-- Modal -->
 <div class="modal fade" id="addonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" <?php if($this->selected_lang->short_form == 'ar') { ?> dir="rtl" lang="ar" <?php } ?>>
         <h5 class="modal-title" id="exampleModalLongTitle"><?= $upselling_title ?></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#f86923!important; padding:0px 1rem!important;">
+          <span aria-hidden="true" style="font-size:70px; color:#f86923!important; margin-top:-10px; font-weight:bolder; ">&times;</span>
         </button>
       </div>
 
@@ -494,8 +496,6 @@
                                 <?php echo html_escape($product->title); ?>
                             </a>
                         </div>
-                        
-                        
                     </div>
                 </div>
                 <div class="col-md-3 pr-0 pt-4">
@@ -517,10 +517,12 @@
                     endif;
                 endforeach;
             ?>
-
+        <button class="close_btn" data-dismiss="modal" aria-label="Close" style="border:none; background:#f86923; padding:10px 10px; color:white; float:right" dir='rtl'><?php echo trans("close"); ?></button>
         </div>
 
     </div>
+
+    
   </div>
 </div>
 
@@ -540,7 +542,6 @@
 
 <!-- Harry Code End -->
 <?php endif; endif; ?>
-
 
 
 <script>
@@ -568,7 +569,7 @@ $( 'select[name="billing_country_id"]' ).change(function () {
 
 
 /* *********Kave function********* */
-$( 'input[name="shipping_phone_number"]' ).focusout(function() {
+$( 'input[name="shipping_phone_number"]' ).keyup(function() {
 	var a = $( 'input[name="shipping_phone_number"]' ).val();
     var digit = a.toString()[0];
 	if(digit == '0') {
@@ -577,7 +578,7 @@ $( 'input[name="shipping_phone_number"]' ).focusout(function() {
     }
 });
 
-$( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
+$( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 	var k = $( 'input[name="shipping_phone_number_confirm"]' ).val();
     var digit = k.toString()[0];
 	if(digit == '0') {
@@ -586,11 +587,13 @@ $( 'input[name="shipping_phone_number_confirm"]' ).focusout(function() {
     }
 
     var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+    console.log('ab', a,b);
     if(a == b){
 		$( 'input[name="confirm_validation"]').val("1");
         $('#confirm_validation-error').hide();
 	}
 	else{
+        $('#confirm_validation-error').show();
 	$( 'input[name="confirm_validation"]').val("");
 	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
 	}
@@ -614,20 +617,50 @@ $( 'input[name="shipping_phone_number_confirm"]' ).keyup(function() {
 	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
 	}
 });
-setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
-    $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
-} }, 100);
+
+$( '#place_order' ).click(function() {
+	var a = $( 'input[name="shipping_phone_number"]' ).val(), b = $( 'input[name="shipping_phone_number_confirm"]' ).val();
+   // console.log(a);
+	//console.log(b);
+	//debugger;
+	if(a == b){
+		//console.log("true");
+		$( 'input[name="confirm_validation"]').val("1");
+        $('#confirm_validation-error').hide();
+	}
+	else{
+		//console.log("false");
+    $('#confirm_validation-error').show();
+	$( 'input[name="confirm_validation"]').val("");
+	$('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>'); 
+    return false;
+	}
+});
+// setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
+//     $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
+// } }, 100);
+
+$('.payment_method').on('click', function() {
+   if( $('input[name=payment_option]:checked').val() == 'cash_on_delivery') {
+       $('.cod_msg').show();
+   } else {
+    $('.cod_msg').hide();
+   }
+});
 
 </script>
 
 
 
+
 <!-- GPS location map -->
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyDokZ9yr2DNr6W_Gpq39VJKMg1C-ob9ya4" ></script>
+
 <script>
 var geocoder;
 var map;
 var marker;
+var address;
 var infowindow = new google.maps.InfoWindow({
   size: new google.maps.Size(150, 50)
 });
@@ -645,7 +678,7 @@ navigator.geolocation.getCurrentPosition(function (p) {
         // This is checking to see if the Geoeode Status is OK before proceeding
         if (status == google.maps.GeocoderStatus.OK) {
             console.log(results);
-            var address = (results[0].formatted_address);
+            address = (results[0].formatted_address);
 			document.getElementById("gps_location").value = address;
 			codeAddress(address);
         }
@@ -705,6 +738,7 @@ function codeAddress(address) {
         infowindow.open(map, marker);
       });
       google.maps.event.trigger(marker, 'click');
+      
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }

@@ -823,6 +823,11 @@ class Cart_controller extends Home_Core_Controller
         $this->session->unset_userdata('mds_cart_shipping_address');
         $this->cart_model->clear_cart();
 
+        if (!empty($this->session->userdata('mds_default_location_id'))) {
+            $data['country_id'] = $this->session->userdata('mds_default_location_id');
+        } else {
+            $data['country_id'] = 228;
+        }
         
         // echo get_point_checkout_payment_url($order_number); die;
         $data['title'] = trans("msg_order_completed");
