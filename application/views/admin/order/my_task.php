@@ -53,6 +53,7 @@
                             <th><?php echo trans('assign_to'); ?></th>
                             <th><?php echo trans('reminder_date'); ?></th>
                             <th><?php echo trans('reminder_time'); ?></th>
+                            <th><?php echo trans('updated_by'); ?></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -85,6 +86,16 @@
                                 </td>
                                 <td><?php echo $item->reminder_date; ?><?php if( strtotime($item->reminder_date) < strtotime(date('Y-m-d')) ) { ?><p><small class="btn bg-danger" style="color:#ffff">Overdue</small></p> <?php } ?></td>
                                 <td><?php echo $item->reminder_time; ?></td>
+                                <td>
+                                    <?php
+                                    if($item->updated_by){
+                                    $inf = get_user($item->updated_by);
+                                    echo $inf->first_name.' '.$inf->last_name;
+                                    } else {
+                                        echo "N/A";
+                                    }
+                                    ?>
+                                </td>
                             </tr>
 
                         <?php endforeach; ?>

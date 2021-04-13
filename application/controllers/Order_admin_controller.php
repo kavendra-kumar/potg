@@ -560,7 +560,7 @@ class Order_admin_controller extends Admin_Core_Controller
 	 * update task Post
 	 */
 	public function update_task_post()
-	{		
+	{
 		if ($this->order_admin_model->update_order_task()) {
 			
 			$this->session->set_flashdata('success', trans("msg_updated"));

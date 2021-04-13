@@ -119,6 +119,8 @@ class Order_admin_model extends CI_Model
     public function update_order_task()
     {
         $reminder_date = date("Y-m-d", strtotime($this->input->post('reminder_date', true)));
+        $assign_to_arr = $this->input->post('assign_to', true);
+        $assign_to = ($assign_to_arr) ? implode(',', $assign_to_arr) : null;
 
         $id = $this->input->post('task_id', true);
 
@@ -127,6 +129,9 @@ class Order_admin_model extends CI_Model
             'comment' => $this->input->post('comment', true),
             'reminder_date' => $reminder_date,
             'status' => $this->input->post('status', true),
+            'assign_to' => $assign_to,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'updated_by' => $this->session->userdata['modesy_sess_user_id'],
         );
 
         $this->db->where('id', $id);
@@ -720,6 +725,7 @@ class Order_admin_model extends CI_Model
     public function get_all_orders_export()
     {
         $this->db->select('orders.id, orders.order_number, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->where('orders.status !=', 3);
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
@@ -736,6 +742,7 @@ class Order_admin_model extends CI_Model
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->where_in('orders.id', $order_ids);
+        $this->db->where('orders.status !=', 3);
         $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
         
         $query = $this->db->get();
@@ -1079,7 +1086,16 @@ class Order_admin_model extends CI_Model
     //get paginated invoices
     public function get_paginated_today_task($per_page, $offset)
     {
+        $login_id = $this->session->userdata['modesy_sess_user_id'];
+        $where = "FIND_IN_SET('".$login_id."', assign_to)";
+
         $this->filter_task();
+
+        $this->db->group_start();
+        $this->db->where($where);
+        $this->db->or_where('created_by', $login_id);
+        $this->db->group_end();
+
         $this->db->limit($per_page, $offset);
         $query = $this->db->get('order_tasks');
         return $query->result();

@@ -481,6 +481,7 @@
                                         <th><?php echo trans('status'); ?></th>
                                         <th><?php echo trans('created_by'); ?></th>
                                         <th><?php echo trans('assign_to'); ?></th>
+                                        <th><?php echo trans('updated_by'); ?></th>
                                         <th class="max-width-120"><?php echo trans('options'); ?></th>
                                     </tr>
                                     </thead>
@@ -519,6 +520,16 @@
                                                         $inf = get_user($uid);
                                                         echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
                                                     }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                if($order_task->updated_by){
+                                                $inf = get_user($order_task->updated_by);
+                                                echo $inf->first_name.' '.$inf->last_name;
+                                                } else {
+                                                    echo "N/A";
                                                 }
                                                 ?>
                                             </td>
@@ -922,10 +933,24 @@
 
                         <div class="form-group">
                             <label class="control-label"><?php echo trans('status'); ?></label>
-                            <select class="form-control" name="status" id="status" required>
+                            <select class="form-control" name="status" id="task_status" required>
                                 <option value="">Select Status</option>
                                 <option value="1">Close</option>
                                 <option value="0">Open</option>
+                            </select>
+                        </div>
+
+                        
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('assign_to'); ?></label>
+                            
+                            <select id="task_assign_to" name="assign_to[]" class="form-control mySelect for" multiple="multiple" style="width: 100%" required>
+                                <?php
+                                if($admin_users) {
+                                    foreach($admin_users as $obj){
+                                ?>
+                                <option value="<?php echo $obj->id; ?>"><?php echo $obj->first_name.' '.$obj->last_name; ?></option>
+                                <?php } } ?>
                             </select>
                         </div>
                         
@@ -942,7 +967,7 @@
     
     <?php if($recent_orders) { ?>
     <!--Recent Orders Modal -->
-    <div id="RecentOrdersModal" class="modal fade" role="dialog">
+    <!-- <div id="RecentOrdersModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <input type="hidden" name="id" value="<?php echo $order->id; ?>">
@@ -968,7 +993,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <?php } ?>
 
     
@@ -1066,6 +1091,17 @@ $(document).ready(function(){
 
                 $('#task_id').val(result.id);
                 $('#comment').val(result.comment);
+                if(result.status == 0 || result.status == '0'){
+                    $('#task_status option').eq(2).prop('selected', true);
+                } else {
+                    $('#task_status option').eq(1).prop('selected', true);
+                }
+
+                var ids = result.assign_to;
+                if(ids){
+                    var numbersArray = ids.split(',');
+                    $('#task_assign_to').select2().val(numbersArray).trigger('change');
+                }
 
                 var date= result.reminder_date;
                 var d=new Date(date);
@@ -1104,9 +1140,15 @@ $(document).ready(function(){
         $('input.timepicker').timepicker({});
     });
 
-
+    
     $('#assign_to').select2();
     $('#assign_to').on('select2:opening select2:closing', function( event ) {
+        var $searchfield = $(this).parent().find('.select2-search__field');
+        $searchfield.prop('disabled', true);
+    });
+
+    $('#task_assign_to').select2();
+    $('#task_assign_to').on('select2:opening select2:closing', function( event ) {
         var $searchfield = $(this).parent().find('.select2-search__field');
         $searchfield.prop('disabled', true);
     });
