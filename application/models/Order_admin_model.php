@@ -683,7 +683,7 @@ class Order_admin_model extends CI_Model
         
         if (!empty($data['q'])) {
             $data['q'] = str_replace("#", "", $data['q']);
-            $order_numbers = explode(',', $data['q']);
+            $order_numbers = explode(' ', $data['q']);
             $this->db->where_in('orders.order_number', $order_numbers);
         }
         
@@ -724,7 +724,7 @@ class Order_admin_model extends CI_Model
     // get orders for export
     public function get_all_orders_export()
     {
-        $this->db->select('orders.id, orders.order_number, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->select('orders.id, orders.order_number, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
         $this->db->where('orders.status !=', 3);
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
@@ -738,7 +738,7 @@ class Order_admin_model extends CI_Model
     // get orders for export
     public function get_orders_export($order_ids)
     {
-        $this->db->select('orders.id, orders.order_number, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->select('orders.id, orders.order_number, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->where_in('orders.id', $order_ids);

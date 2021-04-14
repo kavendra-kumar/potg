@@ -14,11 +14,15 @@
                     <i class="icon-verified icon-verified-member"></i>
                 <?php endif; ?>
             </div>
+
+            <?php if($user->last_seen) { ?>
             <div class="row-custom">
                 <p class="p-last-seen">
                     <span class="last-seen <?php echo (is_user_online($user->last_seen)) ? 'last-seen-online' : ''; ?>"> <i class="icon-circle"></i> <?php echo trans("last_seen"); ?>&nbsp;<?php echo time_ago($user->last_seen); ?></span>
                 </p>
             </div>
+            <?php } ?>
+
             <?php if ($user->role == 'admin' || $user->role == 'vendor'): ?>
                 <div class="row-custom">
                     <p class="description">

@@ -1040,9 +1040,10 @@
 
     .recent-links{
         color: #fff;
-    text-decoration: underline;
-    padding: 0px 10px;
-    font-size: 18px;
+        text-decoration: underline;
+        padding: 0px 10px;
+        font-size: 18px;
+        white-space: pre-wrap;
     }
     .recent-orders1, .recent-orders1:hover{
         background-color: #ff9800a6 !important;
