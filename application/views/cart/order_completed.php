@@ -32,6 +32,27 @@
 			<div class="col-5">
 				<p><?php echo trans("order_email_msg"); ?></p>
 			</div>
+            
+            <!-- order track via whatsapp -->
+            <?php
+            if($country_id == 116 || $country_id == 165){
+                $number = '971503053129';
+            } else if($country_id == 189) {
+                $number = '971503053145';
+            } else {
+                $number = '971502189305';
+            }
+
+            ?>
+            <div class="col-12" style="text-align: center;">
+				<p>
+                    <?php echo trans("get_order_track_whatsapp"); ?>
+                    <a target="_blank" href="https://wa.me/<?php echo $number; ?>/?text=Please%20Track%20My%20Order%20<?php echo $order->order_number; ?>">
+                        <img src="<?php echo base_url(); ?>assets/img/social-icons/whatsapp.png" alt="WhatsApp" class="img-whatsapp" style="height: 60px; width: 60px;">
+                    </a>
+                </p>
+			</div>
+
 			<div class="col-12 text-center pt-4">
 				<p><?php echo trans("order_check_msg"); ?></p>
 				<a href="<?php echo lang_base_url(); ?>" class="btn btn-lg btn-custom"><?php echo trans("goto_home");?></a>

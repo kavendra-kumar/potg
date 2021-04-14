@@ -160,6 +160,7 @@ input.checkbox {
 					<?php endif; ?>
 					<div class="col-sm-12 table-ft">
 						<div class="row">
+							<?php if($this->session->userdata['modesy_sess_user_id'] == 1 || $this->session->userdata['modesy_sess_user_id'] == 1739 || $this->session->userdata['modesy_sess_user_id'] == 806) { ?>
 							<div class="pull-left">
 								<button type="submit" class="btn bg-purple export"><?php echo trans("export"); ?></button>
 								<?php echo form_close(); ?>
@@ -170,6 +171,7 @@ input.checkbox {
 									<button type="submit" class="btn bg-purple export"><?php echo trans("export"); ?> All Orders</button>
 								<?php echo form_close(); ?>
 							</div>
+							<?php } ?>
 
 							<div class="pull-right">
 								<?php echo $this->pagination->create_links(); ?>

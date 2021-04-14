@@ -141,7 +141,7 @@
                     <ul class="treeview-menu">
                         <li><a href="<?php echo admin_url(); ?>orders"> <?php echo trans("orders"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>return_and_refund_orders"> <?php echo trans("return_and_refund_orders"); ?></a></li>
-                        <li><a href="<?php echo admin_url(); ?>order-follw-up"> <?php echo trans("order_follw_up"); ?> <span class="blobs-container"><div class="blob red"></div></span></a></li>
+                        <li><a href="<?php echo admin_url(); ?>order-follw-up"> <?php echo trans("todays_task"); ?> <span class="blobs-container"><div class="blob red"></div></span></a></li>
                         <li><a href="<?php echo admin_url(); ?>my_task"> <?php echo trans("my_task"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>transactions"> <?php echo trans("transactions"); ?></a></li>
                         <li><a href="<?php echo admin_url(); ?>order-bank-transfers"> <?php echo trans("bank_transfer_notifications"); ?></a></li>

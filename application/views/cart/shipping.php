@@ -391,7 +391,7 @@
 														<li>
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
-																	<input type="radio" class="custom-control-input" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" required>
+																	<input type="radio" class="custom-control-input payment_method" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" required>
 																	<label class="custom-control-label label-payment-option" for="option_cash_on_delivery"><?php echo trans("cash_on_delivery"); ?><br><small><?php echo trans("cash_on_delivery_exp"); ?></small></label>
 																</div>
 															</div>
@@ -401,7 +401,7 @@
                                                         <li>
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
-																	<input type="radio" class="custom-control-input" id="option_point_checkout" name="payment_option" value="point_checkout" required>
+																	<input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
 																	<label class="custom-control-label label-payment-option" for="option_point_checkout"><?php echo trans("point_checkout"); ?><br><small><?php echo trans("point_checkout"); ?></small></label>
 																</div>
 															</div>
@@ -409,7 +409,8 @@
                                                     <?php endif; ?>
 												</ul>
 											</div>
-											<div>
+
+											<div class="cod_msg" style="display:none;">
 												<p class="m-b-30">
 													<?php echo trans("cash_on_delivery_warning"); ?>
 												</p>
@@ -461,14 +462,15 @@
         $upselling_products = ($prod->upselling_products) ? explode(",", $prod->upselling_products) : null;
         // $addon_products = ($prod->addon_products) ? explode(",", $prod->addon_products) : null;
         if($upselling_products): ?>
+       
 <!-- Modal -->
 <div class="modal fade" id="addonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" <?php if($this->selected_lang->short_form == 'ar') { ?> dir="rtl" lang="ar" <?php } ?>>
         <h5 class="modal-title" id="exampleModalLongTitle"><?= $upselling_title ?></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#f86923!important; padding:0px 1rem!important;">
+          <span aria-hidden="true" style="font-size:70px; color:#f86923!important; margin-top:-10px; font-weight:bolder; ">&times;</span>
         </button>
       </div>
 
@@ -519,10 +521,12 @@
                     endif;
                 endforeach;
             ?>
-
+        <button class="close_btn" data-dismiss="modal" aria-label="Close" style="border:none; background:#f86923; padding:10px 10px; color:white; float:right" dir='rtl'><?php echo trans("close"); ?></button>
         </div>
 
     </div>
+
+    
   </div>
 </div>
 
@@ -640,6 +644,14 @@ $( '#place_order' ).click(function() {
 // setInterval(function(){ if ( $( "#confirm_validation-error" ).length ) {
 //     $('#confirm_validation-error').html('<?php echo trans("phone_mismatch"); ?>');
 // } }, 100);
+
+$('.payment_method').on('click', function() {
+   if( $('input[name=payment_option]:checked').val() == 'cash_on_delivery') {
+       $('.cod_msg').show();
+   } else {
+    $('.cod_msg').hide();
+   }
+});
 
 </script>
 

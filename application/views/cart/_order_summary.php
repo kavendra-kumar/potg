@@ -57,6 +57,10 @@
                                     </div>
                                 <?php endif; ?>
 
+                                <div class="list-item">
+                                    <a href="javascript:void(0)" class="btn btn-md btn-outline-gray btn-cart-remove" onclick="remove_from_cart('<?php echo $cart_item->cart_item_id; ?>');"><i class="icon-close"></i> <?php echo trans("remove"); ?></a>
+                                </div>
+
                             </div>
                         </div>
                     <?php endif;

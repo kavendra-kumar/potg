@@ -121,7 +121,7 @@ class Order_admin_controller extends Admin_Core_Controller
 
 
 	/**
-	 * Orders export
+	 * selected Orders export
 	 */
 	public function orders_export()
 	{
@@ -151,13 +151,16 @@ class Order_admin_controller extends Admin_Core_Controller
 					'price_total' => 'Total Amount',
 					'custom_value' => 'Custom Value',
 					'payment_status' => 'Payment Status',
-					'price_currency' => 'Currency'
+					'price_currency' => 'Currency',
+					'recent_order_number' => 'Recent Order Number',
+					'recent_order_status' => 'Recent Order Status',
 				);
 				foreach($orders as $obj) {
 					//echo "<pre>";  print_r($obj); die;
 					$minus_per = $obj->price_total * 30 / 100;
 					$custom_value = ($obj->price_total - $minus_per)/100;
 
+					// get ordered product info..
 					$products = $this->order_admin_model->get_order_products_by_order_id($obj->id);
 					$product_title = '';
 					$product_quantity = '';
@@ -177,6 +180,49 @@ class Order_admin_controller extends Admin_Core_Controller
 						$sku = implode(' | ', $sku_arr);
 					}
 
+
+					// get recent orders
+					$recent_orders = $this->order_admin_model->get_order_by_userid($obj->buyer_id, $obj->id);
+					$rec_order_number = '';
+					$rec_status = '';
+
+					$order_number_arr = array();
+					$status_arr = array();
+					if($recent_orders){
+						foreach($recent_orders as $recent){
+														
+							if ($recent->status == 1):
+								$recent_status = trans("completed");
+							elseif ($recent->status == 2):
+								$recent_status = trans("confirmed");
+							elseif ($recent->status == 3):
+								$recent_status = trans("cancelled");
+							elseif ($recent->status == 4):
+								$recent_status = trans("shipped");
+							elseif ($recent->status == 5):
+								$recent_status = trans("payment_received");
+							elseif ($recent->status == 6):
+								$recent_status = trans("awaiting_payment");
+							elseif ($recent->status == 7):
+								$recent_status = trans("recent_processing");
+							elseif ($recent->status == 8):
+								$recent_status = $recent_status = trans("scheduled");
+							elseif ($recent->status == 9):
+								$recent_status = trans("returned");
+							elseif ($recent->status == 10):
+								$recent_status = trans("return_and_refund_request");
+							else:
+								$recent_status = trans("new");
+							endif;
+
+							$order_number_arr[] = $recent->order_number;
+							$status_arr[] = $recent_status;
+						}
+						$rec_order_number = implode(' | ', $order_number_arr);
+						$rec_status = implode(' | ', $status_arr);
+					}
+
+
 					$data[] = array(
 						'order_number' => ($obj->order_number)?$obj->order_number:'',
 						'name' => ($obj->shipping_first_name ? $obj->shipping_first_name:'').' '.($obj->shipping_last_name ?$obj->shipping_last_name:''),
@@ -194,7 +240,9 @@ class Order_admin_controller extends Admin_Core_Controller
 						'price_total' => ($obj->price_total)?$obj->price_total/100:'0',
 						'custom_value' => number_format($custom_value, 2),
 						'payment_status' => trans($obj->payment_status),
-						'price_currency' => ($obj->price_currency)?$obj->price_currency:''
+						'price_currency' => ($obj->price_currency)?$obj->price_currency:'',
+						'recent_order_number' => $rec_order_number,
+						'recent_order_status' => $rec_status
 					);
 					$i++;
 				}
@@ -255,13 +303,17 @@ class Order_admin_controller extends Admin_Core_Controller
 				'price_total' => 'Total Amount',
 				'custom_value' => 'Custom Value',
 				'payment_status' => 'Payment Status',
-				'price_currency' => 'Currency'
+				'price_currency' => 'Currency',
+				'recent_order_number' => 'Recent Order Number',
+				'recent_order_status' => 'Recent Order Status',
 			);
+
 			foreach($orders as $obj) {
 				//echo "<pre>";  print_r($obj); die;
 				$minus_per = $obj->price_total * 30 / 100;
 				$custom_value = ($obj->price_total - $minus_per)/100;
 
+				// get ordered products info..
 				$products = $this->order_admin_model->get_order_products_by_order_id($obj->id);
 				$product_title = '';
 				$product_quantity = '';
@@ -279,6 +331,48 @@ class Order_admin_controller extends Admin_Core_Controller
 					$product_title = implode(' | ', $product_title_arr);
 					$product_quantity = implode(' | ', $product_quantity_arr);
 					$sku = implode(' | ', $sku_arr);
+				}
+			
+
+				// get recent orders
+				$recent_orders = $this->order_admin_model->get_order_by_userid($obj->buyer_id, $obj->id);
+				$rec_order_number = '';
+				$rec_status = '';
+
+				$order_number_arr = array();
+				$status_arr = array();
+				if($recent_orders){
+					foreach($recent_orders as $recent){
+													
+						if ($recent->status == 1):
+							$recent_status = trans("completed");
+						elseif ($recent->status == 2):
+							$recent_status = trans("confirmed");
+						elseif ($recent->status == 3):
+							$recent_status = trans("cancelled");
+						elseif ($recent->status == 4):
+							$recent_status = trans("shipped");
+						elseif ($recent->status == 5):
+							$recent_status = trans("payment_received");
+						elseif ($recent->status == 6):
+							$recent_status = trans("awaiting_payment");
+						elseif ($recent->status == 7):
+							$recent_status = trans("recent_processing");
+						elseif ($recent->status == 8):
+							$recent_status = $recent_status = trans("scheduled");
+						elseif ($recent->status == 9):
+							$recent_status = trans("returned");
+						elseif ($recent->status == 10):
+							$recent_status = trans("return_and_refund_request");
+						else:
+							$recent_status = trans("new");
+						endif;
+
+						$order_number_arr[] = $recent->order_number;
+						$status_arr[] = $recent_status;
+					}
+					$rec_order_number = implode(' | ', $order_number_arr);
+					$rec_status = implode(' | ', $status_arr);
 				}
 
 				$data[] = array(
@@ -298,7 +392,9 @@ class Order_admin_controller extends Admin_Core_Controller
 					'price_total' => ($obj->price_total)?$obj->price_total/100:'0',
 					'custom_value' => number_format($custom_value, 2),
 					'payment_status' => trans($obj->payment_status),
-					'price_currency' => ($obj->price_currency)?$obj->price_currency:''
+					'price_currency' => ($obj->price_currency)?$obj->price_currency:'',
+					'recent_order_number' => $rec_order_number,
+					'recent_order_status' => $rec_status
 				);
 				$i++;
 			}
@@ -325,7 +421,7 @@ class Order_admin_controller extends Admin_Core_Controller
 			exit;
 			
 		}
-				
+		
 		redirect($this->agent->referrer(),'refresh');
 	}
 
@@ -560,7 +656,7 @@ class Order_admin_controller extends Admin_Core_Controller
 	 * update task Post
 	 */
 	public function update_task_post()
-	{		
+	{
 		if ($this->order_admin_model->update_order_task()) {
 			
 			$this->session->set_flashdata('success', trans("msg_updated"));

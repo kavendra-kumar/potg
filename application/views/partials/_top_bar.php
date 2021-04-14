@@ -82,10 +82,26 @@ else{
                             </a>
                             <div class="dropdown-menu">
                                 <?php foreach ($this->languages as $language):
-                                    $lang_url = base_url() . $language->short_form . "/";
+                                    // $lang_url = base_url() . $language->short_form . "/";
+
+                                    $base_url = str_replace("/ar", "", base_url());
+                                    $current_url = str_replace("/ar", "", current_url());
+                                    $str = explode($base_url, $current_url);
+                                    
                                     if ($language->id == $this->general_settings->site_lang) {
-                                        $lang_url = base_url();
-                                    } ?>
+                                        if($str[1]) {
+                                            $lang_url = base_url() . $str[1];
+                                        } else {
+                                            $lang_url = base_url();
+                                        }
+                                    } else {
+                                        if($str[1]) {
+                                            $lang_url = base_url() . $language->short_form . "/".$str[1];
+                                        } else {
+                                            $lang_url = base_url() . $language->short_form;
+                                        }
+                                    }
+                                ?>
                                     <a href="<?php echo $lang_url; ?>" class="<?php echo ($language->id == $this->selected_lang->id) ? 'selected' : ''; ?> " class="dropdown-item">
                                         <img src="<?php echo base_url($language->flag_path); ?>" class="flag"><?php echo $language->name; ?>
                                     </a>
