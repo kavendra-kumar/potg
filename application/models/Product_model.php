@@ -16,6 +16,7 @@ class Product_model extends Core_Model
 
         $data = array(
             'title' => $this->input->post('title', true),
+            'short_title' => $this->input->post('short_title', true),
             'product_type' => $this->input->post('product_type', true),
             'listing_type' => $this->input->post('listing_type', true),
             'sku' => $this->input->post('sku', true),
@@ -179,6 +180,7 @@ class Product_model extends Core_Model
 
         $data = array(
             'title' => $this->input->post('title', true),
+            'short_title' => $this->input->post('short_title', true),
             'product_type' => $this->input->post('product_type', true),
             'listing_type' => $this->input->post('listing_type', true),
             'sku' => $this->input->post('sku', true),

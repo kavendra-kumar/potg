@@ -182,7 +182,7 @@ class Order_admin_controller extends Admin_Core_Controller
 
 
 					// get recent orders
-					$recent_orders = $this->order_admin_model->get_order_by_userid($obj->buyer_id, $obj->id);
+					$recent_orders = $this->order_admin_model->get_recentorder_by_userid_for_export($obj->buyer_id, $obj->id);
 					$rec_order_number = '';
 					$rec_status = '';
 
@@ -335,7 +335,7 @@ class Order_admin_controller extends Admin_Core_Controller
 			
 
 				// get recent orders
-				$recent_orders = $this->order_admin_model->get_order_by_userid($obj->buyer_id, $obj->id);
+				$recent_orders = $this->order_admin_model->get_recentorder_by_userid_for_export($obj->buyer_id, $obj->id);
 				$rec_order_number = '';
 				$rec_status = '';
 

@@ -725,7 +725,7 @@ class Order_admin_model extends CI_Model
     public function get_all_orders_export()
     {
         $this->db->select('orders.id, orders.order_number, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
-        $this->db->where('orders.status !=', 3);
+        // $this->db->where('orders.status !=', 3);
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
@@ -742,7 +742,7 @@ class Order_admin_model extends CI_Model
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->where_in('orders.id', $order_ids);
-        $this->db->where('orders.status !=', 3);
+        // $this->db->where('orders.status !=', 3);
         $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
         
         $query = $this->db->get();
@@ -1198,10 +1198,21 @@ class Order_admin_model extends CI_Model
 	}
 
 
-    //get completed orders count
+    //get recent oreders by order id
     public function get_order_by_userid($user_id, $id)
     {
         $user_id = clean_number($user_id);
+        $this->db->where('buyer_id', $user_id);
+        $this->db->where('id !=', $id);
+        $query = $this->db->get('orders');
+        return $query->result();
+    }
+
+    //get recent oreders by order id for export order
+    public function get_recentorder_by_userid_for_export($user_id, $id)
+    {
+        $user_id = clean_number($user_id);
+        $this->db->where('order_status', 'cancelled');
         $this->db->where('buyer_id', $user_id);
         $this->db->where('id !=', $id);
         $query = $this->db->get('orders');
