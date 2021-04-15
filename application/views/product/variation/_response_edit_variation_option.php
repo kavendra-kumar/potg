@@ -52,6 +52,13 @@
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
+
+                <div class="form-group m-b-5">
+                    <label class="control-label"><?php echo trans("sku"); ?></label>
+                    <input type="text" name="option_sku" class="form-control form-input" placeholder="<?php echo trans("sku"); ?>" value="<?php echo $variation_option->option_sku; ?>">
+                </div>
+
+
                 <?php if (!empty($variation->parent_id != 0)): ?>
                     <div class="form-group">
                         <label class="control-label"><?php echo trans('parent_option'); ?></label>
