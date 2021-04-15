@@ -756,16 +756,13 @@ class Order_admin_model extends CI_Model
         $this->db->select('order_products.product_id, order_products.product_title, order_products.product_quantity, products.sku');
         $this->db->from('order_products');
         $this->db->where('order_products.order_id', $order_id);
+        $this->db->where('order_products.order_status !=', 'cancelled');
         $this->db->join('products', 'products.id = order_products.product_id');
         
         $query = $this->db->get();
         // echo "<pre>"; print_r($query->result()); die;
         return $query->result();
     }
-
-    
-
-
 
      
     //get return orders count
@@ -1198,21 +1195,10 @@ class Order_admin_model extends CI_Model
 	}
 
 
-    //get recent oreders by order id
+    //get completed orders count
     public function get_order_by_userid($user_id, $id)
     {
         $user_id = clean_number($user_id);
-        $this->db->where('buyer_id', $user_id);
-        $this->db->where('id !=', $id);
-        $query = $this->db->get('orders');
-        return $query->result();
-    }
-
-    //get recent oreders by order id for export order
-    public function get_recentorder_by_userid_for_export($user_id, $id)
-    {
-        $user_id = clean_number($user_id);
-        $this->db->where('order_status', 'cancelled');
         $this->db->where('buyer_id', $user_id);
         $this->db->where('id !=', $id);
         $query = $this->db->get('orders');
