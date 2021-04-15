@@ -1068,11 +1068,21 @@ class Order_admin_model extends CI_Model
      //task filter by values
      public function filter_task()
      {
-         $order_number = $this->input->get('order_number', true);
-         if (!empty($order_number)) {
-             $this->db->like('order_id', $order_number);
-         }
-         $this->db->where('status', 0);
+
+        $login_id = $this->session->userdata['modesy_sess_user_id'];
+        $where = "FIND_IN_SET('".$login_id."', assign_to)";
+
+        $order_number = $this->input->get('order_number', true);
+        if (!empty($order_number)) {
+            $this->db->like('order_id', $order_number);
+        }
+        $this->db->where('status', 0);
+        $this->db->where('DATE(reminder_date) <=', date('Y-m-d'));
+
+        $this->db->group_start();
+        $this->db->where($where);
+        $this->db->or_where('created_by', $login_id);
+        $this->db->group_end();
      }
 
     //get task count
@@ -1086,15 +1096,7 @@ class Order_admin_model extends CI_Model
     //get paginated invoices
     public function get_paginated_today_task($per_page, $offset)
     {
-        $login_id = $this->session->userdata['modesy_sess_user_id'];
-        $where = "FIND_IN_SET('".$login_id."', assign_to)";
-
         $this->filter_task();
-
-        $this->db->group_start();
-        $this->db->where($where);
-        $this->db->or_where('created_by', $login_id);
-        $this->db->group_end();
 
         $this->db->limit($per_page, $offset);
         $query = $this->db->get('order_tasks');

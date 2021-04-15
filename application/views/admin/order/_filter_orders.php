@@ -18,7 +18,7 @@
             <label><?php echo trans("status"); ?></label>
             <select name="status" class="form-control">
                 <option value="" selected><?php echo trans("all"); ?></option>
-            <?php if($this->uri->segment(2) == orders){ ?>
+            <?php if($this->uri->segment(2) == "orders"){ ?>
                 
                 <option value="confirmed" <?php echo ($this->input->get('status', true) == 'confirmed') ? 'selected' : ''; ?>><?php echo trans("confirmed"); ?></option>
                 <option value="completed" <?php echo ($this->input->get('status', true) == 'completed') ? 'selected' : ''; ?>><?php echo trans("completed"); ?></option>
@@ -45,7 +45,7 @@
         </div>
 
 
-        <?php if($this->uri->segment(2) == orders){ ?>
+        <?php if($this->uri->segment(2) == "orders"){ ?>
 
         <div class="item-table-filter col-md-2">
             <label><?php echo trans("country"); ?></label>
