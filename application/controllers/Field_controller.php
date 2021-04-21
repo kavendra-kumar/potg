@@ -128,6 +128,8 @@ class Field_controller extends Home_Core_Controller
             if (!empty($variation)) {
                 if ($this->variation_model->is_variation_option_exist($variation_id)) {
                     $this->session->set_flashdata('error', trans("msg_option_exists"));
+                }  elseif ($this->variation_model->is_variation_option_sku_exist()) {
+                    $this->session->set_flashdata('error', trans("msg_option_sku_exists"));
                 } else {
                     $variation_option_id = $this->variation_model->add_variation_option($variation_id);
                     if ($variation_option_id) {
@@ -212,6 +214,8 @@ class Field_controller extends Home_Core_Controller
             //check option exist
             if ($this->variation_model->is_variation_option_exist($variation_id, $option_id)) {
                 $this->session->set_flashdata('error', trans("msg_option_exists"));
+            } elseif ($this->variation_model->is_variation_option_sku_exist()) {
+                $this->session->set_flashdata('error', trans("msg_option_sku_exists"));
             } elseif ($this->variation_model->edit_variation_option($option_id)) {
                 //clear default option
                 $this->variation_model->clear_variation_default_option($variation_id, $option_id);

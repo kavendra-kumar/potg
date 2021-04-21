@@ -210,6 +210,7 @@ class Variation_model extends CI_Model
             'variation_id' => $variation_id,
             'parent_id' => $this->input->post('parent_id', true),
             'option_names ' => $array_names,
+            'option_sku' => $this->input->post('option_sku', true),
             'stock' => $this->input->post('option_stock', true),
             'color' => $this->input->post('option_color', true),
             'price' => $this->input->post('option_price', true),
@@ -270,6 +271,7 @@ class Variation_model extends CI_Model
         $data = array(
             'parent_id' => $this->input->post('parent_id', true),
             'option_names ' => $array_names,
+            'option_sku' => $this->input->post('option_sku', true),
             'stock' => $this->input->post('option_stock', true),
             'color' => $this->input->post('option_color', true),
             'price' => $this->input->post('option_price', true),
@@ -346,6 +348,19 @@ class Variation_model extends CI_Model
         }
         $this->db->where('variation_id', $variation_id);
         $this->db->where('option_names', $array_names);
+        $query = $this->db->get('variation_options');
+        $rows = $query->result();
+        if (count($rows) > 0) {
+            return true;
+        }
+    }
+
+    
+    //is variation option sku exist
+    public function is_variation_option_sku_exist()
+    {
+        $option_sku = $this->input->post('option_sku', true);
+        $this->db->where('option_sku', $option_sku);
         $query = $this->db->get('variation_options');
         $rows = $query->result();
         if (count($rows) > 0) {

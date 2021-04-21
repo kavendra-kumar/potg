@@ -725,7 +725,7 @@ class Order_admin_model extends CI_Model
     public function get_all_orders_export()
     {
         $this->db->select('orders.id, orders.order_number, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
-        $this->db->where('orders.status !=', 3);
+        // $this->db->where('orders.status !=', 3);
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
@@ -742,7 +742,7 @@ class Order_admin_model extends CI_Model
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->where_in('orders.id', $order_ids);
-        $this->db->where('orders.status !=', 3);
+        // $this->db->where('orders.status !=', 3);
         $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
         
         $query = $this->db->get();
@@ -756,16 +756,13 @@ class Order_admin_model extends CI_Model
         $this->db->select('order_products.product_id, order_products.product_title, order_products.product_quantity, products.sku');
         $this->db->from('order_products');
         $this->db->where('order_products.order_id', $order_id);
+        $this->db->where('order_products.order_status !=', 'cancelled');
         $this->db->join('products', 'products.id = order_products.product_id');
         
         $query = $this->db->get();
         // echo "<pre>"; print_r($query->result()); die;
         return $query->result();
     }
-
-    
-
-
 
      
     //get return orders count
@@ -1068,11 +1065,21 @@ class Order_admin_model extends CI_Model
      //task filter by values
      public function filter_task()
      {
-         $order_number = $this->input->get('order_number', true);
-         if (!empty($order_number)) {
-             $this->db->like('order_id', $order_number);
-         }
-         $this->db->where('status', 0);
+
+        $login_id = $this->session->userdata['modesy_sess_user_id'];
+        $where = "FIND_IN_SET('".$login_id."', assign_to)";
+
+        $order_number = $this->input->get('order_number', true);
+        if (!empty($order_number)) {
+            $this->db->like('order_id', $order_number);
+        }
+        $this->db->where('status', 0);
+        $this->db->where('DATE(reminder_date) <=', date('Y-m-d'));
+
+        $this->db->group_start();
+        $this->db->where($where);
+        $this->db->or_where('created_by', $login_id);
+        $this->db->group_end();
      }
 
     //get task count
@@ -1086,15 +1093,7 @@ class Order_admin_model extends CI_Model
     //get paginated invoices
     public function get_paginated_today_task($per_page, $offset)
     {
-        $login_id = $this->session->userdata['modesy_sess_user_id'];
-        $where = "FIND_IN_SET('".$login_id."', assign_to)";
-
         $this->filter_task();
-
-        $this->db->group_start();
-        $this->db->where($where);
-        $this->db->or_where('created_by', $login_id);
-        $this->db->group_end();
 
         $this->db->limit($per_page, $offset);
         $query = $this->db->get('order_tasks');

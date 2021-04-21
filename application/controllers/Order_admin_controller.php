@@ -222,11 +222,12 @@ class Order_admin_controller extends Admin_Core_Controller
 						$rec_status = implode(' | ', $status_arr);
 					}
 
+					$Number  = ($obj->shipping_phone_number) ? $obj->shipping_phone_number:'';
 
 					$data[] = array(
 						'order_number' => ($obj->order_number)?$obj->order_number:'',
 						'name' => ($obj->shipping_first_name ? $obj->shipping_first_name:'').' '.($obj->shipping_last_name ?$obj->shipping_last_name:''),
-						'shipping_phone_number' => ($obj->shipping_phone_number)?$obj->shipping_phone_number:'',
+						'shipping_phone_number' => '="' . $Number . '"',
 						'shipping_email' => ($obj->shipping_email)?$obj->shipping_email:'',
 						'shipping_address_1' => ($obj->shipping_address_1 ? $obj->shipping_address_1:'') . ($obj->shipping_address_2 ? ' | '.$obj->shipping_address_2:''),
 						'shipping_city' => ($obj->shipping_city)?$obj->shipping_city:'',
@@ -246,7 +247,7 @@ class Order_admin_controller extends Admin_Core_Controller
 					);
 					$i++;
 				}
-				//echo "<pre>";  print_r($data); die;
+				// echo "<pre>";  print_r($data); die;
 				
 				// header("Content-type: application/csv");
 				// header("Content-Disposition: attachment; filename=\"orders_export".".csv\"");
@@ -375,10 +376,12 @@ class Order_admin_controller extends Admin_Core_Controller
 					$rec_status = implode(' | ', $status_arr);
 				}
 
+				$Number  = ($obj->shipping_phone_number) ? $obj->shipping_phone_number:'';
+
 				$data[] = array(
 					'order_number' => ($obj->order_number)?$obj->order_number:'',
 					'name' => ($obj->shipping_first_name ? $obj->shipping_first_name:'').' '.($obj->shipping_last_name ?$obj->shipping_last_name:''),
-					'shipping_phone_number' => ($obj->shipping_phone_number)?$obj->shipping_phone_number:'',
+					'shipping_phone_number' => '="' . $Number . '"',
 					'shipping_email' => ($obj->shipping_email)?$obj->shipping_email:'',
 					'shipping_address_1' => ($obj->shipping_address_1 ? $obj->shipping_address_1:'') . ($obj->shipping_address_2 ? ' | '.$obj->shipping_address_2:''),
 					'shipping_city' => ($obj->shipping_city)?$obj->shipping_city:'',

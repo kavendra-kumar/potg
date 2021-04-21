@@ -120,10 +120,18 @@
                                             <h4 class="title"><?php echo trans('details'); ?></h4>
                                         </div>
                                         <div class="form-box-body">
-                                            <div class="form-group">
+                                        
+                                        <div class="form-group">
                                                 <label class="control-label"><?php echo trans("title"); ?></label>
                                                 <input type="text" name="title" class="form-control form-input" placeholder="<?php echo trans("title"); ?>" required>
                                             </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label"><?php echo trans("short_title"); ?></label>
+                                                <input type="text" name="short_title" class="form-control form-input" placeholder="<?php echo trans("short_title"); ?>" >
+                                            </div>
+
+
                                             <div class="form-group">
                                                 <label class="control-label"><?php echo trans("sku"); ?>&nbsp;(<?php echo trans("product_code"); ?>)</label>
                                                 <input type="text" name="sku" class="form-control form-input" placeholder="<?php echo trans("sku"); ?>&nbsp;(<?php echo trans("optional"); ?>)">

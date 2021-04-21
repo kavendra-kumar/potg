@@ -14,7 +14,7 @@
                     <i class="icon-verified icon-verified-member"></i>
                 <?php endif; ?>
             </div>
-
+            
             <?php if($user->last_seen) { ?>
             <div class="row-custom">
                 <p class="p-last-seen">
