@@ -171,7 +171,7 @@ class Order_admin_controller extends Admin_Core_Controller
 					$sku_arr = array();
 					if($products){
 						foreach($products as $prod){
-							$product_title_arr[] = $prod->product_title;
+							$product_title_arr[] = $prod->short_title;
 							$product_quantity_arr[] = $prod->product_quantity;
 							$sku_arr[] = $prod->sku;
 						}
@@ -325,7 +325,7 @@ class Order_admin_controller extends Admin_Core_Controller
 				$sku_arr = array();
 				if($products){
 					foreach($products as $prod){
-						$product_title_arr[] = $prod->product_title;
+						$product_title_arr[] = $prod->short_title;
 						$product_quantity_arr[] = $prod->product_quantity;
 						$sku_arr[] = $prod->sku;
 					}
