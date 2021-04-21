@@ -21,7 +21,13 @@
             <div class="box-body">
                 <div class="row" style="margin-bottom: 30px;">
                     <div class="col-sm-12 col-md-12 col-lg-6">
-                        <h4 class="sec-title"><?php echo trans("order"); ?>#<?php echo $order->order_number; ?> </h4>
+                        <h4 class="sec-title">
+                            <?php echo trans("order"); ?>#<?php echo $order->order_number; ?> 
+                            &nbsp;
+                            <?php if($order->awb_number == null) { ?>
+                                <a class="btn btn-sm btn-info" href="<?php echo base_url(); ?>admin/generate_awb/<?php echo $order->order_number; ?>">Ship Through SMSA</a>
+                            <?php } ?>
+                        </h4>
                         <div class="row row-details">
                             <div class="col-xs-12 col-sm-4 col-right">
                                 <strong> <?php echo trans("status"); ?></strong>
@@ -100,6 +106,15 @@
                             </div>
                             <div class="col-sm-8">
                                 <strong class="font-right"><?php echo trans($order->payment_status); ?></strong>
+                            </div>
+                        </div>
+
+                        <div class="row row-details">
+                            <div class="col-xs-12 col-sm-4 col-right">
+                                <strong> AWB Number</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <strong class="font-right"><?php echo $order->awb_number; ?></strong>
                             </div>
                         </div>
 

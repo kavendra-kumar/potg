@@ -2159,5 +2159,26 @@ if (!function_exists('get_point_checkout_payment_status')) {
 }
 
 
+//generate AWB (shipping)
+if (!function_exists('makeSoapCall')) {
+    function makeSoapCall($function_name, $arguments, $options = array())
+    {
+
+        $url	= "http://track.smsaexpress.com/SECOM/SMSAwebService.asmx?wsdl";
+		$client     = new SoapClient($url, array("trace" => 1, "exception" => 0));
+
+		try {
+			return $client->{$function_name}($arguments);
+		}
+		catch(Exception $e) {
+		}
+
+		return false;
+
+
+    }
+
+}
+
 
 ?>
