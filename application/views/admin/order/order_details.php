@@ -22,11 +22,7 @@
                 <div class="row" style="margin-bottom: 30px;">
                     <div class="col-sm-12 col-md-12 col-lg-6">
                         <h4 class="sec-title">
-                            <?php echo trans("order"); ?>#<?php echo $order->order_number; ?> 
-                            &nbsp;
-                            <?php if($order->awb_number == null) { ?>
-                                <a class="btn btn-sm btn-info" href="<?php echo base_url(); ?>admin/generate_awb/<?php echo $order->order_number; ?>">Ship Through SMSA</a>
-                            <?php } ?>
+                            <?php echo trans("order"); ?>#<?php echo $order->order_number; ?>                             
                         </h4>
                         <div class="row row-details">
                             <div class="col-xs-12 col-sm-4 col-right">
@@ -109,14 +105,7 @@
                             </div>
                         </div>
 
-                        <div class="row row-details">
-                            <div class="col-xs-12 col-sm-4 col-right">
-                                <strong> AWB Number</strong>
-                            </div>
-                            <div class="col-sm-8">
-                                <strong class="font-right"><?php echo $order->awb_number; ?></strong>
-                            </div>
-                        </div>
+                        
 
                         <div class="row row-details">
                             <div class="col-xs-12 col-sm-4 col-right">
@@ -280,6 +269,7 @@
 						</div>
 					  </div>
 					</div>
+                    
                     <div class="row">
 						<div class="col-sm-12 col-md-12 col-lg-6">
                             <h4 class="sec-title"><?php echo trans("shipping_address"); ?><a class="bg-green-gradient" style="float: right;margin-left:10px;border-radius: 10%;padding: 3px;" href="https://api.whatsapp.com/send?phone=<?php echo $shipping->shipping_phone_number; ?>" target="_blank"><i class="fa fa-whatsapp" aria-hidden="true"></i></a>  <a style="float:right;" href="#" data-toggle="modal" data-target="#addressModal"><?php echo trans("edit"); ?></a></h4>
@@ -365,6 +355,21 @@
                                     <strong class="font-right"><?php echo $shipping->gps_location; ?></strong>
                                 </div>
                             </div>
+
+
+                            <?php if($order->awb_number) { ?>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> SMSA Tracking Number</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right">
+                                        <a target="_blank" style="color:red" href="https://smsaexpress.com/trackingdetails?tracknumbers%5B0%5D=<?php echo $order->awb_number; ?>"><?php echo $order->awb_number; ?></a>
+                                    </strong>
+                                </div>
+                            </div>
+                            <?php } ?>
+
 
 
                             <div class="row row-details hidden">
@@ -464,10 +469,17 @@
                     </div>
                 <?php endif; ?>
 
-
+                <br>
+                <?php if($order->awb_number == null) { ?>
+                    <a class="btn btn-sm btn-info" href="<?php echo base_url(); ?>admin/generate_awb/<?php echo $order->order_number; ?>">Ship Through SMSA</a>
+                <?php } ?>
+                <br>
+                
             </div><!-- /.box-body -->
         </div>
     </div>
+
+    
 
     <!-- Order Task List Start -->
     <div class="col-sm-12">
