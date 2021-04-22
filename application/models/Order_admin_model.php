@@ -753,7 +753,7 @@ class Order_admin_model extends CI_Model
     // get order products for export
     public function get_order_products_by_order_id($order_id)
     {
-        $this->db->select('order_products.product_id, order_products.product_title, order_products.product_quantity, products.sku');
+        $this->db->select('order_products.product_id, order_products.product_title, order_products.product_quantity, products.sku, products.short_title');
         $this->db->from('order_products');
         $this->db->where('order_products.order_id', $order_id);
         $this->db->where('order_products.order_status !=', 'cancelled');

@@ -171,7 +171,7 @@ class Order_admin_controller extends Admin_Core_Controller
 					$sku_arr = array();
 					if($products){
 						foreach($products as $prod){
-							$product_title_arr[] = $prod->product_title;
+							$product_title_arr[] = $prod->short_title;
 							$product_quantity_arr[] = $prod->product_quantity;
 							$sku_arr[] = $prod->sku;
 						}
@@ -325,7 +325,7 @@ class Order_admin_controller extends Admin_Core_Controller
 				$sku_arr = array();
 				if($products){
 					foreach($products as $prod){
-						$product_title_arr[] = $prod->product_title;
+						$product_title_arr[] = $prod->short_title;
 						$product_quantity_arr[] = $prod->product_quantity;
 						$sku_arr[] = $prod->sku;
 					}
@@ -494,6 +494,93 @@ class Order_admin_controller extends Admin_Core_Controller
 		$this->load->view('admin/order/order_details', $data);
 		$this->load->view('admin/includes/_footer');
 	}
+
+
+
+	/**
+	 * shipping servise smsa (generate awb)
+	 */
+	public function generate_awb($Number)
+	{
+		$order = $this->order_admin_model->get_order_by_order_number($Number);
+		$shipping = get_order_shipping($order->id);
+		$productss = $this->order_admin_model->get_order_products($order->id);
+		$pcs = 0;
+		$product_name = array();
+		if($productss){
+			foreach($productss as $products)
+			{
+				if($products->order_status != 'cancelled'){
+					$product_name[] = $products->product_title;
+					$pcs = $pcs + $products->product_quantity;
+				}
+			}
+		}
+
+		if($order->payment_method == 'Cash On Delivery'){
+			$total = $order->price_total;
+		} else {
+			$total = 0;
+		}
+		$currency = $order->price_currency;
+
+		$country = $shipping->shipping_country;
+
+		if($country = 'United Arab Emirates') {
+			$passkey = 'PmG@5125';
+		} elseif($country = 'Saudi Arabia') {
+			$passkey = 'pMt@3423';
+		} elseif($country = 'Oman') {
+			$passkey = 'PmG@3717';
+		} elseif($country = 'Kuwait') {
+			$passkey = 'pGt@3424';
+		} elseif($country = 'Bahrain') {
+			$passkey = 'PmG@Pmg@3425';
+		}
+
+
+		$arguments = array('passKey' => $passkey);
+		$arguments['refNo'] = $Number;
+		$arguments['sentDate'] = date("Y-m-d H:i:s");
+		$arguments['idNo'] = '0';
+		$arguments['cName'] = ($shipping->shipping_first_name ? $shipping->shipping_first_name.' ':'') . ($shipping->shipping_last_name ? $shipping->shipping_last_name.' ':'');
+		$arguments['cntry'] = $country;
+		$arguments['cCity'] = $shipping->shipping_city ? $shipping->shipping_city : '';
+		$arguments['cZip'] = $shipping->shipping_zip_code ? $shipping->shipping_zip_code : '';
+		$arguments['cPOBox'] = '';
+		$arguments['cMobile'] = $shipping->shipping_phone_number ? $shipping->shipping_phone_number : '';
+		$arguments['cTel1'] = '';
+		$arguments['cTel2'] = '';
+		$arguments['cAddr1'] = $shipping->shipping_address_1 ? $shipping->shipping_address_1 : '';
+		$arguments['cAddr2'] = $shipping->shipping_address_2 ? $shipping->shipping_address_2 : '';
+		$arguments['shipType'] = 'DLV';
+		$arguments['PCs'] = $pcs;
+		$arguments['cEmail'] = '';
+		$arguments['carrValue'] = '0';
+		$arguments['carrCurr'] = $currency;
+		$arguments['codAmt'] = $total/100;
+		$arguments['weight'] = '1';
+		$arguments['custVal'] = '0';
+		$arguments['custCurr'] = $currency;
+		$arguments['insrAmt'] = '0';
+		$arguments['insrCurr'] = $currency;
+		$arguments['itemDesc'] = implode(' | ', $product_name);
+
+		echo "<pre>"; print_r($arguments);
+
+		$output =    makeSoapCall('addShipment', $arguments);
+		//echo "<pre>"; print_r($output); exit;
+		echo $awb_number = $output->addShipmentResult;
+
+		$this->db->set('awb_number', $awb_number);
+		$this->db->where('id', $order->id);
+		$this->db->update('orders');
+
+		$this->session->set_flashdata('success', trans("msg_updated"));
+		redirect($this->agent->referrer(),'location', 301);
+	}
+
+
 	/***
 	*
 	*Add product to existing order

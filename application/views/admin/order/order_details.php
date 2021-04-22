@@ -21,7 +21,9 @@
             <div class="box-body">
                 <div class="row" style="margin-bottom: 30px;">
                     <div class="col-sm-12 col-md-12 col-lg-6">
-                        <h4 class="sec-title"><?php echo trans("order"); ?>#<?php echo $order->order_number; ?> </h4>
+                        <h4 class="sec-title">
+                            <?php echo trans("order"); ?>#<?php echo $order->order_number; ?>                             
+                        </h4>
                         <div class="row row-details">
                             <div class="col-xs-12 col-sm-4 col-right">
                                 <strong> <?php echo trans("status"); ?></strong>
@@ -102,6 +104,8 @@
                                 <strong class="font-right"><?php echo trans($order->payment_status); ?></strong>
                             </div>
                         </div>
+
+                        
 
                         <div class="row row-details">
                             <div class="col-xs-12 col-sm-4 col-right">
@@ -265,6 +269,7 @@
 						</div>
 					  </div>
 					</div>
+                    
                     <div class="row">
 						<div class="col-sm-12 col-md-12 col-lg-6">
                             <h4 class="sec-title"><?php echo trans("shipping_address"); ?><a class="bg-green-gradient" style="float: right;margin-left:10px;border-radius: 10%;padding: 3px;" href="https://api.whatsapp.com/send?phone=<?php echo $shipping->shipping_phone_number; ?>" target="_blank"><i class="fa fa-whatsapp" aria-hidden="true"></i></a>  <a style="float:right;" href="#" data-toggle="modal" data-target="#addressModal"><?php echo trans("edit"); ?></a></h4>
@@ -350,6 +355,21 @@
                                     <strong class="font-right"><?php echo $shipping->gps_location; ?></strong>
                                 </div>
                             </div>
+
+
+                            <?php if($order->awb_number) { ?>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> SMSA Tracking Number</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right">
+                                        <a target="_blank" style="color:red" href="https://smsaexpress.com/trackingdetails?tracknumbers%5B0%5D=<?php echo $order->awb_number; ?>"><?php echo $order->awb_number; ?></a>
+                                    </strong>
+                                </div>
+                            </div>
+                            <?php } ?>
+
 
 
                             <div class="row row-details hidden">
@@ -449,10 +469,42 @@
                     </div>
                 <?php endif; ?>
 
-
+                <br>
+                <?php if($order->awb_number == null) { ?>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                    Ship Through SMSA
+                    </button>
+                <?php } ?>
+                <br>
+                
             </div><!-- /.box-body -->
         </div>
     </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirmation Alert</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure ? you want to generate AWB Number...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a class="btn btn-primary" href="<?php echo base_url(); ?>admin/generate_awb/<?php echo $order->order_number; ?>">Continue</a>
+      </div>
+    </div>
+  </div>
+</div>
+    
 
     <!-- Order Task List Start -->
     <div class="col-sm-12">
