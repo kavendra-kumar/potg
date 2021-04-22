@@ -471,7 +471,10 @@
 
                 <br>
                 <?php if($order->awb_number == null) { ?>
-                    <a class="btn btn-sm btn-info" href="<?php echo base_url(); ?>admin/generate_awb/<?php echo $order->order_number; ?>">Ship Through SMSA</a>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                    Ship Through SMSA
+                    </button>
                 <?php } ?>
                 <br>
                 
@@ -479,6 +482,28 @@
         </div>
     </div>
 
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirmation Alert</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure ? you want to generate AWB Number...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a class="btn btn-primary" href="<?php echo base_url(); ?>admin/generate_awb/<?php echo $order->order_number; ?>">Continue</a>
+      </div>
+    </div>
+  </div>
+</div>
     
 
     <!-- Order Task List Start -->
