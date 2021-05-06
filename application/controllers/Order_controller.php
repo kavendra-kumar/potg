@@ -167,6 +167,7 @@ class Order_controller extends Home_Core_Controller
      */
     public function invoice($order_number)
     {
+        
         $data['title'] = trans("invoice");
         $data['description'] = trans("invoice") . " - " . $this->app_name;
         $data['keywords'] = trans("invoice") . "," . $this->app_name;
@@ -231,7 +232,8 @@ class Order_controller extends Home_Core_Controller
                 exit();
             }
         }
-		// echo "<pre>"; print_r($data["order"]); die;
+        $data['getDiscount'] = $this->order_admin_model->get_order_discount($data["order"]->id);
+		//echo "<pre>"; print_r($data["order"]); die;
         $this->load->view('order/invoice', $data);
     }
 

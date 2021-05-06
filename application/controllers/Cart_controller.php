@@ -143,6 +143,9 @@ class Cart_controller extends Home_Core_Controller
      */
     public function cod_direct_post()
     {
+        
+        echo "<pre>"; print_r($this->input->post()); exit;
+        
         $this->cart_model->set_sess_cart_shipping_address();
 		$this->cart_model->set_sess_cart_payment_method();
         $mds_payment_type = $this->input->post('mds_payment_type', true);
@@ -156,6 +159,8 @@ class Cart_controller extends Home_Core_Controller
             @$this->session->unset_userdata('mds_default_location_id');
         }
         //add order
+
+        echo "<pre>"; print_r($payment_option);
         $order_id = $this->order_model->add_order_offline_payment($payment_option);
         $order = $this->order_model->get_order($order_id);
         if (!empty($order)) {

@@ -2181,4 +2181,25 @@ if (!function_exists('makeSoapCall')) {
 }
 
 
+// Check today task
+if(!function_exists('checkTodayTask')){
+     function checkTodayTask() {
+        $ci =& get_instance();
+       
+        $response = $ci->order_admin_model->get_paginated_today_task(15, 0);
+        if(count((array)$response)){
+
+            return true;
+
+        }else{
+
+            return false;
+
+        }
+        
+        
+    }
+}
+
+
 ?>

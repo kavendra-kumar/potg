@@ -653,6 +653,8 @@ class Order_admin_model extends CI_Model
             }
             elseif ($data['status'] == 'scheduled') {
                 $this->db->where('orders.status', 8);
+            }elseif ($data['status'] == 'shipped') {
+                $this->db->where('orders.status', 4);
             }
             elseif ($data['status'] == 'new') {
                 $this->db->where('orders.status', 0);
@@ -709,13 +711,14 @@ class Order_admin_model extends CI_Model
      //get paginated orders
      public function get_paginated_orders($per_page, $offset)
      {
+        //echo "test"; exit;
          $this->filter_orders();
          $this->db->select('orders.*, order_shipping.order_id');
          $this->db->order_by('orders.created_at', 'DESC');
          $this->db->limit($per_page, $offset);
          $this->db->from('orders');
          $this->db->join('order_shipping', 'orders.id = order_shipping.order_id');
-        //  print_r($this->db->last_query()); die;
+       // print_r($this->db->last_query()); die;
          $query = $this->db->get();
          // $query = $this->db->get('orders');
          return $query->result();
@@ -760,7 +763,7 @@ class Order_admin_model extends CI_Model
         $this->db->join('products', 'products.id = order_products.product_id');
         
         $query = $this->db->get();
-        // echo "<pre>"; print_r($query->result()); die;
+        //echo "<pre>"; print_r($query->result()); die;
         return $query->result();
     }
 
@@ -1211,6 +1214,114 @@ class Order_admin_model extends CI_Model
         $this->db->where('status', 1);
         $query = $this->db->get('location_countries');
         return $query->result();
+    }
+
+
+
+    // Add custom shipment detials
+    public function addCustomShipmentDetails($details){
+
+            $data = array(
+            'order_id' => $details['id'],
+            'awb' => $details['task'],
+            'custom_link' => $details['custom_link'],
+            'final_status' => $details['final_status'],
+            'courier' => $details['courier'],
+            'created_at' => date('Y-m-d H:i:s'),
+           
+        );
+
+        return $this->db->insert('order_custom_shipment_details',$data);
+        return true;
+
+    }
+
+
+    public function get_custom_order_details($id){
+
+        $this->db->where('order_id',$id);
+        
+        $query = $this->db->get('order_custom_shipment_details');
+        return $query->result_array();
+
+
+    }
+
+    public function create_order_discount($postdata){
+     //echo "<pre>"; print_r($postdata); exit;
+            if($postdata['type']=='add'){
+                $data = array(
+                        'order_id' => $postdata['order_id'],
+                        'discount_type' => $postdata['discount_type'],
+                        'total_discount' => $postdata['discount'],
+                        'status' => 1,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        );
+
+                $this->db->insert('order_discount',$data);
+            }else{
+
+                $data = array(
+                        'order_id' => $postdata['order_id'],
+                        'discount_type' => $postdata['discount_type'],
+                        'total_discount' => $postdata['discount'],
+                        'status' => 1,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        );
+
+                    //print_r($data); exit;
+
+                   $this->db->where('order_id', $postdata['order_id']);
+                   $this->db->update('order_discount', $data);
+            }
+            
+
+        return true;
+
+    }
+
+    public function get_order_discount($id){
+
+        $this->db->where('order_id',$id);
+        $query = $this->db->get('order_discount');
+
+        return $query->row_array();
+
+    }
+
+
+    public function addCustomCodAmount($postdata){
+
+        $data   = array(
+                    'order_id' => $postdata['order_id'],
+                    'customAmount' => $postdata['custom_amount'],
+                    'status' => 1,
+                    'created_at' => date('Y-m-d H:i:s'),
+                );
+
+        if($postdata['type']=="add"){
+
+            $this->db->insert('order_custom_amount',$data);
+
+        } else {
+
+            $this->db->where('order_id', $postdata['order_id']);
+            $this->db->update('order_custom_amount', $data);
+            
+        }
+        
+
+        return true;
+    }
+
+
+    public function get_custom_code_amount($id){
+
+        $this->db->where('order_id',$id);
+        $query = $this->db->get('order_custom_amount');
+
+        return $query->row_array();
+
     }
 	
 }
