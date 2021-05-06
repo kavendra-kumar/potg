@@ -84,6 +84,7 @@ class Order_admin_controller extends Admin_Core_Controller
 		}
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
+
 		$this->load->view('admin/includes/_header', $data);
 		$this->load->view('admin/order/return_order_details', $data);
 		$this->load->view('admin/includes/_footer');
@@ -96,10 +97,12 @@ class Order_admin_controller extends Admin_Core_Controller
 	 */
 	public function orders()
 	{
+		
 		$data['title'] = trans("orders");
 		$data['form_action'] = admin_url() . "orders";
 		$data['form_action_export'] = admin_url() . "order_admin_controller/orders_export";
-
+		$data['start'] = "";
+		$data['to'] = "";
 		$date_range = $this->input->get('date_range', true);
 		if($date_range){
 			$date_range_arr = explode(" - ", $date_range);
@@ -113,7 +116,7 @@ class Order_admin_controller extends Admin_Core_Controller
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
 		$data['countries'] = $this->order_admin_model->get_countries();
-		// echo "<pre>"; print_r($data['countries']); die;
+		//echo "<pre>"; print_r($data['orders']); die;
 		$this->load->view('admin/includes/_header', $data);
 		$this->load->view('admin/order/orders', $data);
 		$this->load->view('admin/includes/_footer');
@@ -162,6 +165,7 @@ class Order_admin_controller extends Admin_Core_Controller
 
 					// get ordered product info..
 					$products = $this->order_admin_model->get_order_products_by_order_id($obj->id);
+					//echo "<pre>"; print_r($products); exit;
 					$product_title = '';
 					$product_quantity = '';
 					$sku = '';
@@ -436,6 +440,7 @@ class Order_admin_controller extends Admin_Core_Controller
 		$data['title'] = trans("order");
 
 		$data['order'] = $this->order_admin_model->get_order($id);
+		//echo "<pre>"; print_r($data['order']); exit;
 		if (empty($data['order'])) {
 			redirect(admin_url() . "orders");
 		}
@@ -490,6 +495,10 @@ class Order_admin_controller extends Admin_Core_Controller
 		// echo "<pre>"; print_r($data['admin_users']); die;
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
+        $data['ShipmentCustomDetail'] = $this->order_admin_model->get_custom_order_details($id);
+        $data['getDiscount'] = $this->order_admin_model->get_order_discount($id);
+        $data['getCustomDiscount'] = $this->order_admin_model->get_custom_code_amount($id);
+		
 		$this->load->view('admin/includes/_header', $data);
 		$this->load->view('admin/order/order_details', $data);
 		$this->load->view('admin/includes/_footer');
@@ -502,11 +511,19 @@ class Order_admin_controller extends Admin_Core_Controller
 	 */
 	public function generate_awb($Number)
 	{
+		
+
 		$order = $this->order_admin_model->get_order_by_order_number($Number);
+		//echo "<pre>"; print_r($order); exit;
+
+		if($order->awb_number!=""){
+			$Number = $Number.'-'.rand(10,99);
+		}
 		$shipping = get_order_shipping($order->id);
 		$productss = $this->order_admin_model->get_order_products($order->id);
 		$pcs = 0;
 		$product_name = array();
+
 		if($productss){
 			foreach($productss as $products)
 			{
@@ -522,23 +539,73 @@ class Order_admin_controller extends Admin_Core_Controller
 		} else {
 			$total = 0;
 		}
+
 		$currency = $order->price_currency;
 
 		$country = $shipping->shipping_country;
 
-		if($country = 'United Arab Emirates') {
+		$passkey="";
+
+		// if($country == "Oman"){
+		// 	$passkey = 'pMt@3423';
+		// }
+
+//echo $country."--".$passkey; exit;
+		$getCustomCodAmount = array();
+//		echo $country;
+		if($country == "United Arab Emirates") {
+
+			
 			$passkey = 'PmG@5125';
-		} elseif($country = 'Saudi Arabia') {
+
+		} elseif ($country == "Saudi Arabia") {
+
 			$passkey = 'pMt@3423';
-		} elseif($country = 'Oman') {
+
+		} elseif ($country == "Oman") {
+		
+			$getCustomCodAmount = $this->order_admin_model->get_custom_code_amount($order->id);
+			
 			$passkey = 'PmG@3717';
-		} elseif($country = 'Kuwait') {
+
+		} elseif ($country == "Kuwait") {
+
 			$passkey = 'pGt@3424';
-		} elseif($country = 'Bahrain') {
-			$passkey = 'PmG@Pmg@3425';
+
+		} elseif ($country == "Bahrain") {
+
+			$passkey = 'Pmg@3425';
+
+		} 
+
+		if(!empty($getCustomCodAmount)){
+
+			$custVal = $getCustomCodAmount['customAmount'];
+
+		} else {
+
+			$custVal = "";
+
 		}
 
+		//echo $custVal; exit;
+		//echo $passkey; exit;
 
+		// if($country = 'United Arab Emirates') {
+		// 	$passkey = 'PmG@5125';
+		// } elseif($country = 'Saudi Arabia') {
+		// 	$passkey = 'pMt@3423';
+		// } elseif($country = 'Oman') {
+		// 	$passkey = 'PmG@3717';
+		// } elseif($country = 'Kuwait') {
+		// 	$passkey = 'pGt@3424';
+		// } elseif($country = 'Bahrain') {
+		// 	$passkey = 'PmG@Pmg@3425';
+		// }
+
+		
+
+		//$customsCost = ($total/30)*100; 
 		$arguments = array('passKey' => $passkey);
 		$arguments['refNo'] = $Number;
 		$arguments['sentDate'] = date("Y-m-d H:i:s");
@@ -560,21 +627,33 @@ class Order_admin_controller extends Admin_Core_Controller
 		$arguments['carrCurr'] = $currency;
 		$arguments['codAmt'] = $total/100;
 		$arguments['weight'] = '1';
-		$arguments['custVal'] = '0';
+		$arguments['custVal'] = $custVal;
 		$arguments['custCurr'] = $currency;
 		$arguments['insrAmt'] = '0';
 		$arguments['insrCurr'] = $currency;
 		$arguments['itemDesc'] = implode(' | ', $product_name);
 
-		echo "<pre>"; print_r($arguments);
+		//echo "<pre>"; print_r($arguments); 
 
 		$output =    makeSoapCall('addShipment', $arguments);
 		//echo "<pre>"; print_r($output); exit;
 		echo $awb_number = $output->addShipmentResult;
 
-		$this->db->set('awb_number', $awb_number);
-		$this->db->where('id', $order->id);
-		$this->db->update('orders');
+		if($order->awb_number==""){
+
+			$this->db->set('awb_number', $awb_number);
+			$this->db->where('id', $order->id);
+			$this->db->update('orders');
+
+		} else {
+			
+			$updated_awb_number = $order->awb_number.','.$awb_number;
+			$this->db->set('awb_number',$updated_awb_number);
+			$this->db->where('id', $order->id);
+			$this->db->update('orders');
+		}
+		
+		//echo $awb_number; exit;
 
 		$this->session->set_flashdata('success', trans("msg_updated"));
 		redirect($this->agent->referrer(),'location', 301);
@@ -966,6 +1045,8 @@ class Order_admin_controller extends Admin_Core_Controller
 			$this->session->set_flashdata('error', trans("msg_error"));
 		}
 	}
+
+
 	/**
 	 * Select Product Variations
 	 */
@@ -986,6 +1067,76 @@ class Order_admin_controller extends Admin_Core_Controller
 			endforeach;
 		endif; 
 
+	}
+
+
+	public function create_custom_shipment(){
+
+		$this->order_admin_model->addCustomShipmentDetails($this->input->post());
+		$this->session->set_flashdata('success', trans("msg_updated"));
+		redirect($this->agent->referrer());
+		//echo "<pre>"; print_r($this->input->post()); exit;
+	}
+
+
+
+	/** Create Order*/
+	public function createOrder(){
+		$data['products'] = $this->product_admin_model->get_products();
+		//echo "<pre>"; print_r($data['products']); exit;
+		$this->load->view('admin/includes/_header');
+		$this->load->view('admin/order/create_order');
+		$this->load->view('admin/includes/_footer');
+	}
+
+	/*Update smsa old order*/
+
+	public function UpdateOrderId() {
+		//echo "test"; exit;
+     $query = $this->db->select("*")->from("overall_orders_list_with_status")->get()->result_array();
+
+     foreach ($query as $key => $value) {
+     	//echo "<pre>"; print_r($value);  exit;
+
+     	$resultTest = $this->db->select("*")->from("orders")->where("order_number",$value['Orders_Numbers'])->get()->row_array();
+
+     	if(!empty($resultTest) && $resultTest['awb_number']=="") {
+
+     		$data=  array('awb_number' => $value['AWB'],
+     					  'smsa_order_status'=>$value['Final_Status'],
+     					  'order_smsa_type'=>$value['Courier'] 
+     				);
+
+     		//echo "<pre>"; print_r($data); exit;
+     		$this->db->where('order_number',$value['Orders_Numbers']);
+			$this->db->update('orders', $data);
+     	}
+
+     	//echo "<pre>"; print_r($resultTest); exit;
+
+     }
+		//$query = $this->db->get('overall_orders_list_with_status');
+		
+	}
+
+
+	#For manage discount
+	public function createDiscount(){
+
+		$this->order_admin_model->create_order_discount($this->input->post());
+		$this->session->set_flashdata('success', trans("msg_updated"));
+		redirect($this->agent->referrer());
+	}
+
+
+
+	public function addCustomCodAmount() {
+		
+		$this->order_admin_model->addCustomCodAmount($this->input->post());
+		$this->session->set_flashdata('success', trans("msg_updated"));
+		redirect($this->agent->referrer());
+
+		
 	}
 	
 }

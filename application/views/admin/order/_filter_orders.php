@@ -21,6 +21,9 @@
             <?php if($this->uri->segment(2) == "orders"){ ?>
                 
                 <option value="confirmed" <?php echo ($this->input->get('status', true) == 'confirmed') ? 'selected' : ''; ?>><?php echo trans("confirmed"); ?></option>
+                
+                <option value="shipped" <?php echo ($this->input->get('status', true) == 'shipped') ? 'selected' : ''; ?>><?php echo trans("shipped"); ?></option>
+                
                 <option value="completed" <?php echo ($this->input->get('status', true) == 'completed') ? 'selected' : ''; ?>><?php echo trans("completed"); ?></option>
                 <option value="cancelled" <?php echo ($this->input->get('status', true) == 'cancelled') ? 'selected' : ''; ?>><?php echo trans("cancelled"); ?></option>
                 <option value="processing" <?php echo ($this->input->get('status', true) == 'processing') ? 'selected' : ''; ?>><?php echo trans("order_processing"); ?></option>

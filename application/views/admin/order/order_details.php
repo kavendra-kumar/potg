@@ -357,7 +357,7 @@
                             </div>
 
 
-                            <?php if($order->awb_number) { ?>
+                            <?php /*if($order->awb_number) { ?>
                             <div class="row row-details">
                                 <div class="col-xs-12 col-sm-4 col-right">
                                     <strong> SMSA Tracking Number</strong>
@@ -368,7 +368,7 @@
                                     </strong>
                                 </div>
                             </div>
-                            <?php } ?>
+                            <?php } */?>
 
 
 
@@ -470,17 +470,194 @@
                 <?php endif; ?>
 
                 <br>
-                <?php if($order->awb_number == null) { ?>
+              
+                <?php /* if($order->awb_number == null) { ?>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                    Ship Through SMSA
-                    </button>
-                <?php } ?>
+                    
+                <?php } */?>
                 <br>
                 
             </div><!-- /.box-body -->
         </div>
     </div>
+
+
+    <!-- shipping details -->
+    <div class="col-sm-12">
+   <div class="box">
+      <div class="box-header with-border">
+         <h3 class="box-title"><b>Shipping Details</b></h3>
+        
+      </div>
+      <!-- /.box-header -->
+      <div class="box-body">
+         <div class="row">
+            <!-- include message block -->
+            <div class="col-sm-12">
+               <!--print error messages-->
+               <!--print custom error message-->
+               <!--print custom success message-->
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm-12">
+               <div class="table-responsive" id="">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                    Ship Through SMSA
+                    </button>
+
+                    <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateTaskModal"><i class="fa fa-plus"></i> Create Custom Shipment detail</button>
+                    
+                    <?php if($shipping->billing_country=='Oman'){ ?>
+                        <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateCustomAmount"><i class="fa fa-plus"></i><?php echo empty($getCustomDiscount)?"Add Csutom COD":"Edit Custom COD"; ?></button>
+                    <?php } ?>
+
+                     <div class="col-sm-12">
+                        <?php $this->load->view('admin/includes/_messages'); ?>
+                    </div>
+                  <table class="table table-bordered table-striped" role="grid">
+                     <thead>
+                        <tr role="row">
+                           <th>Order Number</th>
+                           <th>ID</th>
+                           <th>AWB</th>
+                           <th>Final Status</th>
+                           <th>Courier</th>
+                           
+                        </tr>
+                     </thead>
+                     <tbody>
+                          <?php 
+                            $awb_number = explode(',', $order->awb_number); 
+                          // echo "<pre>";  print_r($awb_number); exit;
+                          foreach($awb_number as $awb) { ?>
+                        <tr>
+                           <td style="width: 80px;">
+                              <?php echo ($order->order_number!="") ? $order->order_number :"--" ; ?>                                       
+                           </td>
+                           <td>
+                            <?php 
+                                 echo ($order->order_number != "") ?$order->order_number:"--" ;?>
+                           </td>
+                           <td>  
+
+                           
+                          
+
+                                <a target="_blank" style="color:red" href="https://smsaexpress.com/trackingdetails?tracknumbers%5B0%5D=<?php echo $awb; ?>"><?php echo ($awb != "") ? $awb:"--" ;?> </a> <br>
+
+                           
+
+                            </td>
+                           <td><?php 
+
+                       
+          
+            $shipping = get_order_shipping($order->id);
+           // print_r($shipping); exit;
+            $country = $shipping->shipping_country;
+
+            $passkey="";
+
+            if($country == "United Arab Emirates") {
+
+                $passkey = 'PmG@5125';
+            } elseif ($country == "Saudi Arabia") {
+                $passkey = 'pMt@3423';
+
+            } elseif ($country == "Oman") {
+
+                $passkey == 'PmG@3717';
+
+            } elseif ($country == "Kuwait") {
+
+                $passkey = 'pGt@3424';
+
+            } elseif ($country == "Bahrain") {
+
+                $passkey = 'Pmg@3425';
+
+            } 
+
+
+            $arguments = array('awbNo' =>$awb);
+            $arguments['passkey'] = $passkey;
+
+
+
+
+
+
+
+
+        $url    = "http://track.smsaexpress.com/SECOM/SMSAwebService.asmx?wsdl";
+        $client     = new SoapClient($url, array("trace" => 1, "exception" => 0));
+        //echo "<pre>"; print_r($arguments); exit;
+        try {
+
+             $data= $client->{'getStatus'}($arguments);
+             $response = count((array)$data)? $data->getStatusResult:'--';
+             //echo "<pre>"; print_r($response); exit;
+        }
+        catch(Exception $e) {
+
+        }
+
+       
+    //echo "<pre>"; print_r($data); exit;
+
+
+
+
+?>
+
+
+
+
+                          <?php echo (@$response != "") ? @$response:"--" ;?></td>
+                           <td>
+                              <?php echo ($order->order_smsa_type != "") ? "SMSA":"--" ;?>
+                           </td>
+                           
+                        </tr>
+                         <?php } ?>
+
+             <?php foreach($ShipmentCustomDetail as $shipment) { ?>
+                <tr>
+   <td style="width: 80px;">
+      <?php echo $shipment['order_id']; ?>                                   
+   </td>
+   <td>
+       <?php echo $shipment['order_id']; ?>                             
+   </td>
+   <td>  
+      <a target="_blank" style="color:red" href="<?php echo $shipment['custom_link']; ?> "> <?php echo $shipment['awb']; ?>  
+   </td>
+   <td>
+      <?php echo $shipment['final_status']; ?>  
+   </td>
+   <td>
+      <?php echo $shipment['courier']; ?>                           
+   </td>
+</tr>
+                <?php } ?> 
+                     </tbody>
+                  </table>
+                  <div class="col-sm-12 table-ft">
+                     <div class="row">
+                        <div class="pull-right">
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- /.box-body -->
+   </div>
+</div>
+
+    <!-- End Shipping Details -->
 
 
 
@@ -768,6 +945,10 @@
                     <strong> <?php echo trans("subtotal"); ?></strong>
                 </div>
                 <div class="col-sm-6">
+                    <?php 
+
+                    //echo $getDiscount['discount_type'].'-----'.$getDiscount['total_discount']; exit;
+                    //echo "<pre>"; print_r($getDiscount); exit; ?>
                     <strong class="font-right"><?php echo price_formatted($order->price_subtotal, $order->price_currency); ?></strong>
                 </div>
             </div>
@@ -781,23 +962,75 @@
                     </div>
                 </div>
             <?php endif; ?>
-            <?php if ($is_order_has_physical_product): ?>
+           
+
+
+              <?php 
+
+           
+
+
+              if ($getDiscount['discount_type']!=""): ?>
                 <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
-                        <strong> <?php echo trans("shipping"); ?></strong>
+                        <strong> Discount type </strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong class="font-right">
+                            <?php if($getDiscount['discount_type']=="fix-amount"){ ?>
+                                Fix amount
+                            <?php } elseif($getDiscount['discount_type']=="percentage"){ ?>
+                                Percentage
+                            <?php } ?>
+
+                          
+                            
+                        </strong>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+             <?php if ($getDiscount['total_discount']!=""): ?>
+                <div class="row row-details">
+                    <div class="col-xs-12 col-sm-6 col-right">
+                        <strong> Total Discount </strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong class="font-right"><?php echo $getDiscount['total_discount']; ?></strong>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+               <?php if ($is_order_has_physical_product): ?>
+                <div class="row row-details">
+                    <div class="col-xs-12 col-sm-6 col-right">
+                        <strong> <?php echo trans("shipping"); ?> </strong>
                     </div>
                     <div class="col-sm-6">
                         <strong class="font-right"><?php echo price_formatted($order->price_shipping, $order->price_currency); ?></strong>
                     </div>
                 </div>
             <?php endif; ?>
+             
+                    <div class="row row-details">
+                    <div class="col-xs-12 col-sm-6 col-right">
+                        <strong>
+
+                            <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateDiscount"><i class="fa fa-plus"></i><?php echo $getDiscount['total_discount']?'Edit Discount':'Add Discount'; ?></button> 
+                        </strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <strong class="font-right"></strong>
+                    </div>
+                </div>
+                
             <hr>
             <div class="row row-details">
                 <div class="col-xs-12 col-sm-6 col-right">
                     <strong> <?php echo trans("total"); ?></strong>
                 </div>
                 <div class="col-sm-6">
-                    <strong class="font-right"><?php echo price_formatted($order->price_total, $order->price_currency); ?></strong>
+                    <strong class="font-right"><?php echo price_formatted_again($order->price_subtotal, $order->price_currency,$getDiscount['discount_type'],$getDiscount['total_discount'],$order->price_shipping,$order->price_vat); ?></strong>
                 </div>
             </div>
         </div>
@@ -870,10 +1103,14 @@
 							<option value="">Select Product</option>
 							<?php if($listproducts):?>
 							<?php foreach($listproducts as $listproduct):?>
+
                                  <option value="<?php echo $listproduct->id; ?>"><?php echo $listproduct->title; ?></option>
+
                             <?php endforeach;?>
 							<?php else:?>
+
 									<option value=""><?php echo 'No Products'; ?></option>
+
 							<?php endif;?>
 							</select>
                         </div>
@@ -905,44 +1142,35 @@
     <div id="CreateTaskModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <?php echo form_open('order_admin_controller/create_task_post'); ?>
+                <?php echo form_open('order_admin_controller/create_custom_shipment'); ?>
                 <input type="hidden" name="id" value="<?php echo $order->id; ?>">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"><?php echo trans("order_follw_up"); ?></h4>
+                    <h4 class="modal-title">Shipment Details</h4>
                 </div>
                 <div class="modal-body">
                     <div class="table-order-status">
 
                         <div class="form-group">
-                            <label class="control-label"><?php echo trans('task'); ?></label>
+                            <label class="control-label"> AWB </label>
+                          
                             <input type="text" name="task" class="form-control" value="" required />
                         </div>
-                        <div class="form-group">
-                            <label class="control-label"><?php echo trans('comment'); ?></label>
-                            <textarea name="comment" class="form-control"></textarea>
+                         <div class="form-group">
+                            <label class="control-label"> Custom Links </label>
+                          
+                            <input type="text" name="custom_link" class="form-control" value="" required />
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><?php echo trans('reminder_date'); ?></label>
-                            <input type="text" name="reminder_date"id="datepicker" class="form-control datepicker" value="" required />
+                            <label class="control-label">Final Status</label>
+                            <input type="text" name="final_status" class="form-control" value="" required />
                         </div>
                         <div class="form-group">
-                            <label class="control-label"><?php echo trans('reminder_time'); ?></label>
-                            <input placeholder="Select time" type="text" name="reminder_time" id="reminder_time" class="form-control timepicker">
+                            <label class="control-label">Courier</label>
+                            <input type="text" name="courier" id="" class="form-control datepicker" value="" required />
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="control-label"><?php echo trans('assign_to'); ?></label>
-                            
-                            <select id="assign_to" name="assign_to[]" class="form-control mySelect for" multiple="multiple" style="width: 100%" required>
-                                <?php
-                                if($admin_users) {
-                                    foreach($admin_users as $obj){
-                                ?>
-                                <option value="<?php echo $obj->id; ?>"><?php echo $obj->first_name.' '.$obj->last_name; ?></option>
-                                <?php } } ?>
-                            </select>
-                        </div>
+                       
+                      
                         
                     </div>
                 </div>
@@ -954,10 +1182,51 @@
             </div>
         </div>
     </div>
+
+    <!-- Create Discount -->
+      <div id="CreateDiscount" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <?php echo form_open('admin/create-discount'); ?>
+                <input type="hidden" name="order_id" value="<?php echo $order->id; ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><?php echo $getDiscount['discount_type']=="Create Discount"?"":"Edit Discount";?></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-order-status">
+                     <input type="hidden" name="type" value= "<?php echo ($getDiscount['total_discount'])?'edit':'add'; ?>" id="discount" class="form-control">
+                        <div class="form-group">
+                            <label class="control-label">Discount Type</label>
+                             <select class="form-control" name="discount_type" id="" required>
+                                <option value="">Select Status</option>
+                                <option <?php echo ($getDiscount['discount_type']=="fix-amount")?"selected":""; ?> value="fix-amount">Fix amount</option>
+                                <option <?php echo ($getDiscount['discount_type']=="percentage")?"selected":""; ?>value="percentage">Percentage</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="control-label">Fill Discount</label>
+                            <input type="text" name="discount" value= "<?php echo ($getDiscount['total_discount'])?$getDiscount['total_discount']:''; ?>" id="discount" class="form-control">
+                        </div>
+
+                   </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+                <?php echo form_close(); ?>
+            </div>
+        </div>
+    </div>
+    <!-- End -->
     
 
     <!--update task Modal -->
-    <div id="UpdateTaskModal" class="modal fade" role="dialog">
+    <div id="createCustomShipmentModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <?php echo form_open('order_admin_controller/update_task_post'); ?>
@@ -1016,7 +1285,96 @@
             </div>
         </div>
     </div>
-    
+
+    <div id="CreateCustomAmount" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <?php echo form_open('admin/custom-amount'); ?>
+                <input type="hidden" name="order_id" value="<?php echo $order->id; ?>">
+                <input type="hidden" name="type" value="<?php echo empty($getCustomDiscount)?"add":"update"; ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-order-status">
+
+                        <div class="form-group">
+                            <label class="control-label"><?php echo empty($getCustomDiscount)?"Add Csutom COD":"Edit Custom COD"; ?></label>
+                            <input type="text" name="custom_amount" class="form-control" value="<?php echo empty($getCustomDiscount)?"":$getCustomDiscount['customAmount']; ?>" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success addCustomAmount"><?php echo trans("save_changes"); ?></button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+                <?php echo form_close(); ?>
+            </div>
+        </div>
+    </div>
+
+
+     <div id="UpdateTaskModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <?php echo form_open('order_admin_controller/update_task_post'); ?>
+                <input type="hidden" name="task_id" id="task_id" value="">
+                <input type="hidden" name="order_id" value="<?php echo $order->id; ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><?php echo trans("order_follw_up"); ?></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-order-status">
+
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('task'); ?></label>
+                            <input type="text" name="task" id="task" class="form-control" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('comment'); ?></label>
+                            <textarea name="comment" id="comment" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('reminder_date'); ?></label>
+                            <input type="text" name="reminder_date" id="datepicker2" class="form-control reminder_date datepicker" value="" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('status'); ?></label>
+                            <select class="form-control" name="status" id="task_status" required>
+                                <option value="">Select Status</option>
+                                <option value="1">Close</option>
+                                <option value="0">Open</option>
+                            </select>
+                        </div>
+
+                        
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('assign_to'); ?></label>
+                            
+                            <select id="task_assign_to" name="assign_to[]" class="form-control mySelect for" multiple="multiple" style="width: 100%" required>
+                                <?php
+                                if($admin_users) {
+                                    foreach($admin_users as $obj){
+                                ?>
+                                <option value="<?php echo $obj->id; ?>"><?php echo $obj->first_name.' '.$obj->last_name; ?></option>
+                                <?php } } ?>
+                            </select>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+                <?php echo form_close(); ?>
+            </div>
+        </div>
+    </div>
+
     <?php if($recent_orders) { ?>
     <!--Recent Orders Modal -->
     <!-- <div id="RecentOrdersModal" class="modal fade" role="dialog">
@@ -1132,6 +1490,11 @@ $("#productId").on('change',function(){
 });
 </script>
 <script>
+    
+
+
+
+
 $(document).ready(function(){
     $( ".update_task" ).on( "click", function() {
         var task_id = $(this).attr('alt');

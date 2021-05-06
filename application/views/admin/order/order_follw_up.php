@@ -79,7 +79,13 @@
                                         $name_arr = array();
                                         foreach($assign_to as $uid){
                                             $inf = get_user($uid);
-                                            echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
+                                            //echo "<pre>"; print_r($inf); 
+                                            if(count((array)$inf)) {
+
+                                                echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
+
+                                            } 
+
                                         }
                                     } else {}
                                     ?>
