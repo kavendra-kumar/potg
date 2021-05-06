@@ -350,8 +350,9 @@ if (!function_exists('calculate_earned_amount')) {
 
 //price formatted
 if (!function_exists('price_formatted')) {
-    function price_formatted($price, $currency, $format = null)
+    function price_formatted($price, $currency, $format = null, $discounttype = null, $totalDiscount= null)
     {
+        
         $ci =& get_instance();
         $price = $price / 100;
         $dec_point = '.';
@@ -368,7 +369,94 @@ if (!function_exists('price_formatted')) {
         }
         // $price = number_format((float)$price, 2, '.', '');
         $price = price_currency_format($price, $currency);
+       // echo $price; 
+      
+        
         return $price;
+    }
+}
+
+
+//price formatted
+if (!function_exists('price_formatted_again')) {
+    function price_formatted_again($price, $currency, $discounttype, $totalDiscount, $shipping, $vat)
+    {
+        
+        //echo $price.'----'.$currency.'-----'.$discounttype.'------'.$totalDiscount.'-----'.$shipping; exit;
+
+        $ci =& get_instance();
+        $price = $price / 100;
+        $dec_point = '.';
+        $thousands_sep = ',';
+        if ($ci->thousands_separator != '.') {
+            $dec_point = ',';
+            $thousands_sep = '.';
+        }
+
+        if (is_int($price)) {
+            $price = number_format($price, 0, $dec_point, $thousands_sep);
+        } else {
+            $price = number_format($price, 2, $dec_point, $thousands_sep);
+        }
+
+
+        // For vat
+        $vat = $vat / 100;
+        $dec_point = '.';
+        $thousands_sep = ',';
+        if ($ci->thousands_separator != '.') {
+            $dec_point = ',';
+            $thousands_sep = '.';
+        }
+
+        if (is_int($vat)) {
+            $vat = number_format($vat, 0, $dec_point, $thousands_sep);
+        } else {
+            $vat = number_format($vat, 2, $dec_point, $thousands_sep);
+        }
+
+      //  echo $vat; exit;
+
+        // For Shipping
+        $shipping = $shipping / 100;
+        $dec_point = '.';
+        $thousands_sep = ',';
+        if ($ci->thousands_separator != '.') {
+            $dec_point = ',';
+            $thousands_sep = '.';
+        }
+
+        if (is_int($shipping)) {
+            $shipping = number_format($shipping, 0, $dec_point, $thousands_sep);
+        } else {
+            $shipping = number_format($shipping, 2, $dec_point, $thousands_sep);
+        }
+
+
+
+
+
+      // $price = number_format((float)$price, 2, '.', '');
+        
+       // echo $price; 
+        if($discounttype=="fix-amount"){
+
+            $price =  str_replace(',' , '', $price) - str_replace(',' , '', $totalDiscount);   
+
+            
+
+        }elseif($discounttype=="percentage"){
+
+            $price =($totalDiscount / 100) * $price;
+
+        }
+        
+        $finalPrice = $price+$shipping+$vat;
+
+        $finalPrice     = price_currency_format($finalPrice, $currency);
+       
+
+        return $finalPrice;
     }
 }
 

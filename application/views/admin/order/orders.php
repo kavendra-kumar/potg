@@ -41,6 +41,8 @@ input.checkbox {
 						<tbody>
 						<?php echo form_open('order_admin_controller/orders_export'); ?>
 						<?php foreach ($orders as $item): ?>
+
+							<?php //echo "<pre>"; print_r($item); exit; ?>
 							<tr>
 								<td>
 									<input type="checkbox" name="order_ids[]" value="<?php echo html_escape($item->id); ?>" class="checkbox orders_export" />
