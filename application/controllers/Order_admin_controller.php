@@ -534,11 +534,10 @@ class Order_admin_controller extends Admin_Core_Controller
 			}
 		}
 
-		if($order->payment_method == 'Cash On Delivery'){
-			$total = $order->price_total;
-		} else {
-			$total = 0;
-		}
+		$total = $order->price_total;
+
+		$minus_per = $order->price_total * 30 / 100;
+		$custom_value = ($order->price_total - $minus_per)/100;
 
 		$currency = $order->price_currency;
 
@@ -550,9 +549,9 @@ class Order_admin_controller extends Admin_Core_Controller
 		// 	$passkey = 'pMt@3423';
 		// }
 
-//echo $country."--".$passkey; exit;
+		//echo $country."--".$passkey; exit;
 		$getCustomCodAmount = array();
-//		echo $country;
+		//		echo $country;
 		if($country == "United Arab Emirates") {
 
 			
@@ -565,6 +564,9 @@ class Order_admin_controller extends Admin_Core_Controller
 		} elseif ($country == "Oman") {
 		
 			$getCustomCodAmount = $this->order_admin_model->get_custom_code_amount($order->id);
+			if(!empty($getCustomCodAmount)){
+				$custom_value = $getCustomCodAmount['customAmount'];
+			}
 			
 			$passkey = 'PmG@3717';
 
@@ -578,15 +580,7 @@ class Order_admin_controller extends Admin_Core_Controller
 
 		} 
 
-		if(!empty($getCustomCodAmount)){
-
-			$custVal = $getCustomCodAmount['customAmount'];
-
-		} else {
-
-			$custVal = "";
-
-		}
+		
 
 		//echo $custVal; exit;
 		//echo $passkey; exit;
@@ -627,7 +621,7 @@ class Order_admin_controller extends Admin_Core_Controller
 		$arguments['carrCurr'] = $currency;
 		$arguments['codAmt'] = $total/100;
 		$arguments['weight'] = '1';
-		$arguments['custVal'] = $custVal;
+		$arguments['custVal'] = $custom_value;
 		$arguments['custCurr'] = $currency;
 		$arguments['insrAmt'] = '0';
 		$arguments['insrCurr'] = $currency;
