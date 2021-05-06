@@ -971,7 +971,7 @@
 
 
               if ($getDiscount['discount_type']!=""): ?>
-                <div class="row row-details">
+                <!-- <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong> Discount type </strong>
                     </div>
@@ -987,21 +987,33 @@
                             
                         </strong>
                     </div>
-                </div>
+                </div> -->
             <?php endif; ?>
 
-             <?php if ($getDiscount['total_discount']!=""): ?>
+             <?php if ($getDiscount['total_discount']!=""): 
+                
+                if($getDiscount['discount_type']=="fix-amount") {
+                    $total_discount = $getDiscount['total_discount'];
+                    $msg = '';
+                } else {
+                    $total_discount = ($order->price_subtotal / 100) * $getDiscount['total_discount']/100;
+                    $msg = ' ('.$getDiscount['total_discount'].'%)';
+                }
+            ?>
                 <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong> Total Discount </strong>
                     </div>
                     <div class="col-sm-6">
-                        <strong class="font-right"><?php echo $getDiscount['total_discount']; ?></strong>
+                        <strong class="font-right">
+                            <?php echo $msg; ?>
+                            <?php echo price_formatted($total_discount*100, $order->price_currency); ?>
+                        </strong>
                     </div>
                 </div>
             <?php endif; ?>
 
-               <?php if ($is_order_has_physical_product): ?>
+            <?php if ($is_order_has_physical_product): ?>
                 <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong> <?php echo trans("shipping"); ?> </strong>
@@ -1030,7 +1042,9 @@
                     <strong> <?php echo trans("total"); ?></strong>
                 </div>
                 <div class="col-sm-6">
-                    <strong class="font-right"><?php echo price_formatted_again($order->price_subtotal, $order->price_currency,$getDiscount['discount_type'],$getDiscount['total_discount'],$order->price_shipping,$order->price_vat); ?></strong>
+                    <strong class="font-right">
+                    <?php echo price_formatted($order->price_total, $order->price_currency); ?>
+                    <?php // echo price_formatted_again($order->price_subtotal, $order->price_currency,$getDiscount['discount_type'],$getDiscount['total_discount'],$order->price_shipping,$order->price_vat); ?></strong>
                 </div>
             </div>
         </div>
@@ -1195,13 +1209,18 @@
                 </div>
                 <div class="modal-body">
                     <div class="table-order-status">
+
+                    <input type="hidden" name="price_subtotal" value="<?php echo $order->price_subtotal; ?>" />
+                    <input type="hidden" name="price_vat" value="<?php echo $order->price_vat; ?>" />
+                    <input type="hidden" name="price_shipping" value="<?php echo $order->price_shipping; ?>" />
+
                      <input type="hidden" name="type" value= "<?php echo ($getDiscount['total_discount'])?'edit':'add'; ?>" id="discount" class="form-control">
                         <div class="form-group">
                             <label class="control-label">Discount Type</label>
                              <select class="form-control" name="discount_type" id="" required>
                                 <option value="">Select Status</option>
-                                <option <?php echo ($getDiscount['discount_type']=="fix-amount")?"selected":""; ?> value="fix-amount">Fix amount</option>
-                                <option <?php echo ($getDiscount['discount_type']=="percentage")?"selected":""; ?>value="percentage">Percentage</option>
+                                <option <?php echo ($getDiscount['discount_type']=="fix-amount")?"selected":""; ?>  value="fix-amount">Fix amount</option>
+                                <option <?php echo ($getDiscount['discount_type']=="percentage")?"selected":""; ?> value="percentage">Percentage</option>
                             </select>
                         </div>
 

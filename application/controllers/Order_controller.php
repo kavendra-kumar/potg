@@ -203,6 +203,15 @@ class Order_controller extends Home_Core_Controller
                 $datas['price_total']+=$products->product_total_price;
 				
 			}
+            $discount = $this->order_admin_model->get_order_discount($data["order"]->id);
+			if($discount) {
+				if($discount['discount_type'] == 'fix-amount') {
+					$datas['price_total'] = (($datas['price_total']/100) - $discount['total_discount'])*100;
+				} else {
+					$disc_per = ($datas['price_subtotal']/100) * $discount['total_discount'] / 100;
+					$datas['price_total'] = (($datas['price_total']/100) - $disc_per)*100;
+				}
+			}
 			$this->order_model->update_order($datas,$data["order"]->id);
 		
 		}

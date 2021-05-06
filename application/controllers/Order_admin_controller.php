@@ -477,6 +477,18 @@ class Order_admin_controller extends Admin_Core_Controller
                 $datas['price_total']+=$products->product_total_price;
 				
 			}
+			$discount = $this->order_admin_model->get_order_discount($id);
+			if($discount) {
+				if($discount['discount_type'] == 'fix-amount') {
+					
+					$datas['price_total'] = (($datas['price_total']/100) - $discount['total_discount'])*100;
+					//echo $datas['price_total']; die;
+				} else {
+					$disc_per = ($datas['price_subtotal']/100) * $discount['total_discount'] / 100;
+					$datas['price_total'] = (($datas['price_total']/100) - $disc_per)*100;
+				}
+			}
+
 			$this->order_model->update_order($datas,$id);
 		
 		}
@@ -533,6 +545,8 @@ class Order_admin_controller extends Admin_Core_Controller
 				}
 			}
 		}
+
+		// print_r($product_name); die;
 
 		$total = $order->price_total;
 

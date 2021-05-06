@@ -1247,9 +1247,9 @@ class Order_admin_model extends CI_Model
 
     }
 
-    public function create_order_discount($postdata){
+    public function create_order_discount($postdata) {
      //echo "<pre>"; print_r($postdata); exit;
-            if($postdata['type']=='add'){
+            if($postdata['type']=='add') {
                 $data = array(
                         'order_id' => $postdata['order_id'],
                         'discount_type' => $postdata['discount_type'],
@@ -1259,8 +1259,7 @@ class Order_admin_model extends CI_Model
                         );
 
                 $this->db->insert('order_discount',$data);
-            }else{
-
+            } else {
                 $data = array(
                         'order_id' => $postdata['order_id'],
                         'discount_type' => $postdata['discount_type'],
@@ -1269,13 +1268,21 @@ class Order_admin_model extends CI_Model
                         'updated_at' => date('Y-m-d H:i:s'),
                         );
 
-                    //print_r($data); exit;
-
                    $this->db->where('order_id', $postdata['order_id']);
                    $this->db->update('order_discount', $data);
             }
-            
 
+            if($postdata['discount_type'] == 'fix-amount') {
+                $price_total = ($postdata['price_subtotal'] - $postdata['discount']) + $postdata['price_vat'] + $postdata['price_shipping'];
+            } else {
+                $disc_per = $postdata['price_subtotal'] * $postdata['discount'] / 100;
+                $price_total = ($postdata['price_subtotal'] - $disc_per) + $postdata['price_vat'] + $postdata['price_shipping'];
+            }
+            $arr = array('price_total' => $price_total);
+            $this->db->where('id', $postdata['order_id']);
+            $this->db->update('orders', $arr);
+            
+            // echo $price_total; die;
         return true;
 
     }

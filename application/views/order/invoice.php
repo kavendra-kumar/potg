@@ -267,7 +267,7 @@
                                     <?php endif; ?>
 
                                         <?php  if ($getDiscount['discount_type']!=""): ?>
-                                            <div class="row mb-2">
+                                            <!-- <div class="row mb-2">
                                             <div class="col-6 col-left">
                                                 Discount type
                                             </div>
@@ -280,16 +280,31 @@
                                                     <?php } ?>
                                                 </strong>
                                             </div>
-                                            </div>
+                                            </div> -->
                                         <?php endif; ?>
 
-                                     <?php if ($getDiscount['total_discount']): ?>
+                                     <?php if ($getDiscount['total_discount']):
+                                    
+                                    if($getDiscount['discount_type']=="fix-amount") {
+                                        $total_discount = $getDiscount['total_discount'];
+                                        $msg = '';
+                                    } else {
+                                        $total_discount = ($sale_subtotal / 100) * $getDiscount['total_discount']/100;
+                                        $msg = ' ('.$getDiscount['total_discount'].'%)';
+                                    }
+                                        
+                                    ?>
                                         <div class="row mb-2">
                                             <div class="col-6 col-left">
                                                 Total Discount
                                             </div>
                                             <div class="col-6 col-right">
-                                                <strong class="font-600"><?php echo $getDiscount['total_discount']; ?></strong>
+                                                <strong class="font-600">
+                                                    <?php echo $msg; ?>
+                                                    <?php echo price_formatted($total_discount*100, $order->price_currency); ?>
+                                                    
+
+                                                </strong>
                                             </div>
                                         </div>
                                     <?php endif; ?>
@@ -299,7 +314,7 @@
                                         </div>
                                         <div class="col-6 col-right">
                                             <strong class="font-600">
-<?php echo price_formatted_again($sale_subtotal, $order->price_currency,$getDiscount['discount_type'],$getDiscount['total_discount'],$sale_shipping,$sale_vat); ?>
+<?php echo price_formatted($sale_total, $order->price_currency); ?>
 
 <?php //echo price_formatted($sale_total, $order->price_currency); ?></strong>
                                         </div>
