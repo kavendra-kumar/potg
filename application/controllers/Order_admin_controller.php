@@ -155,8 +155,11 @@ class Order_admin_controller extends Admin_Core_Controller
 					'custom_value' => 'Custom Value',
 					'payment_status' => 'Payment Status',
 					'price_currency' => 'Currency',
+					'assign_to' => 'Assign To',
+					'created_at' => 'Created At',
 					'recent_order_number' => 'Recent Order Number',
 					'recent_order_status' => 'Recent Order Status',
+					
 				);
 				foreach($orders as $obj) {
 					//echo "<pre>";  print_r($obj); die;
@@ -228,6 +231,13 @@ class Order_admin_controller extends Admin_Core_Controller
 
 					$Number  = ($obj->shipping_phone_number) ? $obj->shipping_phone_number:'';
 
+					if($obj->assign_to) {
+						$inf = get_user($obj->assign_to);
+                        $contact_person = $inf->first_name.' '.$inf->last_name;
+					} else {
+						$contact_person = '';
+					}
+
 					$data[] = array(
 						'order_number' => ($obj->order_number)?$obj->order_number:'',
 						'name' => ($obj->shipping_first_name ? $obj->shipping_first_name:'').' '.($obj->shipping_last_name ?$obj->shipping_last_name:''),
@@ -246,6 +256,8 @@ class Order_admin_controller extends Admin_Core_Controller
 						'custom_value' => number_format($custom_value, 2),
 						'payment_status' => trans($obj->payment_status),
 						'price_currency' => ($obj->price_currency)?$obj->price_currency:'',
+						'assign_to' => $contact_person,
+						'created_at' => ($obj->created_at)?$obj->created_at:'',
 						'recent_order_number' => $rec_order_number,
 						'recent_order_status' => $rec_status
 					);
@@ -309,6 +321,8 @@ class Order_admin_controller extends Admin_Core_Controller
 				'custom_value' => 'Custom Value',
 				'payment_status' => 'Payment Status',
 				'price_currency' => 'Currency',
+				'assign_to' => 'Assign To',
+				'created_at' => 'Created At',
 				'recent_order_number' => 'Recent Order Number',
 				'recent_order_status' => 'Recent Order Status',
 			);
@@ -381,6 +395,12 @@ class Order_admin_controller extends Admin_Core_Controller
 				}
 
 				$Number  = ($obj->shipping_phone_number) ? $obj->shipping_phone_number:'';
+				if($obj->assign_to) {
+					$inf = get_user($obj->assign_to);
+					$contact_person = $inf->first_name.' '.$inf->last_name;
+				} else {
+					$contact_person = '';
+				}
 
 				$data[] = array(
 					'order_number' => ($obj->order_number)?$obj->order_number:'',
@@ -400,6 +420,8 @@ class Order_admin_controller extends Admin_Core_Controller
 					'custom_value' => number_format($custom_value, 2),
 					'payment_status' => trans($obj->payment_status),
 					'price_currency' => ($obj->price_currency)?$obj->price_currency:'',
+					'assign_to' => $contact_person,
+					'created_at' => ($obj->created_at)?$obj->created_at:'',
 					'recent_order_number' => $rec_order_number,
 					'recent_order_status' => $rec_status
 				);
@@ -1145,6 +1167,20 @@ class Order_admin_controller extends Admin_Core_Controller
 		redirect($this->agent->referrer());
 
 		
+	}
+
+	/**
+	 * Assign contact person Post
+	 */
+	public function assign_contact_person()
+	{
+		if ($this->order_admin_model->assign_contact_person()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
 	}
 	
 }

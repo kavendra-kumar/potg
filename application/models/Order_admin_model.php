@@ -727,7 +727,7 @@ class Order_admin_model extends CI_Model
     // get orders for export
     public function get_all_orders_export()
     {
-        $this->db->select('orders.id, orders.order_number, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->select('orders.id, orders.order_number, orders.assign_to, orders.created_at, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
         // $this->db->where('orders.status !=', 3);
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
@@ -741,7 +741,7 @@ class Order_admin_model extends CI_Model
     // get orders for export
     public function get_orders_export($order_ids)
     {
-        $this->db->select('orders.id, orders.order_number, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->select('orders.id, orders.order_number, orders.assign_to, orders.created_at, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->where_in('orders.id', $order_ids);
@@ -1329,6 +1329,19 @@ class Order_admin_model extends CI_Model
 
         return $query->row_array();
 
+    }
+
+    
+    //Assign Contact Person
+    public function assign_contact_person()
+    {
+        $data_order = array(
+            'assign_to' => $this->input->post('assign_to', true),
+        );
+
+        $this->db->where('id', $this->input->post('id', true));
+        $this->db->update('orders', $data_order);
+        return false;
     }
 	
 }
