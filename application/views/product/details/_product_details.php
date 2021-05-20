@@ -29,7 +29,20 @@
             endif;
         endif; ?>
 
-        <h1 class="product-title"><?php echo html_escape($product->title); ?></h1>
+        <h1 class="product-title">
+            <?php
+            if($this->selected_lang->short_form == 'ar') {
+                if($product->title_arbic) {
+                    echo html_escape($product->title_arbic);
+                } else {
+                    echo html_escape($product->title);
+                }
+            } else {
+                echo html_escape($product->title);
+            }
+            
+            ?>
+        </h1>
         <?php if ($product->status == 0): ?>
             <label class="badge badge-warning badge-product-status"><?php echo trans("pending"); ?></label>
         <?php elseif ($product->visibility == 0): ?>

@@ -78,7 +78,7 @@ else{
                     <?php if ($this->general_settings->multilingual_system == 1 && count($this->languages) > 1): ?>
                         <li class="nav-item dropdown language-dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                                <img src="<?php echo base_url($this->selected_lang->flag_path); ?>" class="flag"><?php echo html_escape($this->selected_lang->name); ?><i class="icon-arrow-down"></i>
+                                <img src="<?php echo base_url($this->selected_lang->flag_path); ?>" class="flag"> <span <?php if($this->selected_lang->short_form == 'ar'){ ?> class="ar-lang"<?php } ?>><?php echo html_escape($this->selected_lang->name); ?><i class="icon-arrow-down"></i></span>
                             </a>
                             <div class="dropdown-menu">
                                 <?php foreach ($this->languages as $language):
@@ -89,13 +89,13 @@ else{
                                     $str = explode($base_url, $current_url);
                                     
                                     if ($language->id == $this->general_settings->site_lang) {
-                                        if($str[1]) {
+                                        if(isset($str[1])) {
                                             $lang_url = base_url() . $str[1];
                                         } else {
                                             $lang_url = base_url();
                                         }
                                     } else {
-                                        if($str[1]) {
+                                        if(isset($str[1])) {
                                             $lang_url = base_url() . $language->short_form . "/".$str[1];
                                         } else {
                                             $lang_url = base_url() . $language->short_form;
@@ -103,7 +103,7 @@ else{
                                     }
                                 ?>
                                     <a href="<?php echo $lang_url; ?>" class="<?php echo ($language->id == $this->selected_lang->id) ? 'selected' : ''; ?> " class="dropdown-item">
-                                        <img src="<?php echo base_url($language->flag_path); ?>" class="flag"><?php echo $language->name; ?>
+                                        <img src="<?php echo base_url($language->flag_path); ?>" class="flag"><span <?php if($this->selected_lang->short_form == 'ar'){ ?> class="ar-lang"<?php } ?>><?php echo $language->name; ?></span>
                                     </a>
                                 <?php endforeach; ?>
                             </div>

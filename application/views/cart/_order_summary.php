@@ -16,13 +16,13 @@
                         } ?>
                         <div class="item">
                             <div class="item-left">
-                                <div class="img-cart-product">
+                                <div class="img-cart-product <?php if($this->selected_lang->short_form == 'ar'){ ?> img-ar-checkout-div<?php } ?>">
                                     <a href="<?php echo generate_product_url($product); ?>">
-                                        <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($cart_item->product_id, 'image_small'); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
+                                        <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($cart_item->product_id, 'image_small'); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product <?php if($this->selected_lang->short_form == 'ar'){ ?> img-ar-checkout<?php } ?>" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
                                     </a>
                                 </div>
                             </div>
-                            <div class="item-right">
+                            <div class="item-right <?php if($this->selected_lang->short_form == 'ar'){ ?> item-right-ar<?php } ?>">
                                 <?php if ($product->product_type == 'digital'): ?>
                                     <div class="list-item">
                                         <label class="label-instant-download label-instant-download-sm"><i class="icon-download-solid"></i><?php echo trans("instant_download"); ?></label>

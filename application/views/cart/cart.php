@@ -67,9 +67,9 @@
                                             if (!empty($product)): ?>
                                                 <div class="item">
                                                     <div class="cart-item-image">
-                                                        <div class="img-cart-product">
+                                                        <div class="img-cart-product <?php if($this->selected_lang->short_form == 'ar'){ ?> img-cart-product-ar<?php } ?>">
                                                             <a href="<?php echo generate_product_url($product); ?>">
-                                                                <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($cart_item->product_id, 'image_small'); ?>" alt="<?php echo html_escape($cart_item->product_title); ?>" class="lazyload img-fluid img-product" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
+                                                                <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($cart_item->product_id, 'image_small'); ?>" alt="<?php echo html_escape($cart_item->product_title); ?>" class="lazyload img-fluid img-product <?php if($this->selected_lang->short_form == 'ar'){ ?> img-ar-cart<?php } ?>" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
                                                             </a>
                                                         </div>
                                                     </div>

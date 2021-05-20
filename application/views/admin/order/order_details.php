@@ -97,6 +97,30 @@
                                 </strong>
                             </div>
                         </div>
+
+                        <?php
+                        if($order->payment_status == 'awaiting_payment' && $order->payment_method == 'Point Checkout' && $order->transaction_id != null) {
+                            $response = get_point_checkout_payment_status($order->transaction_id);
+                            if($response->success == true) {
+                                $payurl = $response->result->redirectUrlShort;
+                            }
+                        ?>
+                        <div class="row row-details">
+                            <div class="col-xs-12 col-sm-4 col-right">
+                                <strong> Payment URL</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <strong class="font-right">
+                                <input disabled type="text" value="<?php echo $payurl; ?>" id="myInput">
+                                <button onclick="myFunction()">Copy URL</button>
+                                </strong>
+                            </div>
+                        </div>
+                        <?php
+                        }
+                        ?>
+
+
                         <div class="row row-details">
                             <div class="col-xs-12 col-sm-4 col-right">
                                 <strong> <?php echo trans("currency"); ?></strong>
@@ -1699,3 +1723,12 @@ $(document).ready(function(){
     });
   </script>
 
+<script>
+function myFunction() {
+  var copyText = document.getElementById("myInput");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999)
+  document.execCommand("copy");
+  alert("Copied the URL: " + copyText.value);
+}
+</script>

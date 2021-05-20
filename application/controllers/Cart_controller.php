@@ -144,7 +144,7 @@ class Cart_controller extends Home_Core_Controller
     public function cod_direct_post()
     {
         
-        echo "<pre>"; print_r($this->input->post()); exit;
+        // echo "<pre>"; print_r($this->input->post()); exit;
         
         $this->cart_model->set_sess_cart_shipping_address();
 		$this->cart_model->set_sess_cart_payment_method();
@@ -160,7 +160,7 @@ class Cart_controller extends Home_Core_Controller
         }
         //add order
 
-        echo "<pre>"; print_r($payment_option);
+        // echo "<pre>"; print_r($payment_option);
         $order_id = $this->order_model->add_order_offline_payment($payment_option);
         $order = $this->order_model->get_order($order_id);
         if (!empty($order)) {
@@ -179,8 +179,17 @@ class Cart_controller extends Home_Core_Controller
             /* redirect to point_checkout payment gateway code start */
             if($payment_option == 'point_checkout') {
                 $response = get_point_checkout_payment_url($order_id, $order->order_number);
-                
+
+                // echo "<pre>"; print_r($response); die;
                 if($response->success == true){
+
+                    $transaction_id = $response->result->id;
+                    $data_order = array(
+                        'transaction_id' => $transaction_id,
+                    );
+                    $this->db->where('id', $order_id);
+                    $this->db->update('orders', $data_order);
+                    
                     $this->session->set_userdata('mds_show_order_completed_page', 1);
                     $transcation_id = $response->result->id;
                     $redirectUrl = $response->result->redirectUrl;

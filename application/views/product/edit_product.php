@@ -126,10 +126,16 @@
                                         </div>
                                         <div class="form-box-body">
 
-                                        <div class="form-group">
+                                            <div class="form-group">
                                                 <label class="control-label"><?php echo trans("title"); ?></label>
                                                 <input type="text" name="title" class="form-control form-input" value="<?php echo html_escape($product->title); ?>" placeholder="<?php echo trans("title"); ?>" required>
                                             </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label"><?php echo trans("title"); ?> in Arbic</label>
+                                                <input type="text" name="title_arbic" class="form-control form-input" value="<?php echo html_escape($product->title_arbic); ?>" placeholder="<?php echo trans("title"); ?> in Arbic">
+                                            </div>
+                                            
 
                                             <div class="form-group">
                                                 <label class="control-label"><?php echo trans("short_title"); ?></label>
@@ -199,7 +205,7 @@
                                                 </div>
                                                 <textarea name="description" id="ckEditor" class="text-editor"><?php echo $product->description; ?></textarea>
                                             </div>
-
+                                            
 
                                             <?php 
                                                 $addon_products = ($product->addon_products) ? explode(',', $product->addon_products) : array();
