@@ -308,17 +308,37 @@
                                             </div>
                                         </div>
                                     <?php endif; ?>
+
                                     <div class="row mb-2">
                                         <div class="col-6 col-left">
                                             <?php echo trans("total"); ?>
                                         </div>
                                         <div class="col-6 col-right">
                                             <strong class="font-600">
-<?php echo price_formatted($sale_total, $order->price_currency); ?>
-
-<?php //echo price_formatted($sale_total, $order->price_currency); ?></strong>
+                                                <?php echo price_formatted($sale_total, $order->price_currency); ?>
+                                            </strong>
                                         </div>
                                     </div>
+                                    <?php if($order->status < 10 and ($order->status != 3 or $order->status != 9)) { ?>
+                                    <div class="row mb-2">
+                                        <div class="col-6 col-left">
+                                            Due Amount
+                                        </div>
+                                        <div class="col-6 col-right">
+                                            <strong class="font-600">
+                                            <?php
+                                            if($order->payment_status =='payment_received') {
+                                                $due_amnt = 0;
+                                            } elseif($order->payment_status =='awaiting_payment') {
+                                                $due_amnt = $sale_total;
+                                            }
+                                            ?>
+                                                <?php echo price_formatted($due_amnt, $order->price_currency); ?>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                    <?php } ?>
+                                 
                                 </div>
                             </div>
                         </div>

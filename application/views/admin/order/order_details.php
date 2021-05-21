@@ -99,7 +99,7 @@
                         </div>
 
                         <?php
-                        if($order->payment_status == 'awaiting_payment' && $order->payment_method == 'Point Checkout' && $order->transaction_id != null) {
+                        if($order->payment_method == 'Point Checkout' && $order->transaction_id != null) {
                             $response = get_point_checkout_payment_status($order->transaction_id);
                             if($response->success == true) {
                                 $payurl = $response->result->redirectUrlShort;
@@ -573,19 +573,13 @@
                                  echo ($order->order_number != "") ?$order->order_number:"--" ;?>
                            </td>
                            <td>  
-
-                           
-                          
-
                                 <a target="_blank" style="color:red" href="https://smsaexpress.com/trackingdetails?tracknumbers%5B0%5D=<?php echo $awb; ?>"><?php echo ($awb != "") ? $awb:"--" ;?> </a> <br>
-
-                           
-
                             </td>
-                           <td><?php 
 
-                       
-          
+                           <td>
+
+
+                           <?php
             $shipping = get_order_shipping($order->id);
            // print_r($shipping); exit;
             $country = $shipping->shipping_country;
@@ -616,13 +610,6 @@
             $arguments = array('awbNo' =>$awb);
             $arguments['passkey'] = $passkey;
 
-
-
-
-
-
-
-
         $url    = "http://track.smsaexpress.com/SECOM/SMSAwebService.asmx?wsdl";
         $client     = new SoapClient($url, array("trace" => 1, "exception" => 0));
         //echo "<pre>"; print_r($arguments); exit;
@@ -630,24 +617,16 @@
 
              $data= $client->{'getStatus'}($arguments);
              $response = count((array)$data)? $data->getStatusResult:'--';
+             echo isset($response) ? $response:"--" ;
              //echo "<pre>"; print_r($response); exit;
         }
         catch(Exception $e) {
-
+            
         }
-
-       
-    //echo "<pre>"; print_r($data); exit;
-
-
-
-
 ?>
+                          </td>
 
 
-
-
-                          <?php echo (@$response != "") ? @$response:"--" ;?></td>
                            <td>
                               <?php echo ($order->order_smsa_type != "") ? "SMSA":"--" ;?>
                            </td>

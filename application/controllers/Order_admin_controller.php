@@ -802,9 +802,12 @@ class Order_admin_controller extends Admin_Core_Controller
 				$this->session->set_flashdata('error', trans("msg_error"));
 			}
 
-			$this->order_admin_model->update_payment_status_if_all_received($order_product->order_id);
+			if($order_status == 'awaiting_payment' or $order_status == 'payment_received') {
+				$this->order_admin_model->update_payment_status_if_all_received($order_product->order_id);
+			}
 			$this->order_admin_model->update_order_status_if_completed($order_product->order_id);
 		}
+
 		redirect($this->agent->referrer(),'refresh');
 	}
 	
