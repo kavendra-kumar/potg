@@ -128,7 +128,7 @@
 
                                             <div class="form-group">
                                                 <label class="control-label"><?php echo trans("title"); ?> in Arbic</label>
-                                                <input type="text" name="title_arbic" class="form-control form-input" placeholder="<?php echo trans("title"); ?> in Arbic" required>
+                                                <input dir="rtl" type="text" name="title_arbic" class="form-control form-input" placeholder="<?php echo trans("title"); ?> in Arbic" required>
                                             </div>
 
                                             <div class="form-group">

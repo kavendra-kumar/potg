@@ -572,6 +572,10 @@ class Order_admin_controller extends Admin_Core_Controller
 
 		$total = $order->price_total;
 
+		if($order->payment_method == 'Point Checkout') {
+			$total = 0;
+		}
+
 		$minus_per = $order->price_total * 30 / 100;
 		$custom_value = ($order->price_total - $minus_per)/100;
 
@@ -602,6 +606,7 @@ class Order_admin_controller extends Admin_Core_Controller
 			$getCustomCodAmount = $this->order_admin_model->get_custom_code_amount($order->id);
 			if(!empty($getCustomCodAmount)){
 				$custom_value = $getCustomCodAmount['customAmount'];
+				$currency = 'USD';
 			}
 			
 			$passkey = 'PmG@3717';
@@ -615,23 +620,6 @@ class Order_admin_controller extends Admin_Core_Controller
 			$passkey = 'Pmg@3425';
 
 		} 
-
-		
-
-		//echo $custVal; exit;
-		//echo $passkey; exit;
-
-		// if($country = 'United Arab Emirates') {
-		// 	$passkey = 'PmG@5125';
-		// } elseif($country = 'Saudi Arabia') {
-		// 	$passkey = 'pMt@3423';
-		// } elseif($country = 'Oman') {
-		// 	$passkey = 'PmG@3717';
-		// } elseif($country = 'Kuwait') {
-		// 	$passkey = 'pGt@3424';
-		// } elseif($country = 'Bahrain') {
-		// 	$passkey = 'PmG@Pmg@3425';
-		// }
 
 		
 

@@ -133,7 +133,7 @@
 
                                             <div class="form-group">
                                                 <label class="control-label"><?php echo trans("title"); ?> in Arbic</label>
-                                                <input type="text" name="title_arbic" class="form-control form-input" value="<?php echo html_escape($product->title_arbic); ?>" placeholder="<?php echo trans("title"); ?> in Arbic">
+                                                <input dir="rtl" type="text" name="title_arbic" class="form-control form-input" value="<?php echo html_escape($product->title_arbic); ?>" placeholder="<?php echo trans("title"); ?> in Arbic">
                                             </div>
                                             
 

@@ -1287,7 +1287,7 @@
     </div>
 
     <!--update task Modal -->
-    <div id="createCustomShipmentModal" class="modal fade" role="dialog">
+    <div id="UpdateTaskModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <?php echo form_open('order_admin_controller/update_task_post'); ?>
