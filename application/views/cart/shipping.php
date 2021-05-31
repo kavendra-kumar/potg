@@ -384,7 +384,19 @@
 											<h2 class="title mb-3">
 												<?php echo trans("payment_method"); ?>
 											</h2>
-
+                                            
+                                            <?php 
+                                            if ($this->payment_settings->point_checkout_enabled && $this->payment_settings->point_checkout_discount_enabled && empty($cart_has_digital_product)): 
+                                                
+                                                if($this->selected_lang->short_form == 'ar') {
+                                                    echo "<h6 class='point_disc'>استعمل بطاقتك الائتمانية وأحصل على ".$this->payment_settings->point_checkout_discount_percentage." ٪؜  خصم.</h6>";
+                                                } else {
+                                                    echo "<h6 class='point_disc'>Use your credit card and get ".$this->payment_settings->point_checkout_discount_percentage."% discount.</h6>";
+                                                }
+                                                echo "<br>";
+                                            endif; 
+                                            ?>
+                                            
 											<div class="form-group">
 												<ul class="payment-options-list">
 													<?php if ($this->payment_settings->cash_on_delivery_enabled && empty($cart_has_digital_product) && $mds_payment_type != 'promote'): ?>
