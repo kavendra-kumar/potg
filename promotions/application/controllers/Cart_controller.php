@@ -169,11 +169,33 @@ class Cart_controller extends Home_Core_Controller
             }
             
 
-            /* redirect to point_checkout payment gateway code start */
+                        /* redirect to point_checkout payment gateway code start */
             if($payment_option == 'point_checkout') {
                 $response = get_point_checkout_payment_url($order_id, $order->order_number);
-                
+
+                // echo "<pre>"; print_r($response); die;
                 if($response->success == true){
+
+                    if($this->payment_settings->point_checkout_discount_enabled == 1) {
+                        $discount_percentage = $this->payment_settings->point_checkout_discount_percentage;
+                        $data = array(
+                            'order_id' => $order_id,
+                            'discount_type' => 'percentage',
+                            'total_discount' => $discount_percentage,
+                            'status' => 1,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            );
+    
+                        $this->db->insert('order_discount',$data);
+                    }
+                    
+                    $transaction_id = $response->result->id;
+                    $data_order = array(
+                        'transaction_id' => $transaction_id,
+                    );
+                    $this->db->where('id', $order_id);
+                    $this->db->update('orders', $data_order);
+                    
                     $this->session->set_userdata('mds_show_order_completed_page', 1);
                     $transcation_id = $response->result->id;
                     $redirectUrl = $response->result->redirectUrl;
@@ -182,6 +204,7 @@ class Cart_controller extends Home_Core_Controller
                 }
             }
             /* redirect to point_checkout payment gateway code end */
+
 
 
             $this->session->set_userdata('mds_show_order_completed_page', 1);

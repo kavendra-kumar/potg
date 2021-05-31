@@ -648,8 +648,12 @@ $( '#place_order' ).click(function() {
 $('.payment_method').on('click', function() {
    if( $('input[name=payment_option]:checked').val() == 'cash_on_delivery') {
        $('.cod_msg').show();
+       $('.cod_discount').show();
+       $('.pointcheckout_discount').hide();
    } else {
     $('.cod_msg').hide();
+    $('.cod_discount').hide();
+    $('.pointcheckout_discount').show();
    }
 });
 

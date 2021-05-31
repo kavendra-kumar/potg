@@ -2003,6 +2003,7 @@ if (!function_exists('get_point_checkout_payment_url')) {
     {
         $ci =& get_instance();
 
+
         if ($ci->payment_settings->point_checkout_enabled == 1) {
 
             $point_checkout_api_key = $ci->payment_settings->point_checkout_api_key;
@@ -2053,12 +2054,23 @@ if (!function_exists('get_point_checkout_payment_url')) {
                 "country" => $shipping_address->billing_country_id,
             );
 
+            
+        
+            if($ci->payment_settings->point_checkout_discount_enabled == 1) {
+                $discount_percentage = $ci->payment_settings->point_checkout_discount_percentage;
+                $subtotal = $cart_total->subtotal/100;
+                $pointcheckout_discount = $subtotal * $discount_percentage / 100; 
+            } else {
+                $pointcheckout_discount = 0;
+            }
+                
             $json_arr = array(
                         "transactionId" => $order_id,
                         "orderId" => $order_id,
                         "resultUrl" => generate_url("order_completed").'/'.$order_number,
                         "currency" => $cart_total->currency,
-                        "amount" => $cart_total->total/100,
+                        "amount" => ($cart_total->total/100) - $pointcheckout_discount,
+                        // "discount" => $pointcheckout_discount,
                         "subtotal" => $cart_total->subtotal/100,
                         "shipping" => $cart_total->shipping_cost/100,
                         "tax" => $cart_total->vat/100,

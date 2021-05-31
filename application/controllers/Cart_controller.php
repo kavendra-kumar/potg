@@ -183,6 +183,19 @@ class Cart_controller extends Home_Core_Controller
                 // echo "<pre>"; print_r($response); die;
                 if($response->success == true){
 
+                    if($this->payment_settings->point_checkout_discount_enabled == 1) {
+                        $discount_percentage = $this->payment_settings->point_checkout_discount_percentage;
+                        $data = array(
+                            'order_id' => $order_id,
+                            'discount_type' => 'percentage',
+                            'total_discount' => $discount_percentage,
+                            'status' => 1,
+                            'created_at' => date('Y-m-d H:i:s'),
+                            );
+    
+                        $this->db->insert('order_discount',$data);
+                    }
+                    
                     $transaction_id = $response->result->id;
                     $data_order = array(
                         'transaction_id' => $transaction_id,

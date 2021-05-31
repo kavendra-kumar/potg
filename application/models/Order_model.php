@@ -90,6 +90,18 @@ class Order_model extends CI_Model
         }
 
         $cart_total = $this->cart_model->get_sess_cart_total();
+
+        if($this->payment_settings->point_checkout_discount_enabled == 1) {
+            $discount_percentage = $this->payment_settings->point_checkout_discount_percentage;
+            $subtotal = $cart_total->subtotal/100;
+            $pointcheckout_discount = $subtotal * $discount_percentage / 100; 
+        } else {
+            $pointcheckout_discount = 0;
+        }
+
+        $total_amnt_float = ($cart_total->total/100) - $pointcheckout_discount;
+        $total_amnt_int = $total_amnt_float * 100;
+
         if (!empty($cart_total)) {
             $data = array(
                 'order_number' => uniqid(),
@@ -98,7 +110,7 @@ class Order_model extends CI_Model
                 'price_subtotal' => $cart_total->subtotal,
                 'price_vat' => $cart_total->vat,
                 'price_shipping' => $cart_total->shipping_cost,
-                'price_total' => $cart_total->total,
+                'price_total' => $total_amnt_int,
                 'price_currency' => $cart_total->currency,
                 'status' => 0,
                 'payment_method' => $payment_method,
