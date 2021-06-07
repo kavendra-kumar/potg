@@ -759,7 +759,12 @@
                                                     $name_arr = array();
                                                     foreach($assign_to as $uid){
                                                         $inf = get_user($uid);
-                                                        echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
+                                                        if($inf){
+                                                            echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
+                                                        } else {
+                                                            echo "N/A";
+                                                        }
+                                                        
                                                     }
                                                 }
                                                 ?>
@@ -768,7 +773,11 @@
                                                 <?php
                                                 if($order_task->updated_by){
                                                 $inf = get_user($order_task->updated_by);
-                                                echo $inf->first_name.' '.$inf->last_name;
+                                                if($inf){
+                                                    echo $inf->first_name.' '.$inf->last_name;
+                                                } else {
+                                                    echo "N/A";
+                                                }
                                                 } else {
                                                     echo "N/A";
                                                 }

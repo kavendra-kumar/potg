@@ -83,15 +83,18 @@
             </p>
         <?php endif; ?>
 
+        
         <?php 
         $pointcheckout_discount = 0;
-        if ($is_physical && $this->payment_settings->point_checkout_discount_enabled == 1): ?>
+        if ($is_physical): ?>
         <div class="pointcheckout_discount" style="display:none;">
             <p>
             <?php
                 $pointcheckout_discount = $cart_total->subtotal * $this->payment_settings->point_checkout_discount_percentage / 100; 
             ?>
+            <?php if($this->payment_settings->point_checkout_discount_enabled == 1){ ?>
                 <?php echo trans("discount"); ?><span class="float-right"><?php echo price_formatted($pointcheckout_discount, $this->payment_settings->default_product_currency = $myCurrency); ?></span>
+            <?php } ?>
             </p>
 
             <p class="line-seperator"></p>

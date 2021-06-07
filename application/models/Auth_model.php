@@ -24,6 +24,10 @@ class Auth_model extends CI_Model
         $data = $this->input_values();
         $user = $this->get_user_by_email($data['email']);
 
+        if (empty($user)) {
+            $user = $this->get_user_by_username($data['email']);
+        }
+
         if (!empty($user)) {
             //check password
             if (!$this->bcrypt->check_password($data['password'], $user->password)) {

@@ -69,8 +69,14 @@
                                 <td>
                                     <?php
                                     if($item->created_by){
-                                    $inf = get_user($item->created_by);
-                                    echo $inf->first_name.' '.$inf->last_name; } ?>
+                                        $inf = get_user($item->created_by);
+                                        if($inf){
+                                            echo $inf->first_name.' '.$inf->last_name;
+                                        } else {
+                                            echo "N/A";
+                                        }
+                                    }
+                                    ?>
                                 </td>
                                 <td>
                                     <?php

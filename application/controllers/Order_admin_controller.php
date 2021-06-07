@@ -572,7 +572,7 @@ class Order_admin_controller extends Admin_Core_Controller
 
 		$total = $order->price_total;
 
-		if($order->payment_method == 'Point Checkout') {
+		if($order->payment_method == 'Point Checkout' && $order->payment_status == "payment_received") {
 			$total = 0;
 		}
 

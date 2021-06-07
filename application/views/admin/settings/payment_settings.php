@@ -644,8 +644,8 @@
 
                 <div class="form-group">
                     <label class="control-label">Discount (in Percentage)</label>
-                    <input type="number" class="form-control" name="point_checkout__discount_percentage" placeholder="<?php echo trans('secret_key'); ?>"
-                           value="<?php echo $this->payment_settings->point_checkout__discount_percentage; ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
+                    <input type="number" class="form-control" name="point_checkout_discount_percentage"
+                           value="<?php echo $this->payment_settings->point_checkout_discount_percentage; ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
                 </div>
 
                 <div class="form-group">

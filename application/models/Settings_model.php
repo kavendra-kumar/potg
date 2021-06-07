@@ -192,7 +192,7 @@ class Settings_model extends CI_Model
             'point_checkout_mode' => $this->input->post('point_checkout_mode', true),
             'point_checkout_api_key' => trim($this->input->post('point_checkout_api_key', true)),
             'point_checkout_secret_key' => trim($this->input->post('point_checkout_secret_key', true)),
-            'point_checkout__discount_percentage' => trim($this->input->post('point_checkout__discount_percentage', true)),
+            'point_checkout_discount_percentage' => trim($this->input->post('point_checkout_discount_percentage', true)),
             'point_checkout_discount_enabled' => trim($this->input->post('point_checkout_discount_enabled', true))
         );
         $this->db->where('id', 1);
