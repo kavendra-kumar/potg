@@ -27,8 +27,9 @@
                     <label class="label-instant-download"><i class="icon-download-solid"></i><?php echo trans("instant_download"); ?></label>
                 <?php endif;
             endif;
-        endif; ?>
+        endif; ?>   
 
+        
         <h1 class="product-title">
             <?php
             if($this->selected_lang->short_form == 'ar') {
@@ -190,8 +191,23 @@
             <?php else: ?>
                 <a href="javascript:void(0)" class="btn-wishlist btn-add-remove-wishlist <?php echo $whislist_button_class; ?>" data-product-id="<?php echo $product->id; ?>" data-reload="1"><i class="icon-heart-o"></i><span><?php echo trans("add_to_wishlist"); ?></span></a>
             <?php endif; ?>
-        </div>
+        </div>   
     </div>
+
+    <?php
+    // $current_country = $this->session->userdata('mds_default_location_id');
+    // $product_country = $product->country_id;
+    // $number = "+971503053129";
+    // $currentURL = current_url();
+    // if($current_country != $product_country){
+    ?>
+        <!-- <p class="wrong_location_msg">
+            <?php echo trans("this_product_is_not_available_in_your_region") ?>
+            <a target="_blank" href="https://wa.me/<?php echo $number; ?>/?text=<?php echo $currentURL; ?>">
+                <img src="<?php echo base_url(); ?>assets/img/social-icons/whatsapp.png" alt="WhatsApp" class="img-whatsapp" style="height: 55px; width: 55px; margin-left:-10px;">
+            </a>
+        </p> -->
+    <?php // } ?>
 
     <?php if (!empty($product->demo_url)): ?>
         <div class="col-12 product-add-to-cart-container">

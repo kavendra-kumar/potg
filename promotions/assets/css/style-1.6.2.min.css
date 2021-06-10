@@ -2,23 +2,20 @@
 
 /* *************************** */
 h6.point_disc{
-    border: 3px solid red;
+    /* border: 3px dashed #f6f6f6; */
+    color:#F86923;
     display: inline-block;
     padding: 10px;
-    animation: blink 3s ease-in infinite;
+    /* font-weight: bold; */
+    /* background-color: #f8f8f8; */
+    font-style: italic;
+   
+    /* animation: blink 3s ease-in infinite; */
+    
 }
-@keyframes blink {
-0%{
-    opacity:0;
-}
-    50%{
-        opacity:0.5;
 
-        
-    }
-
-    100%{
-        opacity:1;
-    }
+/* ============= Wrong Location============ */
+.wrong_location_msg{
+    font-size: 16px;
+    color: #060606;;
 }
-/* *************************** */

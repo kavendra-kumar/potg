@@ -894,6 +894,23 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 							<?php endif; ?>
 
 						</div>
+						
+						    <?php
+							// $current_country = $this->session->userdata('mds_default_location_id');
+							// $product_country = $product->country_id;
+							// $number = "+971503053129";
+							// $currentURL = current_url();
+							// if($current_country != $product_country){
+							?>
+								<!-- <p class="wrong_location_msg">
+									<?php echo trans("this_product_is_not_available_in_your_region") ?>
+									<a target="_blank" href="https://wa.me/<?php echo $number; ?>/?text=<?php echo $currentURL; ?>">
+										<img src="<?php echo base_url(); ?>assets/img/social-icons/whatsapp.png" alt="WhatsApp" class="img-whatsapp" style="height: 55px; width: 55px; margin-left:-10px;">
+									</a>
+								</p> -->
+							<?php // } ?>
+
+
 						<?php echo form_close(); ?>
 						<div class="row pt-4">
 							<div class="col">
