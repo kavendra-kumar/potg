@@ -750,7 +750,8 @@
                                             <td>
                                                 <?php
                                                 $inf = get_user($order_task->created_by);
-                                                echo $inf->first_name.' '.$inf->last_name; ?>
+                                                if($inf){ echo $inf->first_name.' '.$inf->last_name; } else { echo "N/A"; }
+                                                ?>
                                             </td>
                                             <td>
                                                 <?php
@@ -1084,6 +1085,39 @@
                     <h4 class="modal-title"><?php echo trans("update_order_status"); ?></h4>
                 </div>
                 <div class="modal-body">
+                
+                <!-- =============Table====== -->
+                <?php $user_track = order_product_status_track($item->id, $item->order_id); ?>
+                <div class="modelTable">
+                <table class="table table-responsive table-striped table-bordered">
+                    <thead class="bg-light text-dark">
+                        <tr>
+                            <th>Status</th>
+                            <th>Updated By</th>
+                            <th>Updated at</th>
+                        </tr>
+                    </thead>   
+                    <tbody>
+                        <?php 
+                        if($user_track){
+                            foreach($user_track as $obj){ 
+                        ?>
+                        <tr>
+                            <td><?php echo trans($obj->order_status); ?></td>
+                            <td>
+                                <?php
+                                $inf = get_user($obj->user_id);
+                                if($inf){ echo $inf->first_name.' '.$inf->last_name; } else { echo "N/A"; }
+                                ?>
+                            </td>
+                            <td><?php echo $obj->created_at; ?></td>
+                        </tr>
+                        <?php } } ?>
+                    </tbody> 
+
+                </table>
+                 </div>
+                 <!-- =============Table====== -->
                     <div class="table-order-status">
                         <div class="form-group">
                             <label class="control-label"><?php echo trans('status'); ?></label>

@@ -73,6 +73,38 @@ class Order_admin_model extends CI_Model
         return false;
     }
     
+    public function update_order_product_status_track($order_product_id, $order_id)
+    {
+        $order_id = clean_number($order_id);
+        $order_product_id = clean_number($order_product_id);
+        $login_id = $this->session->userdata['modesy_sess_user_id'];
+        $order_product = $this->get_order_product($order_product_id);
+
+        if (!empty($order_product)) {
+            $data = array(
+                'user_id' => $login_id,
+                'order_id' => $order_id,
+                'order_product_id' => $order_product_id,
+                'order_status' => $this->input->post('order_status', true),
+                'created_at' => date('Y-m-d H:i:s'),
+            );
+
+            return $this->db->insert('order_status_track',$data);
+        }
+        return false;
+    }
+
+    public function get_order_product_status_track($order_product_id, $order_id) {
+        $order_product_id = clean_number($order_product_id);
+        $order_id = clean_number($order_id);
+
+        $this->db->where('order_product_id', $order_product_id);
+        $this->db->where('order_id', $order_id);
+        $this->db->order_by('id', 'ASC');
+        $query = $this->db->get('order_status_track');
+        return $query->result();   
+    }
+    
     //update order refund values
     public function update_order_refund_values()
     {

@@ -2214,4 +2214,19 @@ if(!function_exists('checkTodayTask')){
 }
 
 
+// Check today task
+if(!function_exists('order_product_status_track')){
+    function order_product_status_track($order_product_id, $order_id) {
+       $ci =& get_instance();
+      
+       $response = $ci->order_admin_model->get_order_product_status_track($order_product_id, $order_id);
+       if($response){
+           return $response;
+       }else{
+           return array();
+       }
+       
+   }
+}
+
 ?>
