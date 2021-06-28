@@ -198,7 +198,7 @@
 						 end of comment */?>
 								<div class="tab-checkout tab-checkout-open m-t-0 p-0">
                                     <h2 class="title"><?php echo trans("shipping_information"); ?></h2>
-                                    <?php echo form_open("cod-direct-post", ['id' => 'form_validate']); ?>
+                                    <?php echo form_open_multipart("cod-direct-post", ['id' => 'form_validate']); ?>
                                     <div class="row">
                                         <div class="col-12 cart-form-shipping-address">
                                             <div class="form-group">
@@ -274,6 +274,13 @@
                                                         <label id="confirm_validation-error" class="error" for="confirm_validation" style="display: none;"></label>
 													</div>
 												</div>
+
+                                                <div class="col-12 col-md-12 py-2" id="id_picture" style="<?php echo ($shipping_address->shipping_country_id == 178) ? 'display:block' : ($country->id == 178)?'display:block':'display:none'; ?>">
+                                                    <label class="font-weight-bold"><?php echo trans("id_picture"); ?></label>
+														<input type="file" name="id_picture" class="form-control form-input" value="" required>
+												</div>
+
+
                                                 <div class="col-12 col-md-6 m-b-sm-15">
                                                     <div class="form-group">
                                                         <label><?php echo trans("email"); ?>*</label>
@@ -282,6 +289,10 @@
                                                 </div>
 											</div>
                                         </div></div>
+
+
+
+                                        
                                         <div class="col-12 cart-form-billing-address d-none" <?php echo ($shipping_address->use_same_address_for_billing == 0) ? 'style="display: block;"' : ''; ?>>
                                             <h3 class="title-billing-address"><?php echo trans("billing_address") ?></h3>
                                             <div class="form-group">
@@ -564,13 +575,25 @@
 <script>
 $( 'select[name="shipping_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="shipping_phone_number"]').val();
-   console.log(val);
+   console.log(a);
    var mob = val.substr(val.length - a.attr("data-length"));
    $(".shipping-phone-number-code").html(a.attr('data-code'));
    $('input[name="shipping_phone_code"]').val(a.attr('data-code'));
    $('input[name="shipping_phone_number"]').val(mob);
    $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":parseInt(a.attr("data-length")) + 1});
   }).change();
+
+  $('#countries').on('change', function() {
+    var country_id = this.value;
+    if(country_id == 178) {
+        $('#id_picture').show();
+        // alert('show');
+    } else {
+        $('#id_picture').hide();
+        // alert('hide');
+    }
+  });
+
 $( 'select[name="billing_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="billing_phone_number"]').val();
    console.log(val);

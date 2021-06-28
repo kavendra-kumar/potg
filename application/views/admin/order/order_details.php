@@ -102,6 +102,7 @@
                         $payurl = '';
                         if($order->payment_method == 'Point Checkout' && $order->transaction_id != null) {
                             $response = get_point_checkout_payment_status($order->transaction_id);
+                            // echo "<pre>"; print_r($response);
                             if($response){
                                 if($response->success == true) {
                                     $payurl = $response->result->redirectUrlShort;
@@ -383,6 +384,7 @@
                                 </div>
                             </div>
 
+                            <?php if($shipping->gps_location) { ?>
                             <div class="row row-details">
                                 <div class="col-xs-12 col-sm-4 col-right">
                                     <strong> <?php echo trans("gps_location"); ?></strong>
@@ -391,6 +393,19 @@
                                     <strong class="font-right"><?php echo $shipping->gps_location; ?></strong>
                                 </div>
                             </div>
+                            <?php } ?>
+
+                            <?php if($shipping->id_picture) { ?>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> ID Picture</strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <a class="btn btn-primary" download href="../../<?php echo $shipping->id_picture; ?>">Download</a>
+                                </div>
+                            </div>
+                            <?php } ?>
+                            
 
 
                             <?php /*if($order->awb_number) { ?>

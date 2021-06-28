@@ -380,7 +380,9 @@ class Cart_model extends CI_Model
     //set cart shipping address session
     public function set_sess_cart_shipping_address()
     {
+
         $std = new stdClass();
+        $std->id_picture = $id_picture;
         $std->shipping_first_name = $this->input->post('shipping_first_name', true);
         $std->shipping_last_name = $this->input->post('shipping_last_name', true);
         $std->shipping_email = $this->input->post('shipping_email', true);

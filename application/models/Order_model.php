@@ -195,8 +195,25 @@ class Order_model extends CI_Model
         $order_id = clean_number($order_id);
         if ($this->cart_model->check_cart_has_physical_product() == true && $this->form_settings->shipping == 1) {
             $shipping_address = $this->cart_model->get_sess_cart_shipping_address();
+
+
+            if($this->input->post('shipping_country_id', true) == 178){
+                $this->load->model('upload_model');
+                $response = $this->upload_model->landing_page_upload('id_picture');
+                if(!empty($response)){
+                    $id_picture = $response;
+                } else {
+                    $id_picture = null;
+                }
+            } else {
+                $id_picture = null;
+            }
+            // die;
+
+
             $data = array(
                 'order_id' => $order_id,
+                'id_picture' => $id_picture,
                 'shipping_first_name' => $shipping_address->shipping_first_name,
                 'shipping_last_name' => $shipping_address->shipping_last_name,
                 'shipping_email' => $shipping_address->shipping_email,
