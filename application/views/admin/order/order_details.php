@@ -99,10 +99,13 @@
                         </div>
 
                         <?php
+                        $payurl = '';
                         if($order->payment_method == 'Point Checkout' && $order->transaction_id != null) {
                             $response = get_point_checkout_payment_status($order->transaction_id);
-                            if($response->success == true) {
-                                $payurl = $response->result->redirectUrlShort;
+                            if($response){
+                                if($response->success == true) {
+                                    $payurl = $response->result->redirectUrlShort;
+                                }
                             }
                         ?>
                         <div class="row row-details">
@@ -987,12 +990,7 @@
            
 
 
-              <?php 
-
-           
-
-
-              if ($getDiscount['discount_type']!=""): ?>
+              <?php if ($getDiscount['discount_type']): ?>
                 <!-- <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong> Discount type </strong>
@@ -1012,7 +1010,7 @@
                 </div> -->
             <?php endif; ?>
 
-             <?php if ($getDiscount['total_discount']!=""): 
+             <?php if ($getDiscount['total_discount']): 
                 
                 if($getDiscount['discount_type']=="fix-amount") {
                     $total_discount = $getDiscount['total_discount'];
@@ -1050,7 +1048,7 @@
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong>
 
-                            <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateDiscount"><i class="fa fa-plus"></i><?php echo $getDiscount['total_discount']?'Edit Discount':'Add Discount'; ?></button> 
+                            <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateDiscount"><i class="fa fa-plus"></i><?php echo isset($getDiscount)?'Edit Discount':'Add Discount'; ?></button> 
                         </strong>
                     </div>
                     <div class="col-sm-6">
@@ -1442,7 +1440,7 @@
 
                         <div class="form-group">
                             <label class="control-label">Fill Discount</label>
-                            <input type="text" name="discount" value= "<?php echo ($getDiscount['total_discount'])?$getDiscount['total_discount']:''; ?>" id="discount" class="form-control">
+                            <input type="text" name="discount" value= "<?php echo isset($getDiscount)?$getDiscount['total_discount']:''; ?>" id="discount" class="form-control">
                         </div>
 
                    </div>

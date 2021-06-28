@@ -1148,7 +1148,8 @@ class Order_admin_controller extends Admin_Core_Controller
 
 		$this->order_admin_model->create_order_discount($this->input->post());
 		$this->session->set_flashdata('success', trans("msg_updated"));
-		redirect($this->agent->referrer());
+		redirect('admin/orders');
+		// redirect($this->agent->referrer());
 	}
 
 
