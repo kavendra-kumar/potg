@@ -395,15 +395,30 @@
                             </div>
                             <?php } ?>
 
-                            <?php if($shipping->id_picture) { ?>
-                            <div class="row row-details">
-                                <div class="col-xs-12 col-sm-4 col-right">
-                                    <strong> ID Picture</strong>
-                                </div>
-                                <div class="col-sm-8">
-                                    <a class="btn btn-primary" download href="../../<?php echo $shipping->id_picture; ?>">Download</a>
-                                </div>
-                            </div>
+                            <?php if($shipping->shipping_country == 'Qatar') { ?>
+                                <?php if($shipping->id_picture) { ?>
+                                    <div class="row row-details">
+                                        <div class="col-xs-12 col-sm-4 col-right">
+                                            <strong> ID Picture</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <a class="btn btn-primary" download href="../../<?php echo $shipping->id_picture; ?>">Download</a>
+                                        </div>
+                                    </div>
+                                <?php } else { ?>
+                                    <?php echo form_open_multipart('order_admin_controller/update_picture_id'); ?>
+                                    <div class="row row-details">
+                                        <div class="col-xs-12 col-sm-4 col-right">
+                                            <strong> ID Picture</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <input type="hidden" name="order_id" value="<?php echo $order->id ?>">
+                                            <input type="file" name="id_picture" class="form-control form-input" value="" required>
+                                            <button type="submit" class="btn btn-success"><?php echo trans("upload"); ?></button>
+                                        </div>
+                                    </div>
+                                    <?php echo form_close(); ?>
+                                <?php } ?>
                             <?php } ?>
                             
 

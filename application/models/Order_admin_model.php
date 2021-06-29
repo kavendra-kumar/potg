@@ -1375,5 +1375,25 @@ class Order_admin_model extends CI_Model
         $this->db->update('orders', $data_order);
         return false;
     }
+
+    //Assign Contact Person
+    public function update_picture_id()
+    {
+        $this->load->model('upload_model');
+        $response = $this->upload_model->landing_page_upload('id_picture');
+        if(!empty($response)){
+            $id_picture = $response;
+        } else {
+            $id_picture = null;
+        }
+
+        $data_order = array(
+            'id_picture' => $id_picture,
+        );
+
+        $this->db->where('order_id', $this->input->post('order_id', true));
+        $this->db->update('order_shipping', $data_order);
+        return false;
+    }
 	
 }

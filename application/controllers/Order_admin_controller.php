@@ -1145,22 +1145,16 @@ class Order_admin_controller extends Admin_Core_Controller
 
 	#For manage discount
 	public function createDiscount(){
-
 		$this->order_admin_model->create_order_discount($this->input->post());
 		$this->session->set_flashdata('success', trans("msg_updated"));
 		redirect('admin/orders');
 		// redirect($this->agent->referrer());
 	}
 
-
-
 	public function addCustomCodAmount() {
-		
 		$this->order_admin_model->addCustomCodAmount($this->input->post());
 		$this->session->set_flashdata('success', trans("msg_updated"));
 		redirect($this->agent->referrer());
-
-		
 	}
 
 	/**
@@ -1175,6 +1169,13 @@ class Order_admin_controller extends Admin_Core_Controller
 			$this->session->set_flashdata('error', trans("msg_error"));
 		}
 		redirect($this->agent->referrer(),'refresh');
+	}
+
+	#Upload ID Picture for Qatar.
+	public function update_picture_id(){
+		$this->order_admin_model->update_picture_id();
+		$this->session->set_flashdata('success', trans("msg_updated"));
+		redirect($this->agent->referrer());
 	}
 	
 }
