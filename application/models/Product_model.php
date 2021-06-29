@@ -267,6 +267,26 @@ class Product_model extends Core_Model
         return $query->row();
     }
 
+    
+    //get promotions product information
+    public function get_new_promo_product_info($id, $lang_id)
+    {
+        $id = clean_number($id);
+        $this->db->where('product_id', $id);
+        $this->db->where('lang_id', $lang_id);
+        $query = $this->db->get('new_products_promotion_info');
+        return $query->row();
+    }
+
+    //get promotions product information
+    public function get_new_promo_product_all_lang($id)
+    {
+        $id = clean_number($id);
+        $this->db->where('product_id', $id);
+        $query = $this->db->get('new_products_promotion_info');
+        return $query->result_array();
+    }
+
     //update product promotion information
     public function update_product_promo_info($product_id)
     {
@@ -429,6 +449,136 @@ class Product_model extends Core_Model
             $data["created_on"] = date('Y/m/d H:i:s');
             $data["product_id"] = $product_id;
             $this->db->insert('products_promotion_info', $data);
+        }
+
+    }
+
+    
+    // update product promotion information
+    // new_products_promotion_info
+    public function update_new_product_promo_info($product_id)
+    {
+        $lang_id = $this->input->post('lang_id', true);
+        
+        $product = $this->get_new_promo_product_info($product_id, $lang_id);
+        
+        $data = array(
+            'lang_id' => $lang_id,
+            's1_heading' => $this->input->post('s1_heading', true),
+            's1_device_name' => $this->input->post('s1_device_name', true),
+            's2_heading' => $this->input->post('s2_heading', true),			
+            's3_video_url' => $this->input->post('s3_video_url', true),
+            's3_sub_number_1' => $this->input->post('s3_sub_number_1', true),
+            's3_sub_text_1' => $this->input->post('s3_sub_text_1', true),
+            's3_sub_number_2' => $this->input->post('s3_sub_number_2', true),
+            's3_sub_text_2' => $this->input->post('s3_sub_text_2', true),
+            's3_sub_number_3' => $this->input->post('s3_sub_number_3', true),
+            's3_sub_text_3' => $this->input->post('s3_sub_text_3', true),
+            's3_main_text_1' => $this->input->post('s3_main_text_1', true),
+            's3_main_text_2' => $this->input->post('s3_main_text_2', true),
+            's3_main_text_3' => $this->input->post('s3_main_text_3', true),
+            's3_main_text_4' => $this->input->post('s3_main_text_4', true),
+            's3_main_text_5' => $this->input->post('s3_main_text_5', true),
+            's4_heading' => $this->input->post('s4_heading', true),
+            's4_details' => $this->input->post('s4_details', true),
+            's5_heading' => $this->input->post('s5_heading', true),            
+            's6_review_name_1' => $this->input->post('s6_review_name_1', true),
+            's6_review_location_1' => $this->input->post('s6_review_location_1', true),
+            's6_review_comment_1' => $this->input->post('s6_review_comment_1', true),
+            's6_review_name_2' => $this->input->post('s6_review_name_2', true),
+            's6_review_location_2' => $this->input->post('s6_review_location_2', true),
+            's6_review_comment_2' => $this->input->post('s6_review_comment_2', true),
+            's6_review_name_3' => $this->input->post('s6_review_name_3', true),
+            's6_review_location_3' => $this->input->post('s6_review_location_3', true),
+            's6_review_comment_3' => $this->input->post('s6_review_comment_3', true),            
+            's7_heading' => $this->input->post('s7_heading', true),            
+            's7_details' => $this->input->post('s7_details', true),
+            's8_heading' => $this->input->post('s8_heading', true),
+            's9_details' => $this->input->post('s9_details', true),
+            's9_heading' => $this->input->post('s9_heading', true),
+            's9_description' => $this->input->post('s9_description', true),            
+            's10_description' => $this->input->post('s10_description', true),
+            's10_point_1' => $this->input->post('s10_point_1', true),
+            's10_point_2' => $this->input->post('s10_point_2', true),
+            's11_cross_sale_id' => $this->input->post('s11_cross_sale_id', true),
+            's11_product_title' => $this->input->post('s11_product_title', true),			
+            'terms_condition_heading' => $this->input->post('terms_condition_heading', true),
+            'terms_conditions' => $this->input->post('terms_conditions', true),			
+            'faq_heading' => $this->input->post('faq_heading', true),
+            'faq_details' => $this->input->post('faq_details', true),
+        );
+
+        $this->load->model('upload_model');
+        $image_background = $this->upload_model->landing_page_upload('image_background');
+        if(!empty($image_background)){$data["image_background"] = $image_background;}
+
+        $image_brand = $this->upload_model->landing_page_upload('image_brand');
+        if(!empty($image_brand)){$data["image_brand"] = $image_brand;}
+
+        $s1_product_image = $this->upload_model->landing_page_upload('s1_product_image');
+        if(!empty($s1_product_image)){$data["s1_product_image"] = $s1_product_image;}
+
+        $s2_image = $this->upload_model->landing_page_upload('s2_image');
+        if(!empty($s2_image)){$data["s2_image"] = $s2_image;}
+
+        $s3_main_image_1 = $this->upload_model->landing_page_upload('s3_main_image_1') ;
+        if(!empty($s3_main_image_1)){$data["s3_main_image_1"] = $s3_main_image_1;}
+
+        $s3_main_image_2 = $this->upload_model->landing_page_upload('s3_main_image_2') ;
+        if(!empty($s3_main_image_2)){$data["s3_main_image_2"] = $s3_main_image_2;}
+
+        $s3_main_image_3 = $this->upload_model->landing_page_upload('s3_main_image_3') ;
+        if(!empty($s3_main_image_3)){$data["s3_main_image_3"] = $s3_main_image_3;}
+
+        $s3_main_image_4 = $this->upload_model->landing_page_upload('s3_main_image_4') ;
+        if(!empty($s3_main_image_4)){$data["s3_main_image_4"] = $s3_main_image_4;}
+
+        $s3_main_image_5 = $this->upload_model->landing_page_upload('s3_main_image_5') ;
+        if(!empty($s3_main_image_5)){$data["s3_main_image_5"] = $s3_main_image_5;}
+
+        $s4_image = $this->upload_model->landing_page_upload('s4_image');
+        if(!empty($s4_image)){$data["s4_image"] = $s4_image;}
+
+        $s5_image = $this->upload_model->landing_page_upload('s5_image');
+        if(!empty($s5_image)){$data["s5_image"] = $s5_image;}
+
+        $s6_review_image_1 = $this->upload_model->landing_page_upload('s6_review_image_1');
+        if(!empty($s6_review_image_1)){$data["s6_review_image_1"] = $s6_review_image_1;}
+
+        $s5_image = $this->upload_model->landing_page_upload('s5_image');
+        if(!empty($s5_image)){$data["s5_image"] = $s5_image;}
+
+        $s6_review_image_1 = $this->upload_model->landing_page_upload('s6_review_image_1');
+        if(!empty($s6_review_image_1)){$data["s6_review_image_1"] = $s6_review_image_1;}
+
+        $s6_review_image_2 = $this->upload_model->landing_page_upload('s6_review_image_2');
+        if(!empty($s6_review_image_2)){$data["s6_review_image_2"] = $s6_review_image_2;}
+
+        $s6_review_image_3 = $this->upload_model->landing_page_upload('s6_review_image_3');
+        if(!empty($s6_review_image_3)){$data["s6_review_image_3"] = $s6_review_image_3;}
+
+        $s7_image = $this->upload_model->landing_page_upload('s7_image');
+        if(!empty($s7_image)){$data["s7_image"] = $s7_image;}
+
+        $s6_review_image = $this->upload_model->landing_page_upload('s6_review_image');
+        if(!empty($s6_review_image)){$data["s6_review_image"] = $s6_review_image;}
+
+        $s9_image = $this->upload_model->landing_page_upload('s9_image');
+        if(!empty($s9_image)){$data["s9_image"] = $s9_image;}
+
+        $s11_cross_sale_image = $this->upload_model->landing_page_upload('s11_cross_sale_image');
+        if(!empty($s11_cross_sale_image)){$data["s11_cross_sale_image"] = $s11_cross_sale_image;}
+
+        if(!empty($product)){          
+            $this->db->where('product_id', $product_id);
+            $this->db->where('lang_id', $lang_id);
+            return $this->db->update('new_products_promotion_info', $data);
+        }
+        else{
+            date_default_timezone_set('Asia/Dubai');
+            $data["created_on"] = date('Y/m/d H:i:s');
+            $data["product_id"] = $product_id;
+            $this->db->insert('new_products_promotion_info', $data);
         }
 
     }
