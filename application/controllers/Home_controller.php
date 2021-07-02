@@ -374,7 +374,7 @@ class Home_controller extends Home_Core_Controller
     
     
     /**
-     * promotional page from different ci
+     * New promotional page from different ci
      */
     public function promotional_page($lang, $slug)
     {
@@ -386,6 +386,10 @@ class Home_controller extends Home_Core_Controller
         
         $data["product"] = $this->product_model->get_product_by_slug($slug);
         $data["product"]->info = $this->product_model->get_new_my_promotion_product_by_slug($slug, $lang);
+
+        if(empty($data["product"]->info)) {
+            $this->error_404();
+        }
         
         if (empty($data['product'])) {
             $this->error_404();
