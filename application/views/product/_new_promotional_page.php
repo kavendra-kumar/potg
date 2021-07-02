@@ -26,8 +26,8 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-6">
                             <div class="form-group">
-                                <label class="control-label"> <?php echo trans("language"); ?></label>
-                                <select name="lang_id" class="form-control form-input" required>
+                                <label class="control-label"> Language</label>
+                                <select name="lang_id" class="form-control form-input" required disabled="disabled" >
                                     <?php foreach ($this->languages as $language): ?>
                                         <option <?php if($language->id == $sess_lang) echo "selected"; ?> value="<?php echo $language->id; ?>"><?php echo $language->name; ?></option>
                                     <?php endforeach; ?>
@@ -48,7 +48,7 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-6">
                             <div class="form-group">
-                                <label class="control-label"> <?php echo trans("title"); ?></label>
+                                <label class="control-label"> Title</label>
                                 <input type="text" name="s1_heading" class="form-control form-input" value="<?php echo html_escape($newinfo['s1_heading']); ?>" required>
                             </div>
                         </div>
@@ -64,7 +64,7 @@ if($newinfo){
                                 <label class="control-label">Background Image (1920X9272px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="image_background" accept=".png, .jpg, .jpeg" onchange="$('#upload-file-info1').html($(this).val());">
                                     </a>
                                     (.png, .jpg, .jpeg)
@@ -77,7 +77,7 @@ if($newinfo){
                                 <label class="control-label">Brand Image (80X30px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="image_brand" accept=".png" onchange="$('#upload-file-info2').html($(this).val());">
                                     </a>
                                     (.png)
@@ -90,7 +90,7 @@ if($newinfo){
                                 <label class="control-label">Product Image (80X30px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s1_product_image" accept=".png" onchange="$('#upload-file-info3').html($(this).val());">
                                     </a>
                                     (.png)
@@ -109,7 +109,7 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-6">
                             <div class="form-group">
-                                <label class="control-label"><?php echo trans("title"); ?></label>
+                                <label class="control-label">Title</label>
                                 <input type="text" name="s2_heading" class="form-control form-input" value="<?php echo html_escape($newinfo['s2_heading']); ?>" required>
                             </div>
                         </div>
@@ -119,7 +119,7 @@ if($newinfo){
                                 <label class="control-label">Image (959X323px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s2_image" accept=".png" onchange="$('#upload-file-info4').html($(this).val());">
                                     </a>
                                     (.png)
@@ -174,7 +174,7 @@ if($newinfo){
                                 <label class="control-label">Image 1 (60X56px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s3_main_image_1" accept=".png" onchange="$('#upload-file-info5').html($(this).val());">
                                     </a>
                                     (.png)
@@ -192,7 +192,7 @@ if($newinfo){
                                 <label class="control-label">Image 2 (60X56px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s3_main_image_2" accept=".png" onchange="$('#upload-file-info6').html($(this).val());">
                                     </a>
                                     (.png)
@@ -210,7 +210,7 @@ if($newinfo){
                                 <label class="control-label">Image 3 (60X56px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s3_main_image_3" accept=".png" onchange="$('#upload-file-info7').html($(this).val());">
                                     </a>
                                     (.png)
@@ -228,7 +228,7 @@ if($newinfo){
                                 <label class="control-label">Image 4 (60X56px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                             <input type="file" name="s3_main_image_4" accept=".png" onchange="$('#upload-file-info8').html($(this).val());">
                                     </a>
                                         (.png)
@@ -246,7 +246,7 @@ if($newinfo){
                                 <label class="control-label">Image 5 (60X56px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s3_main_image_5" accept=".png" onchange="$('#upload-file-info9').html($(this).val());">
                                         </a>
                                         (.png)
@@ -277,7 +277,7 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-6">
                             <div class="form-group">
-                                <label class="control-label"><?php echo trans("title"); ?></label>
+                                <label class="control-label">Title</label>
                                 <input type="text" name="s4_heading" class="form-control form-input" value="<?php echo html_escape($newinfo['s4_heading']); ?>" required>
                             </div>
                         </div>
@@ -287,7 +287,7 @@ if($newinfo){
                                 <label class="control-label">Image (975X360px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s4_image" accept=".png" onchange="$('#upload-file-info10').html($(this).val());">
                                     </a>
                                     (.png)
@@ -297,7 +297,7 @@ if($newinfo){
                         </div>
                         <div class="col col-md-12">
                             <div class="form-group">
-                                <label class="control-label"><?php echo trans('description'); ?></label>
+                                <label class="control-label">Description</label>
                                 <textarea name="s4_details" class="text-editor" id="new_s4_details"><?php echo $newinfo['s4_details']; ?></textarea>
                                 <script>CKEDITOR.replace( 'new_s4_details',{width : "100%",height : "200px",}).setData();</script>
                             </div>
@@ -314,7 +314,7 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-4">
                             <div class="form-group">
-                                <label class="control-label"><?php echo trans("title"); ?></label>
+                                <label class="control-label">Title</label>
                                 <input type="text" name="s5_heading" class="form-control form-input" value="<?php echo html_escape($newinfo['s5_heading']); ?>" required>
                             </div>
                             
@@ -324,7 +324,7 @@ if($newinfo){
                                 <label class="control-label">Section Top Banner Image (884X293px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s5_image" accept=".png" onchange="$('#upload-file-info11').html($(this).val());">
                                     </a>
                                     (.png)
@@ -337,7 +337,7 @@ if($newinfo){
                                 <label class="control-label">Section Bottom Banner Image (710X480px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s6_review_image" accept=".png" onchange="$('#upload-file-info15').html($(this).val());">
                                     </a>
                                     (.png)
@@ -350,7 +350,7 @@ if($newinfo){
                                 <label class="control-label">Review 1 Image (300X300px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s6_review_image_1" accept=".png" onchange="$('#upload-file-info12').html($(this).val());">
                                     </a>
                                     (.png)
@@ -376,7 +376,7 @@ if($newinfo){
                                 <label class="control-label">Review 2 Image (300X300px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s6_review_image_2" accept=".png" onchange="$('#upload-file-info13').html($(this).val());">
                                     </a>
                                     (.png)
@@ -402,7 +402,7 @@ if($newinfo){
                                 <label class="control-label">Review 3 Image (300X300px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s6_review_image_3" accept=".png" onchange="$('#upload-file-info14').html($(this).val());">
                                     </a>
                                     (.png)
@@ -450,7 +450,7 @@ if($newinfo){
                                 <label class="control-label">Image (430X410px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s7_image" accept=".png" onchange="$('#upload-file-info16').html($(this).val());">
                                     </a>
                                     (.png)
@@ -460,7 +460,7 @@ if($newinfo){
                         </div>
                         <div class="col col-md-12">
                             <div class="form-group">
-                                <label class="control-label">Suggested Product <?php echo trans('description'); ?></label>
+                                <label class="control-label">Suggested Product Description</label>
                                 <textarea name="s7_details" class="text-editor" id="new_s7_details"><?php echo $newinfo['s7_details']; ?></textarea>
                                 <script>CKEDITOR.replace( 'new_s7_details',{width : "100%",height : "200px",}).setData();</script>
                             </div>
@@ -473,7 +473,7 @@ if($newinfo){
                 <div class="row">
                     <div class="col col-md-12">
                         <div class="form-group">
-                            <label class="control-label">Section 8 <?php echo trans("title"); ?></label>
+                            <label class="control-label">Section 8 Title</label>
                             <input type="text" name="s8_heading" class="form-control form-input" value="<?php echo html_escape($newinfo['s8_heading']); ?>" required>
                         </div>
                     </div>
@@ -495,7 +495,7 @@ if($newinfo){
                         
                         <div class="col col-md-6">
                             <div class="form-group">
-                                <label class="control-label"><?php echo trans("title"); ?></label>
+                                <label class="control-label">Title</label>
                                 <input type="text" name="s9_heading" class="form-control form-input" value="<?php echo html_escape($newinfo['s9_heading']); ?>" required>
                             </div>
                         </div> 
@@ -505,7 +505,7 @@ if($newinfo){
                                 <label class="control-label">Image (500X695px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s9_image" accept=".png" onchange="$('#upload-file-info17').html($(this).val());">
                                     </a>
                                     (.png)
@@ -515,7 +515,7 @@ if($newinfo){
                         </div>
                         <div class="col col-md-12">
                             <div class="form-group">
-                                <label class="control-label"><?php echo trans('description'); ?></label>
+                                <label class="control-label">Description</label>
                                 <textarea name="s9_description" class="text-editor" id="new_s9_description"><?php echo $newinfo['s9_description']; ?></textarea>
                                 <script>CKEDITOR.replace( 'new_s9_description',{width : "100%",height : "200px",}).setData();</script>
                             </div>
@@ -532,7 +532,7 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-4">
                             <div class="form-group">
-                                <label class="control-label">Guarantee <?php echo trans("title"); ?></label>
+                                <label class="control-label">Guarantee Title</label>
                                 <input type="text" name="s10_description" class="form-control form-input" value="<?php echo html_escape($newinfo['s10_description']); ?>" required>
                             </div>
                             
@@ -562,7 +562,7 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-6">
                             <div class="form-group">
-                                <label class="control-label"> Main Product <?php echo trans("title"); ?></label>
+                                <label class="control-label"> Main Product Title</label>
                                 <input type="text" name="s11_product_title" class="form-control form-input" value="<?php echo html_escape($newinfo['s11_product_title']); ?>" required>
                             </div>
                         </div>
@@ -572,7 +572,7 @@ if($newinfo){
                                 <label class="control-label">Suggested Product Image (300X136px)</label>
                                 <div class="display-block">
                                     <a class='btn btn-success btn-sm btn-file-upload'>
-                                        <?php echo trans('select_image'); ?>
+                                        Select Image
                                         <input type="file" name="s11_cross_sale_image" accept=".png" onchange="$('#upload-file-info18').html($(this).val());">
                                     </a>
                                     (.png)
@@ -591,14 +591,14 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-12">
                             <div class="form-group">
-                                <label class="control-label">Link <?php echo trans("title"); ?></label>
+                                <label class="control-label">Link Title</label>
                                 <input type="text" name="terms_condition_heading" class="form-control form-input" value="<?php echo html_escape($newinfo['terms_condition_heading']); ?>" required>
                             </div>
                             
                         </div>
                         <div class="col col-md-12">
                             <div class="form-group">
-                                <label class="control-label"><?php echo trans('description'); ?></label>
+                                <label class="control-label">Description</label>
                                 <textarea name="terms_conditions" class="text-editor" id="new_s9_description"><?php echo $newinfo['terms_conditions']; ?></textarea>
                                 <script>CKEDITOR.replace( 'new_s9_description',{width : "100%",height : "200px",}).setData();</script>
                             </div>
@@ -615,14 +615,14 @@ if($newinfo){
                     <div class="row">
                         <div class="col col-md-12">
                             <div class="form-group">
-                                <label class="control-label">Link <?php echo trans("title"); ?></label>
+                                <label class="control-label">Link Title</label>
                                 <input type="text" name="faq_heading" class="form-control form-input" value="<?php echo html_escape($newinfo['faq_heading']); ?>">
                             </div>
                             
                         </div>
                         <div class="col col-md-12">
                             <div class="form-group">
-                                <label class="control-label"><?php echo trans('description'); ?></label>
+                                <label class="control-label">Description</label>
                                 <textarea name="faq_details" class="text-editor" id="new_faq_details"><?php echo $newinfo['faq_details']; ?></textarea>
                                 <script>CKEDITOR.replace( 'new_faq_details',{width : "100%",height : "200px",}).setData();</script>
                             </div>
@@ -633,8 +633,8 @@ if($newinfo){
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-custom" data-dismiss="modal"><?php echo trans("close");?></button>
-            <button type="submit" class="btn btn-primary text-white"><?php echo trans("submit");?></button>
+            <button type="button" class="btn btn-secondary btn-custom" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary text-white">Submit</button>
         </div>
         <?php echo form_close(); ?>
     </div>
