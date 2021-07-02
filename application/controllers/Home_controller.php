@@ -376,15 +376,16 @@ class Home_controller extends Home_Core_Controller
     /**
      * promotional page from different ci
      */
-    public function promotional_page($promotionals, $slug)
+    public function promotional_page($lang, $slug)
     {
+        
         get_method();
         $slug = clean_slug($slug);
         $this->review_limit = 5;
         $this->comment_limit = 5;
         
         $data["product"] = $this->product_model->get_product_by_slug($slug);
-        $data["product"]->info = $this->product_model->get_my_promotion_product_by_slug($slug);
+        $data["product"]->info = $this->product_model->get_new_my_promotion_product_by_slug($slug, $lang);
         
         if (empty($data['product'])) {
             $this->error_404();
@@ -397,7 +398,7 @@ class Home_controller extends Home_Core_Controller
                     redirect(lang_base_url());
                 }
             }
-
+            $data['lang']   =   $lang;
             $data["category"] = $this->category_model->get_category($data["product"]->category_id);
 
             //images

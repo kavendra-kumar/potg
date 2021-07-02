@@ -1158,6 +1158,18 @@ class Product_model extends Core_Model
         return $query->row();
     }
 
+    //get new promotion product by slug
+    public function get_new_my_promotion_product_by_slug($slug, $short_form)
+    {
+        $lang = $this->db->select("*")->from("languages")->where("short_form", $short_form)->get()->row();
+        // print_r($lang->row()); die;
+        $sql = "SELECT new_products_promotion_info.*, products.id  FROM new_products_promotion_info  
+                INNER JOIN products ON products.id = new_products_promotion_info.product_id
+                WHERE new_products_promotion_info.lang_id = ".$lang->id." AND products.is_draft = 0 AND products.is_deleted = 0 AND products.slug = ?";
+        $query = $this->db->query($sql, array(clean_str($slug)));
+        return $query->row();
+    }
+
     //is product in wishlist
     public function is_product_in_wishlist($product_id)
     {
