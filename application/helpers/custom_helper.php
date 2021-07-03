@@ -2242,16 +2242,10 @@ if(!function_exists('checkTodayTask')){
        
         $response = $ci->order_admin_model->get_paginated_today_task(15, 0);
         if(count((array)$response)){
-
             return true;
-
         }else{
-
             return false;
-
         }
-        
-        
     }
 }
 
@@ -2268,6 +2262,20 @@ if(!function_exists('order_product_status_track')){
            return array();
        }
        
+   }
+}
+
+// 
+if(!function_exists('update_smsa_status')){
+    function update_smsa_status($order_id, $status) {
+       $ci =& get_instance();
+      
+       $res = $ci->order_admin_model->update_smsa_status($order_id, $status);
+       if(count((array)$res)){
+           return true;
+       }else{
+           return false;
+       }
    }
 }
 

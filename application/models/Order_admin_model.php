@@ -1395,5 +1395,15 @@ class Order_admin_model extends CI_Model
         $this->db->update('order_shipping', $data_order);
         return false;
     }
+
+    public function update_smsa_status($order_id, $status) {
+        $data_order = array(
+            'smsa_status' => $status,
+        );
+
+        $this->db->where('id', $order_id);
+        $this->db->update('orders', $data_order);
+        return false;
+    }
 	
 }

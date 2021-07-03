@@ -650,6 +650,9 @@
 
              $data= $client->{'getStatus'}($arguments);
              $response = count((array)$data)? $data->getStatusResult:'--';
+             if($response) {
+                update_smsa_status($order->id, $response);
+             }
              echo isset($response) ? $response:"--" ;
              //echo "<pre>"; print_r($response); exit;
         }
