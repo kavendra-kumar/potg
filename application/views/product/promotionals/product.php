@@ -1157,11 +1157,13 @@ var x = setInterval(function() {
 }
 </style>
 <script>
-<?php if( $product->country_id == '165' || $product->country_id == '189' ){
-	$ccNumber = '+971505414735';
-}else{
-	$ccNumber = '+971502189305';
-}
+<?php
+// if( $product->country_id == '165' || $product->country_id == '189' ){
+	// $ccNumber = '+971505414735';
+// }else{
+	// $ccNumber = '+971502189305';
+// }
+$ccNumber = '+971568901213';
 ?>
 $(document).ready(function() {
 	$( "#whats-openPopup" ).on( "click", function() {

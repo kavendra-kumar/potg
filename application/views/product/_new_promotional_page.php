@@ -27,7 +27,8 @@ if($newinfo){
                         <div class="col col-md-6">
                             <div class="form-group">
                                 <label class="control-label"> Language</label>
-                                <select name="lang_id" class="form-control form-input" required disabled="disabled" >
+                                <input type="hidden" name="lang_id" value="<?php echo $sess_lang; ?>" />
+                                <select name="lang_id_2" class="form-control form-input not_in_use_ only for showing" required disabled="disabled" >
                                     <?php foreach ($this->languages as $language): ?>
                                         <option <?php if($language->id == $sess_lang) echo "selected"; ?> value="<?php echo $language->id; ?>"><?php echo $language->name; ?></option>
                                     <?php endforeach; ?>
