@@ -665,6 +665,7 @@ class Order_admin_model extends CI_Model
         
         $data = array(
             'status' => $this->input->get('status', true),
+            'assign_to' => $this->input->get('assign_to', true),
             'payment_status' => $this->input->get('payment_status', true),
             'q' => $this->input->get('q', true),
             'search_phone' => $this->input->get('search_phone', true),
@@ -712,6 +713,10 @@ class Order_admin_model extends CI_Model
             $this->db->where('date(orders.created_at) >=', $from);
 			$this->db->where('date(orders.created_at) <=', $to);
         }
+
+        if (!empty($data['assign_to'])) {
+            $this->db->where('orders.assign_to', $data['assign_to']);
+        }
         
         $data['search_phone'] = trim($data['search_phone']);
         
@@ -727,6 +732,8 @@ class Order_admin_model extends CI_Model
         if (!empty($data['country'])) {
             $this->db->like('order_shipping.shipping_country', $data['country']);
         }
+        
+
     }
 
     //get orders count

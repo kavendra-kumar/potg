@@ -115,6 +115,7 @@ class Order_admin_controller extends Admin_Core_Controller
 		$data['orders'] = $this->order_admin_model->get_paginated_orders($pagination['per_page'], $pagination['offset']);
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
+		$data['admin_users'] = $this->order_admin_model->get_user_by_role();
 		$data['countries'] = $this->order_admin_model->get_countries();
 		//echo "<pre>"; print_r($data['orders']); die;
 		$this->load->view('admin/includes/_header', $data);
