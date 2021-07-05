@@ -18,16 +18,17 @@ if($newinfo){
         </button>
       </div>
         <?php echo form_open_multipart('product_controller/edit_new_promotional_page_post'); ?>
+        <input type="hidden" name="lang_id" value="<?php echo $sess_lang; ?>" />
         <div class="modal-body">
             <input type="hidden" name="id" value="<?php echo $product->id; ?>">
             
-            <div class="form-box">
+            <!-- <div class="form-box">
                 <div class="form-box-body">    
                     <div class="row">
                         <div class="col col-md-6">
                             <div class="form-group">
-                                <label class="control-label"> Language</label>
-                                <input type="hidden" name="lang_id" value="<?php echo $sess_lang; ?>" />
+                                <label class="control-label"> Language : </label>
+                                
                                 <select name="lang_id_2" class="form-control form-input not_in_use_ only for showing" required disabled="disabled" >
                                     <?php foreach ($this->languages as $language): ?>
                                         <option <?php if($language->id == $sess_lang) echo "selected"; ?> value="<?php echo $language->id; ?>"><?php echo $language->name; ?></option>
@@ -38,7 +39,7 @@ if($newinfo){
                         
                     </div>
                 </div>
-            </div>
+            </div> -->
             
             
             <div class="form-box">
