@@ -645,7 +645,7 @@
 
         $url    = "http://track.smsaexpress.com/SECOM/SMSAwebService.asmx?wsdl";
         $client     = new SoapClient($url, array("trace" => 1, "exception" => 0));
-        //echo "<pre>"; print_r($arguments); exit;
+        // echo "<pre>"; print_r($client); exit;
         try {
 
              $data= $client->{'getStatus'}($arguments);
@@ -654,7 +654,7 @@
                 update_smsa_status($order->id, $response);
              }
              echo isset($response) ? $response:"--" ;
-             //echo "<pre>"; print_r($response); exit;
+            // echo "<pre>"; print_r($data); exit;
         }
         catch(Exception $e) {
             

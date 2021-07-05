@@ -546,14 +546,14 @@ class Order_admin_controller extends Admin_Core_Controller
 	 */
 	public function generate_awb($Number)
 	{
-		
-
 		$order = $this->order_admin_model->get_order_by_order_number($Number);
-		//echo "<pre>"; print_r($order); exit;
+		// echo "<pre>"; print_r($order); exit;
 
 		if($order->awb_number!=""){
 			$Number = $Number.'-'.rand(10,99);
 		}
+
+		
 		$shipping = get_order_shipping($order->id);
 		$productss = $this->order_admin_model->get_order_products($order->id);
 		$pcs = 0;
@@ -571,14 +571,14 @@ class Order_admin_controller extends Admin_Core_Controller
 
 		// print_r($product_name); die;
 
-		$total = $order->price_total;
+		$total = $order->price_total/100;
 
 		if($order->payment_method == 'Point Checkout' && $order->payment_status == "payment_received") {
 			$total = 0;
 		}
 
-		$minus_per = $order->price_total * 30 / 100;
-		$custom_value = ($order->price_total - $minus_per)/100;
+		$minus_per = $total * 30 / 100;
+		$custom_value = $total - $minus_per;
 
 		$currency = $order->price_currency;
 
@@ -644,7 +644,7 @@ class Order_admin_controller extends Admin_Core_Controller
 		$arguments['cEmail'] = '';
 		$arguments['carrValue'] = '0';
 		$arguments['carrCurr'] = $currency;
-		$arguments['codAmt'] = $total/100;
+		$arguments['codAmt'] = $total;
 		$arguments['weight'] = '1';
 		$arguments['custVal'] = $custom_value;
 		$arguments['custCurr'] = $currency;
@@ -655,23 +655,19 @@ class Order_admin_controller extends Admin_Core_Controller
 		//echo "<pre>"; print_r($arguments); 
 
 		$output =    makeSoapCall('addShipment', $arguments);
-		//echo "<pre>"; print_r($output); exit;
+		// echo "<pre>"; print_r($output); die;
 		echo $awb_number = $output->addShipmentResult;
 
 		if($order->awb_number==""){
-
 			$this->db->set('awb_number', $awb_number);
 			$this->db->where('id', $order->id);
 			$this->db->update('orders');
-
 		} else {
-			
-			$updated_awb_number = $order->awb_number.','.$awb_number;
+			$updated_awb_number = $awb_number;
 			$this->db->set('awb_number',$updated_awb_number);
 			$this->db->where('id', $order->id);
 			$this->db->update('orders');
 		}
-		
 		//echo $awb_number; exit;
 
 		$this->session->set_flashdata('success', trans("msg_updated"));
