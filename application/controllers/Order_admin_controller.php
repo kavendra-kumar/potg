@@ -854,6 +854,20 @@ class Order_admin_controller extends Admin_Core_Controller
 	}
 
 	/**
+	 * update task Post
+	 */
+	public function UpdateCustomSMSA_Status()
+	{
+		if ($this->order_admin_model->UpdateCustomSMSA_Status()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
+
+	/**
 	 * Delete Order Product Post
 	 */
 	public function delete_order_product_post()

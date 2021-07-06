@@ -617,29 +617,20 @@
                            <?php
             $shipping = get_order_shipping($order->id);
            // print_r($shipping); exit;
+
             $country = $shipping->shipping_country;
-
             $passkey="";
-
             if($country == "United Arab Emirates") {
-
                 $passkey = 'PmG@5125';
             } elseif ($country == "Saudi Arabia") {
                 $passkey = 'pMt@3423';
-
             } elseif ($country == "Oman") {
-
                 $passkey == 'PmG@3717';
-
             } elseif ($country == "Kuwait") {
-
                 $passkey = 'pGt@3424';
-
             } elseif ($country == "Bahrain") {
-
                 $passkey = 'Pmg@3425';
-
-            } 
+            }
 
             $arguments = array('awbNo' =>$awb);
             $arguments['passkey'] = $passkey;
@@ -671,25 +662,30 @@
                         </tr>
                          <?php } } ?>
 
-             <?php foreach($ShipmentCustomDetail as $shipment) { ?>
+             <?php if($ShipmentCustomDetail){ foreach($ShipmentCustomDetail as $shipment) { ?>
                 <tr>
-   <td style="width: 80px;">
-      <?php echo $shipment['order_id']; ?>                                   
-   </td>
-   <td>
-       <?php echo $shipment['ref']; ?>                             
-   </td>
-   <td>  
-      <a target="_blank" style="color:red" href="<?php echo $shipment['custom_link']; ?> "> <?php echo $shipment['awb']; ?>  
-   </td>
-   <td>
-      <?php echo $shipment['final_status']; ?>  
-   </td>
-   <td>
-      <?php echo $shipment['courier']; ?>                           
-   </td>
-</tr>
-                <?php } ?> 
+                    <td style="width: 80px;">
+                        <?php echo $shipment['order_id']; ?>                                   
+                    </td>
+                    <td>
+                        <?php echo $shipment['ref']; ?>                             
+                    </td>
+                    <td>  
+                        <a target="_blank" style="color:red" href="<?php echo $shipment['custom_link']; ?> "> <?php echo $shipment['awb']; ?>  
+                    </td>
+
+                    <td>
+                        <?php echo $shipment['final_status']; ?>
+                        &nbsp; 
+                        <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#UpdateCustomSMSA_Status_<?php echo $shipment['id']; ?>"><i class="fa fa-edit"></i></button>
+                    </td>
+
+                    <td>
+                        <?php echo $shipment['courier']; ?>                           
+                    </td>
+                </tr>
+
+            <?php } } ?> 
                      </tbody>
                   </table>
                   <div class="col-sm-12 table-ft">
@@ -730,7 +726,7 @@
     </div>
   </div>
 </div>
-    
+
 
     <!-- Order Task List Start -->
     <div class="col-sm-12">
@@ -1585,6 +1581,36 @@
             </div>
         </div>
     </div>
+
+    <?php if($ShipmentCustomDetail){ foreach($ShipmentCustomDetail as $shipment) { ?>
+        <!-- Update custom smsa status modal. -->
+        <div id="UpdateCustomSMSA_Status_<?php echo $shipment['id']; ?>" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <?php echo form_open('order_admin_controller/UpdateCustomSMSA_Status'); ?>
+                    <input type="hidden" name="id" value="<?php echo $shipment['id']; ?>">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-order-status">
+
+                            <div class="form-group">
+                                <label class="control-label">Shipment Status</label>
+                                <input type="text" name="final_status" class="form-control" value="<?php echo $shipment['final_status']; ?>" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                    </div>
+                    <?php echo form_close(); ?>
+                </div>
+            </div>
+        </div>
+    <?php } } ?>
 
     <?php if($recent_orders) { ?>
     <!--Recent Orders Modal -->

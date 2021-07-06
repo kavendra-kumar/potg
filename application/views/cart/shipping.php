@@ -410,8 +410,8 @@
                                             
 											<div class="form-group">
 												<ul class="payment-options-list">
-													<?php if ($this->payment_settings->cash_on_delivery_enabled && empty($cart_has_digital_product) && $mds_payment_type != 'promote'): ?>
-														<li>
+													<?php if ($this->payment_settings->cash_on_delivery_enabled && empty($cart_has_digital_product) && ($mds_payment_type != 'promote') && ($country->id != 80)): ?>
+														<li id="cod">
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
 																	<input type="radio" class="custom-control-input payment_method" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" required>
@@ -420,8 +420,8 @@
 															</div>
 														</li>
 													<?php endif; ?>
-                                                    <?php if ($this->payment_settings->point_checkout_enabled && empty($cart_has_digital_product)): ?>
-                                                        <li>
+                                                    <?php if ( $this->payment_settings->point_checkout_enabled && empty($cart_has_digital_product)): ?>
+                                                        <li id="pcheckout">
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
 																	<input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
@@ -591,6 +591,12 @@ $( 'select[name="shipping_country_id"]' ).change(function () {
     } else {
         $('#id_picture').hide();
         // alert('hide');
+    }
+
+    if(country_id == 80) {
+        $('#cod').hide();
+    } else {
+        $('#cod').show();
     }
   });
 

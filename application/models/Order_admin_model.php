@@ -171,6 +171,20 @@ class Order_admin_model extends CI_Model
         return true;
     }
 
+        
+    //update UpdateCustomSMSA_Status
+    public function UpdateCustomSMSA_Status()
+    {
+        $id = $this->input->post('id', true);
+        $data = array(
+            'final_status' => $this->input->post('final_status', true),
+        );
+
+        $this->db->where('id', $id);
+        return $this->db->update('order_custom_shipment_details', $data);
+        return true;
+    }
+
     //check order products status / update if all suborders completed
     public function update_order_status_if_completed($order_id)
     {
