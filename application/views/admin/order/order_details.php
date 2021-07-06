@@ -593,10 +593,12 @@
                         </tr>
                      </thead>
                      <tbody>
-                          <?php 
+                        <?php 
                             $awb_number = explode(',', $order->awb_number); 
-                          // echo "<pre>";  print_r($awb_number); exit;
-                          foreach($awb_number as $awb) { ?>
+                            // echo "<pre>";  print_r($awb_number); exit;
+                            if($awb_number) {
+                                foreach($awb_number as $awb) {
+                        ?>
                         <tr>
                            <td style="width: 80px;">
                               <?php echo ($order->order_number!="") ? $order->order_number :"--" ; ?>                                       
@@ -639,7 +641,6 @@
 
             } 
 
-
             $arguments = array('awbNo' =>$awb);
             $arguments['passkey'] = $passkey;
 
@@ -668,7 +669,7 @@
                            </td>
                            
                         </tr>
-                         <?php } ?>
+                         <?php } } ?>
 
              <?php foreach($ShipmentCustomDetail as $shipment) { ?>
                 <tr>
@@ -676,7 +677,7 @@
       <?php echo $shipment['order_id']; ?>                                   
    </td>
    <td>
-       <?php echo $shipment['order_id']; ?>                             
+       <?php echo $shipment['ref']; ?>                             
    </td>
    <td>  
       <a target="_blank" style="color:red" href="<?php echo $shipment['custom_link']; ?> "> <?php echo $shipment['awb']; ?>  
@@ -1407,6 +1408,7 @@
             <div class="modal-content">
                 <?php echo form_open('order_admin_controller/create_custom_shipment'); ?>
                 <input type="hidden" name="id" value="<?php echo $order->id; ?>">
+                <input type="hidden" name="type" value="manual">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Shipment Details</h4>
@@ -1415,8 +1417,11 @@
                     <div class="table-order-status">
 
                         <div class="form-group">
+                            <label class="control-label"> Reference </label>
+                            <input type="text" name="ref" class="form-control" value="" required />
+                        </div>
+                        <div class="form-group">
                             <label class="control-label"> AWB </label>
-                          
                             <input type="text" name="task" class="form-control" value="" required />
                         </div>
                          <div class="form-group">

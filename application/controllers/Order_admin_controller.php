@@ -553,7 +553,6 @@ class Order_admin_controller extends Admin_Core_Controller
 			$Number = $Number.'-'.rand(10,99);
 		}
 
-		
 		$shipping = get_order_shipping($order->id);
 		$productss = $this->order_admin_model->get_order_products($order->id);
 		$pcs = 0;
@@ -568,7 +567,6 @@ class Order_admin_controller extends Admin_Core_Controller
 				}
 			}
 		}
-
 		// print_r($product_name); die;
 
 		$total = $order->price_total/100;
@@ -655,7 +653,7 @@ class Order_admin_controller extends Admin_Core_Controller
 		//echo "<pre>"; print_r($arguments); 
 
 		$output =    makeSoapCall('addShipment', $arguments);
-		// echo "<pre>"; print_r($output); die;
+		//echo "<pre>"; print_r($output); exit;
 		echo $awb_number = $output->addShipmentResult;
 
 		if($order->awb_number==""){
@@ -663,7 +661,7 @@ class Order_admin_controller extends Admin_Core_Controller
 			$this->db->where('id', $order->id);
 			$this->db->update('orders');
 		} else {
-			$updated_awb_number = $awb_number;
+			$updated_awb_number = $order->awb_number.','.$awb_number;
 			$this->db->set('awb_number',$updated_awb_number);
 			$this->db->where('id', $order->id);
 			$this->db->update('orders');

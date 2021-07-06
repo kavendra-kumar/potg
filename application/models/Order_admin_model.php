@@ -1262,17 +1262,22 @@ class Order_admin_model extends CI_Model
 
             $data = array(
             'order_id' => $details['id'],
+            'ref' => $details['ref'],
             'awb' => $details['task'],
             'custom_link' => $details['custom_link'],
             'final_status' => $details['final_status'],
             'courier' => $details['courier'],
+            'type' => $details['type'],
             'created_at' => date('Y-m-d H:i:s'),
            
         );
+        $this->db->insert('order_custom_shipment_details',$data);
 
-        return $this->db->insert('order_custom_shipment_details',$data);
+        $arr = array('smsa_status' => $details['final_status']);
+        $this->db->where('id', $details['id']);
+        $this->db->update('orders', $arr);
+
         return true;
-
     }
 
 
