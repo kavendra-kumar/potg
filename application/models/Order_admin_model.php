@@ -179,9 +179,13 @@ class Order_admin_model extends CI_Model
         $data = array(
             'final_status' => $this->input->post('final_status', true),
         );
-
         $this->db->where('id', $id);
-        return $this->db->update('order_custom_shipment_details', $data);
+        $this->db->update('order_custom_shipment_details', $data);
+
+        // $arr = array('smsa_status' => $this->input->post('final_status', true));
+        // $this->db->where('id', $id);
+        // $this->db->update('orders', $arr);
+
         return true;
     }
 
@@ -1423,12 +1427,16 @@ class Order_admin_model extends CI_Model
     }
 
     public function update_smsa_status($order_id, $status) {
-        $data_order = array(
-            'smsa_status' => $status,
-        );
-
-        $this->db->where('id', $order_id);
-        $this->db->update('orders', $data_order);
+        $order = $this->db->select("smsa_status")->from('orders')->where('id', $order_id)->get()->row();
+        if($order) {
+            if($order->smsa_status == null or $order->smsa_status != $status) {
+                $data_order = array(
+                    'smsa_status' => $status,
+                );
+                $this->db->where('id', $order_id);
+                $this->db->update('orders', $data_order);
+            }
+        }
         return false;
     }
 	

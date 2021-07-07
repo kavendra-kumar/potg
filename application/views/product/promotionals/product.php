@@ -464,7 +464,8 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 						THE AFFORDABLE<br>
 						<?php echo $info->s1_device_name ?><br>
 						<strong>JUST GOT MORE AFFORDABLE.</strong>
-					<?php } ?>
+					<?php } else {
+					echo $info->s1_device_name; } ?>
 					</p>
   
 				</div>
@@ -630,7 +631,7 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 							<img class="trophy" alt="trophy" src="../../uploads/promotions/51190728-0-Trophy.png"/>
 						</div>
 						<div class="col">
-							<?php if($lang == 'en'){ ?>
+							<?php if($lang != 'ar'){ ?>
 							<p class="title">PEOPLE'S&nbsp;</p>
 							<p class="title"><span class="title-yellow">No. 1</span><span > CHOICE.&nbsp;</span></p>
 							<?php } else { ?>
@@ -646,7 +647,7 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 							<img class="trophy" alt="trophy" src="../../uploads/promotions/51190728-0-Trophy.png"/>
 						</div>
 						<div class="col">
-						<?php if($lang == 'en'){ ?>
+						<?php if($lang != 'ar'){ ?>
 							<p class="title"><span>CUSTOMER SATISFACTION IS OUR </span><span class="title-yellow">No. 1</span><span> PRIORITY.&nbsp;</span></p>
 						<?php } else { ?>
 							<p class="title">رضا العملاء &nbsp;</p>
@@ -1126,7 +1127,7 @@ var x = setInterval(function() {
                 </div>
             </div>
             <button type="button" id="whats-openPopup" class="whatsapp-button">
-                <img class="icon-whatsapp" src="../assets/img/whatsapp.svg">
+                <img class="icon-whatsapp" src="../../assets/img/whatsapp.svg">
             </button>
             <div class="circle-anime"></div>
         </div>

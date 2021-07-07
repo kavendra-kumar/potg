@@ -675,7 +675,10 @@
                     </td>
 
                     <td>
-                        <?php echo $shipment['final_status']; ?>
+                        <?php
+                        echo $shipment['final_status']; 
+                        update_smsa_status($order->id, $shipment['final_status']);
+                        ?>
                         &nbsp; 
                         <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#UpdateCustomSMSA_Status_<?php echo $shipment['id']; ?>"><i class="fa fa-edit"></i></button>
                     </td>
