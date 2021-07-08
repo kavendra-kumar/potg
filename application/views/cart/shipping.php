@@ -206,7 +206,7 @@
                                                 <div class="row">
                                                     <div class="col-12 col-md-12 m-b-sm-15">
                                                         <label><?php echo trans("full_name"); ?>*</label>
-                                                        <input type="text" name="shipping_first_name" class="form-control form-input" value="<?php echo $shipping_address->shipping_first_name; ?>" required>
+                                                    <input type="text" name="shipping_first_name" class="form-control form-input" value="<?php echo $shipping_address->shipping_first_name; ?>" placeholder="<?php echo trans("placeholder_name"); ?>" required>
                                                     </div>
 
                                                     <div class="col-12 col-md-6 d-none">
@@ -221,7 +221,7 @@
                                                     <div class="col-12 col-md-6 m-b-sm-15">
                                                         <div class="form-group">
                                                             <label><?php echo trans("email"); ?>*</label>
-                                                            <input type="email" name="shipping_email" class="form-control form-input" value="<?php echo $shipping_address->shipping_email; ?>" required>
+                                                            <input type="email" name="shipping_email" class="form-control form-input" value="<?php echo $shipping_address->shipping_email; ?>" placeholder="<?php echo trans("placeholder_email"); ?>" required>
                                                         </div>
                                                     </div>
 
@@ -303,31 +303,31 @@
                 <div class="col-md-6 col-12">
                     <div class="form-group">
                         <label id="building_label"> House No. / Flat No.*</label>
-                        <input type="text" name="building_no" class="form-control form-input" value="<?php echo $shipping_address->building_no; ?>" >
+                        <input type="text" name="building_no" class="form-control form-input" value="<?php echo $shipping_address->building_no; ?>" placeholder="<?php echo trans("placeholder_officeno"); ?>" >
                     </div>
                 </div>
                 <div class="col-md-6 col-12">
                     <div class="form-group">
                         <label> <?php echo trans("street_building_name"); ?></label>
-                        <input type="text" name="street_building_name" class="form-control form-input" value="<?php echo $shipping_address->street_building_name; ?>" >
+                        <input type="text" name="street_building_name" class="form-control form-input" value="<?php echo $shipping_address->street_building_name; ?>" placeholder="<?php echo trans("placeholder_building_name"); ?>" >
                     </div>
                 </div>
                 <div class="col-md-6 col-12">
                     <div class="form-group">
                         <label> <?php echo trans("landmark"); ?></label>
-                        <input type="text" name="landmark" class="form-control form-input" value="<?php echo $shipping_address->landmark; ?>" >
+                        <input type="text" name="landmark" class="form-control form-input" value="<?php echo $shipping_address->landmark; ?>" placeholder="<?php echo trans("placeholder_landmark"); ?>" >
                     </div>
                 </div>
                 <div class="col-md-6 col-12">
                     <div class="form-group">
                         <label> <?php echo trans("area"); ?>*</label>
-                        <input type="text" name="area" class="form-control form-input" value="<?php echo $shipping_address->area; ?>" required>
+                        <input type="text" name="area" class="form-control form-input" value="<?php echo $shipping_address->area; ?>" placeholder="<?php echo trans("placeholder_area"); ?>" required>
                     </div>
                 </div>
                 <div class="col-md-6 col-12">
                     <div class="form-group">
                         <label><?php echo trans("city"); ?>*</label>
-                        <input type="text" name="shipping_city" class="form-control form-input" value="<?php echo $shipping_address->shipping_city; ?>" required>
+                        <input type="text" name="shipping_city" class="form-control form-input" value="<?php echo $shipping_address->shipping_city; ?>" placeholder="<?php echo trans("placeholder_city"); ?>" required>
                     </div>
                 </div>
             </div> <!--------- row ----- -->  
