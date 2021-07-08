@@ -208,22 +208,23 @@
                                                         <label><?php echo trans("full_name"); ?>*</label>
                                                         <input type="text" name="shipping_first_name" class="form-control form-input" value="<?php echo $shipping_address->shipping_first_name; ?>" required>
                                                     </div>
+
                                                     <div class="col-12 col-md-6 d-none">
                                                         <label><?php echo trans("last_name"); ?>*</label>
                                                         <input type="text" name="shipping_last_name" class="form-control form-input" value="<?php echo $shipping_address->shipping_last_name; ?>">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label><?php echo trans("address"); ?> 1*</label>
-                                                <input type="text" name="shipping_address_1" class="form-control form-input" value="<?php echo $shipping_address->shipping_address_1; ?>" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label><?php echo trans("address"); ?> 2 (<?php echo trans("optional"); ?>)</label>
-                                                <input type="text" name="shipping_address_2" class="form-control form-input" value="<?php echo $shipping_address->shipping_address_2; ?>">
-                                            </div>
+                                            
                                             <div class="form-group">
                                                 <div class="row">
+                                                    <div class="col-12 col-md-6 m-b-sm-15">
+                                                        <div class="form-group">
+                                                            <label><?php echo trans("email"); ?>*</label>
+                                                            <input type="email" name="shipping_email" class="form-control form-input" value="<?php echo $shipping_address->shipping_email; ?>" required>
+                                                        </div>
+                                                    </div>
+
                                                     <div class="col-12 col-md-6 m-b-sm-15">
                                                         <label><?php echo trans("country"); ?>*</label>
                                                         <div class="selectdiv">
@@ -235,21 +236,20 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    
+                                                    
                                                     <div class="col-12 col-md-6 d-none">
                                                         <label><?php echo trans("state"); ?>*</label>
                                                         <input type="text" name="shipping_state" class="form-control form-input" value="<?php echo $shipping_address->shipping_state; ?>">
                                                     </div>
-                                                    <div class="col-12 col-md-6 m-b-sm-15">
-                                                        <label><?php echo trans("city"); ?>*</label>
-                                                        <input type="text" name="shipping_city" class="form-control form-input" value="<?php echo $shipping_address->shipping_city; ?>" required>
-                                                    </div>
+                                                    
                                                     <div class="col-12 col-md-6 d-none">
                                                         <label><?php echo trans("zip_code"); ?>*</label>
                                                         <input type="text" name="shipping_zip_code" class="form-control form-input" value="<?php echo $shipping_address->shipping_zip_code; ?>">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group">
+                                        <div class="form-group">
                                             <div class="row">
 												<div class="col-12 col-md-6">
                                                     <label><?php echo trans("phone_number"); ?>*</label>
@@ -275,22 +275,82 @@
 													</div>
 												</div>
 
-                                                <div class="col-12 col-md-12 py-2" id="id_picture" style="<?php echo ($shipping_address->shipping_country_id == 178) ? 'display:block' : ($country->id == 178)?'display:block':'display:none'; ?>">
-                                                    <label class="font-weight-bold"><?php echo trans("id_picture"); ?></label>
-														<input type="file" name="id_picture" class="form-control form-input" value="" required>
-												</div>
-
-
-                                                <div class="col-12 col-md-6 m-b-sm-15">
-                                                    <div class="form-group">
-                                                        <label><?php echo trans("email"); ?>*</label>
-                                                        <input type="email" name="shipping_email" class="form-control form-input" value="<?php echo $shipping_address->shipping_email; ?>" required>
-                                                    </div>
-                                                </div>
+                                                
 											</div>
-                                        </div></div>
+                                            </div>
+<!-- --------------------Adreess box----------------- -->
+<div class="form-group address_text_box">
+    <div class="row">
+        <div class="col-md-6 col-6">
+            <h6><?php echo trans("address_type"); ?></h6>
+        </div>
+        <div class="col-md-6 col-6">
+            <div class="form-group d-flex">
+                <div class="custom-control custom-checkbox">
+                    <input checked type="radio" name="address_type" value="home" id="home"> <?php echo trans("home"); ?>
+                </div>
+                <div class="custom-control custom-checkbox">
+                    <input type="radio" name="address_type" value="office" id="office"> <?php echo trans("office"); ?>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="addressBox  py-2" style="border:1px solid gray; margin-top:-14px;">
+        <div class="container ">                                                
+            <!-- -------Row 1=== -->
+            <div class="row">
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label id="building_label"> House No. / Flat No.*</label>
+                        <input type="text" name="building_no" class="form-control form-input" value="<?php echo $shipping_address->building_no; ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label> <?php echo trans("street_building_name"); ?></label>
+                        <input type="text" name="street_building_name" class="form-control form-input" value="<?php echo $shipping_address->street_building_name; ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label> <?php echo trans("landmark"); ?></label>
+                        <input type="text" name="landmark" class="form-control form-input" value="<?php echo $shipping_address->landmark; ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label> <?php echo trans("area"); ?>*</label>
+                        <input type="text" name="area" class="form-control form-input" value="<?php echo $shipping_address->area; ?>" required>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label><?php echo trans("city"); ?>*</label>
+                        <input type="text" name="shipping_city" class="form-control form-input" value="<?php echo $shipping_address->shipping_city; ?>" required>
+                    </div>
+                </div>
+            </div> <!--------- row ----- -->  
+        </div> <!--------- container ----- -->     
+    </div>
+</div>
+<!-- ==========================Address box.========= -->
 
+                                            <div class="form-group d-none">
+                                                <label><?php echo trans("address"); ?> 1*</label>
+                                                <input type="text" name="shipping_address_1" class="form-control form-input" value="<?php echo $shipping_address->shipping_address_1; ?>" >
+                                            </div>
+                                            <div class="form-group d-none">
+                                                <label><?php echo trans("address"); ?> 2 (<?php echo trans("optional"); ?>)</label>
+                                                <input type="text" name="shipping_address_2" class="form-control form-input" value="<?php echo $shipping_address->shipping_address_2; ?>">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-12 col-md-12 py-2" id="id_picture" style="<?php echo ($shipping_address->shipping_country_id == 178) ? 'display:block' : ($country->id == 178)?'display:block':'display:none'; ?>">
+                                            <label class="font-weight-bold"><?php echo trans("id_picture"); ?></label>
+                                                <input type="file" name="id_picture" class="form-control form-input" value="" required>
+                                        </div>
 
                                         
                                         <div class="col-12 cart-form-billing-address d-none" <?php echo ($shipping_address->use_same_address_for_billing == 0) ? 'style="display: block;"' : ''; ?>>
@@ -698,6 +758,15 @@ $('.payment_method').on('click', function() {
    }
 });
 
+
+$('input[type=radio][name=address_type]').change(function() {
+    if (this.value == 'home') {
+        $('#building_label').text('House No. / Flat No. *');
+    }
+    else if (this.value == 'office') {
+        $('#building_label').text('Office No. *');
+    }
+});
 </script>
 
 
@@ -794,6 +863,38 @@ function codeAddress(address) {
     }
   });
 }
-
 // google.maps.event.addDomListener(window, "load", initialize);
 </script>
+
+
+<style>
+@media (max-width:576px){
+    .address_text_box h6{
+            font-size:15px!important;
+}
+.address_text_box .custom-control{
+    padding-left: 0.5rem;
+}
+
+}
+@media (max-width:360px){
+    .address_text_box h6{
+            font-size:15px!important;
+    }
+    .address_text_box .custom-control{
+        <?php if($this->selected_lang->short_form == 'ar'){ ?> padding-right: 0rem !important; <?php } else { ?> padding-left: 0.5rem; <?php } ?>
+    }
+}
+@media (max-width: 321px){
+.address_text_box h6 {
+    font-size: 13px!important;
+}
+@media (max-width: 281px){
+.address_text_box .d-flex {
+    display:block!important;
+}
+}
+
+
+
+</style>

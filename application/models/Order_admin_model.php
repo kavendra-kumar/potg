@@ -614,13 +614,17 @@ class Order_admin_model extends CI_Model
     public function update_shipping_address($id)
     {
 		if (!empty($id)) {
-			$this->db->select('shipping_country');
+			$this->db->select('shipping_country, address_type');
 			$this->db->from('order_shipping');
 			$this->db->where('order_id', $id);
-			$country = $this->db->get()->row()->shipping_country;
-			//'client_address' => $order_shipment->shipping_address_1.", ".$order_shipment->shipping_address_2.", ".$order_shipment->shipping_zip_code.", ".$order_shipment->shipping_city.", ".$order_shipment->shipping_state.", ".$order_shipment->shipping_country,
+            $res = $this->db->get()->row();
+			$country = $res->shipping_country;
+			$address_type = $res->address_type;
+
+			$client_address = $address_type.": ".$this->input->post('building_no', true).", ".$this->input->post('street_building_name', true).", ".$this->input->post('landmark', true).", ".$this->input->post('area', true);
+            
             $data1 = array(
-                'client_address' => $this->input->post('shipping_address_1', true).", ".$this->input->post('shipping_address_2', true).", ".$this->input->post('shipping_city', true) .", ".$country
+                'client_address' => $client_address.", ".$this->input->post('shipping_city', true) .", ".$country
             );
             $this->db->where('order_id', $id);
             $this->db->update('invoices', $data1);
@@ -628,6 +632,10 @@ class Order_admin_model extends CI_Model
             $data = array(
                 'shipping_first_name' => $this->input->post('shipping_first_name', true),
                 'shipping_phone_number' => $this->input->post('shipping_phone_number', true),
+                'building_no' => $this->input->post('building_no', true),
+                'street_building_name' => $this->input->post('street_building_name', true),
+                'landmark' => $this->input->post('landmark', true),
+                'area' => $this->input->post('area', true),
                 'shipping_address_1' => $this->input->post('shipping_address_1', true),
                 'shipping_address_2' => $this->input->post('shipping_address_2', true),
                 'shipping_city' => $this->input->post('shipping_city', true)

@@ -247,6 +247,11 @@ class Profile_model extends CI_Model
         $std->shipping_email = "";
         $std->shipping_phone_number = "";
         $std->gps_location = "";
+        $std->address_type = "";
+        $std->building_no = "";
+        $std->street_building_name = "";
+        $std->landmark = "";
+        $std->area = "";
         $std->shipping_address_1 = "";
         $std->shipping_address_2 = "";
         $std->shipping_country_id = "";

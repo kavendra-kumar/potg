@@ -388,6 +388,11 @@ class Cart_model extends CI_Model
         $std->shipping_email = $this->input->post('shipping_email', true);
         $std->shipping_phone_number = $this->input->post('shipping_phone_code', true) . $this->input->post('shipping_phone_number', true);
         $std->gps_location = $this->input->post('gps_location', true);
+        $std->address_type = $this->input->post('address_type', true);
+        $std->building_no = $this->input->post('building_no', true);
+        $std->street_building_name = $this->input->post('street_building_name', true);
+        $std->landmark = $this->input->post('landmark', true);
+        $std->area = $this->input->post('area', true);
         $std->shipping_address_1 = $this->input->post('shipping_address_1', true);
         $std->shipping_address_2 = $this->input->post('shipping_address_2', true);
         $std->shipping_country_id = $this->input->post('shipping_country_id', true);
@@ -474,6 +479,11 @@ class Cart_model extends CI_Model
         $std->shipping_email = $row->shipping_email;
         $std->shipping_phone_number = $row->shipping_phone_number;
         // $std->gps_location = $row->gps_location;
+        $std->address_type = (isset($row->address_type))?$row->address_type:'';
+        $std->building_no = (isset($row->building_no))?$row->building_no:'';
+        $std->street_building_name = (isset($row->street_building_name))?$row->street_building_name:'';
+        $std->landmark = (isset($row->landmark))?$row->landmark:'';
+        $std->area = (isset($row->area))?$row->area:'';
         $std->shipping_address_1 = $row->shipping_address_1;
         $std->shipping_address_2 = $row->shipping_address_2;
         $std->shipping_country_id = $row->shipping_country_id;

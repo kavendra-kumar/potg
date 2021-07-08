@@ -273,14 +273,26 @@
 									</div>
 									<div class="col-xs-12 col-sm-6">
 										<div class="form-group">
-											<label for="address1"><?php echo trans("address"); ?> 1</label>
-											<input type="text" class="form-control" id="address1" name="shipping_address_1" value="<?php echo $shipping->shipping_address_1; ?>">
+											<label for="building_no">Building No.</label>
+											<input type="text" class="form-control" id="building_no" name="building_no" value="<?php echo $shipping->building_no; ?>">
 										</div>
 									</div>
 									<div class="col-xs-12 col-sm-6">
 										<div class="form-group">
-											<label for="address2"><?php echo trans("address"); ?> 2</label>
-											<input type="text" class="form-control" id="address2" name="shipping_address_2" value="<?php echo $shipping->shipping_address_2; ?>">
+											<label for="street_building_name"><?php echo trans("street_building_name"); ?> </label>
+											<input type="text" class="form-control" id="street_building_name" name="street_building_name" value="<?php echo $shipping->street_building_name; ?>">
+										</div>
+									</div>
+                                    <div class="col-xs-12 col-sm-6">
+										<div class="form-group">
+											<label for="landmark"><?php echo trans("landmark"); ?> </label>
+											<input type="text" class="form-control" id="landmark" name="landmark" value="<?php echo $shipping->landmark; ?>">
+										</div>
+									</div>
+                                    <div class="col-xs-12 col-sm-6">
+										<div class="form-group">
+											<label for="area"><?php echo trans("area"); ?> </label>
+											<input type="text" class="form-control" id="area" name="area" value="<?php echo $shipping->area; ?>">
 										</div>
 									</div>
 									<div class="col-xs-12 col-sm-6">
@@ -345,18 +357,43 @@
                             </div>
                             <div class="row row-details">
                                 <div class="col-xs-12 col-sm-4 col-right">
-                                    <strong> <?php echo trans("address"); ?> 1</strong>
+                                    <strong> Address Type</strong>
                                 </div>
                                 <div class="col-sm-8">
-                                    <strong class="font-right"><?php echo $shipping->shipping_address_1; ?></strong>
+                                    <strong class="font-right"><?php echo $shipping->address_type; ?></strong>
                                 </div>
                             </div>
                             <div class="row row-details">
                                 <div class="col-xs-12 col-sm-4 col-right">
-                                    <strong> <?php echo trans("address"); ?> 2</strong>
+                                    <strong> <?php echo ($shipping->address_type == 'home') ? 'House No. / Flat No.' : 'Office No.' ?></strong>
                                 </div>
                                 <div class="col-sm-8">
-                                    <strong class="font-right"><?php echo $shipping->shipping_address_2; ?></strong>
+                                    <strong class="font-right"><?php echo $shipping->building_no; ?></strong>
+                                </div>
+                            </div>
+
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("street_building_name"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->street_building_name; ?></strong>
+                                </div>
+                            </div>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("landmark"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->landmark; ?></strong>
+                                </div>
+                            </div>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("area"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->area; ?></strong>
                                 </div>
                             </div>
                             <div class="row row-details">
