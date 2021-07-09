@@ -16,7 +16,7 @@
                                             <p><?php echo trans("checking_out_as_guest"); ?></p>
                                         </div>
                                         <div class="col-12 col-md-6">
-                                            <p class="text-right"><?php echo trans("have_account"); ?>&nbsp;<a href="javascript:void(0)" class="link-underlined" data-toggle="modal" data-target="#loginModal"><?php echo trans("login"); ?></a></p>
+                                            <p class="text-right1 "><?php echo trans("have_account"); ?>&nbsp;<a href="javascript:void(0)" class="link-underlined" data-toggle="modal" data-target="#loginModal"><?php echo trans("login"); ?></a></p>
                                         </div>
                                     </div>
                                 <?php endif; ?>
@@ -196,7 +196,7 @@
                                     <h2 class="title">3.&nbsp;&nbsp;<?php echo trans("payment"); ?></h2>
                                 </div>
 						 end of comment */?>
-								<div class="tab-checkout tab-checkout-open m-t-0 p-0">
+								<div class="tab-checkout tab-checkout-open m-t-0 p-0 Mobile_bottom">
                                     <h2 class="title"><?php echo trans("shipping_information"); ?></h2>
                                     <?php echo form_open_multipart("cod-direct-post", ['id' => 'form_validate']); ?>
                                     <div class="row">
@@ -868,12 +868,26 @@ function codeAddress(address) {
 
 
 <style>
+p.text-right1{
+    text-align:right;
+}
+@media (max-width:767px){
+
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
 @media (max-width:576px){
     .address_text_box h6{
             font-size:15px!important;
 }
 .address_text_box .custom-control{
     padding-left: 0.5rem;
+}
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
+ p{
+    text-align:center!important;  
 }
 
 }
@@ -892,6 +906,12 @@ function codeAddress(address) {
 @media (max-width: 281px){
 .address_text_box .d-flex {
     display:block!important;
+}
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
+ p{
+    text-align:center!important;  
 }
 }
 
