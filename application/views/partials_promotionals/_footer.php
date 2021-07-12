@@ -137,7 +137,6 @@
 	background-size: cover;
     background-position: center;
 	box-shadow: 0px 0px 15px 15px rgb(255 255 255 / 10%);
-	border:2px dashed #FFF;
 }
 #newsletterModal .jumbotron{
 	margin:0px;
@@ -146,25 +145,10 @@
 #newsletterModal  h2{
 	margin-bottom:30px;
 }
-#newsletterModal .close  span{
-	display: block;
-    height: 20px;
-    width: 20px;
-    background: #FFF;
-    border-radius: 50%;
-	line-height:20px;
-	font-size:20px;
-}
-html[lang="ar"] #newsletterModal .close span{
-	    line-height: 16px;
-}
-html[lang="ar"] #newsletterModal{
-        direction: rtl;
-}
 </style>
-<div class="modal fade bd-example-modal-lg" id="newsletterModal" tabindex="-1" aria-hidden="true" >
+<div class="modal fade" id="newsletterModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background: #fff !important;;">
+    <div class="modal-content">
       <div class="text-right">
         <button type="button" class="close p-2" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -175,18 +159,18 @@ html[lang="ar"] #newsletterModal{
             <div class="jumbotron jumbotron-fluid bg-transparent">
 				<div class="container">
 					<div class="row justify-content-center">
-						 <div class="col-12 col-md-12">
-                         <h2 class="text-dark"><?php echo trans("popup_title"); ?></h2>
-							<h6 class="text-uppercase text-dark"> <?php echo trans("popup_desc"); ?> </h6>
-
-						<img src="<?php echo base_url('assets/img/model_hair.jpg'); ?>" alt="" srcset="" class="img-fluid">
-						</div> 
-						<div class="col-12 col-md-10 mt-4">
-                            <div class="input-group mb-3">
-                                <input type="email" class="form-control" name="email" placeholder="<?php echo trans("enter_email"); ?>" required>
-                            </div>
+						<div class="col-12 col-md-12">
+							<h6><?php echo trans("newsletter_m1"); ?></h6>
+							<h2><?php echo trans("newsletter_m2"); ?></h2>
+						</div>
+						<div class="col-12 col-md-10">
 							<div class="newsletter-inner">
-							<button class="btn btn-warning px-3 w-100" type="submit" id="btn-newsletter"><?php echo trans("sign_me_up"); ?></button>
+								<div class="input-group mb-3">
+									<input type="email" class="form-control" name="email" placeholder="<?php echo trans("enter_email"); ?>" required>
+									<div class="input-group-append">
+										<button class="btn btn-warning" type="submit" id="btn-newsletter"><?php echo trans("subscribe"); ?></button>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
