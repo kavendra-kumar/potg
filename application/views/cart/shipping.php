@@ -491,26 +491,24 @@
 															<div class="option-payment">
                                                                 <div class="row">
                                                                     <div class="col-md-5">
-                                                                    <div class="custom-control custom-radio">
-																	<input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
-																	<label class="custom-control-label label-payment-option" for="option_point_checkout"><?php echo trans("point_checkout"); ?><br><small><?php echo trans("point_checkout"); ?></small></label>
-																</div>
+                                                                        <div class="custom-control custom-radio">
+                                                                            <input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
+                                                                            <label class="custom-control-label label-payment-option" for="option_point_checkout">
+                                                                                <?php echo trans("point_checkout"); ?>
+                                                                                <!-- <br><small><?php echo trans("point_checkout"); ?></small> -->
+                                                                             </label>
+                                                                        </div>
                                                                     </div>
                                                                     <div class="col-md-7">
-                                                                    <div class="card_box">
-                                                            <img src="<?php echo base_url('assets/img/card/master-card.png'); ?>" alt="" srcset="" class="img-fluid">
-                                                            <img src="<?php echo base_url('assets/img/card/visa.png'); ?>" alt="" srcset="" class="img-fluid">
-                                                            <img src="<?php echo base_url('assets/img/card/discover.png'); ?>" alt="" srcset="" class="img-fluid">
-                                                            <img src="<?php echo base_url('assets/img/card/american-ex.png'); ?>" alt="" srcset="" class="img-fluid">
-                                                            </div>
+                                                                        <div class="card_box">
+                                                                            <img src="<?php echo base_url('assets/img/card/master-card.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                                            <img src="<?php echo base_url('assets/img/card/visa.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                                            <img src="<?php echo base_url('assets/img/card/discover.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                                            <img src="<?php echo base_url('assets/img/card/american-ex.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                                        </div>
                                                                     </div>
-
                                                                 </div>
-															
-                                                           
 															</div>
-                                                           
-
 														</li>
                                                     <?php endif; ?>
 												</ul>
