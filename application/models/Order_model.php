@@ -220,6 +220,7 @@ class Order_model extends CI_Model
                 'gps_location' => $shipping_address->gps_location,
                 'address_type' => $shipping_address->address_type,
                 'building_no' => $shipping_address->building_no,
+                'street' => $shipping_address->street,
                 'street_building_name' => $shipping_address->street_building_name,
                 'landmark' => $shipping_address->landmark,
                 'area' => $shipping_address->area,
@@ -868,7 +869,7 @@ class Order_model extends CI_Model
                             array_push($invoice_items, $item);
                         }
                     }
-                    $client_address = $order_shipment->address_type.": ".$order_shipment->building_no.", ".$order_shipment->street_building_name.", ".$order_shipment->landmark.", ".$order_shipment->area.", ".$order_shipment->shipping_zip_code.", ".$order_shipment->shipping_city.", ".$order_shipment->shipping_state.", ".$order_shipment->shipping_country;
+                    $client_address = $order_shipment->address_type.": ".$order_shipment->building_no.", ".$order_shipment->street_building_name.", ".$order_shipment->street.", ".$order_shipment->landmark.", ".$order_shipment->area.", ".$order_shipment->shipping_zip_code.", ".$order_shipment->shipping_city.", ".$order_shipment->shipping_state.", ".$order_shipment->shipping_country;
 
                     $data = array(
                         'order_id' => $order->id,

@@ -621,7 +621,7 @@ class Order_admin_model extends CI_Model
 			$country = $res->shipping_country;
 			$address_type = $res->address_type;
 
-			$client_address = $address_type.": ".$this->input->post('building_no', true).", ".$this->input->post('street_building_name', true).", ".$this->input->post('landmark', true).", ".$this->input->post('area', true);
+			$client_address = $address_type.": ".$this->input->post('building_no', true).", ".$this->input->post('street_building_name', true).", ".$this->input->post('street', true).", ".$this->input->post('landmark', true).", ".$this->input->post('area', true);
             
             $data1 = array(
                 'client_address' => $client_address.", ".$this->input->post('shipping_city', true) .", ".$country
@@ -633,6 +633,7 @@ class Order_admin_model extends CI_Model
                 'shipping_first_name' => $this->input->post('shipping_first_name', true),
                 'shipping_phone_number' => $this->input->post('shipping_phone_number', true),
                 'building_no' => $this->input->post('building_no', true),
+                'street' => $this->input->post('street', true),
                 'street_building_name' => $this->input->post('street_building_name', true),
                 'landmark' => $this->input->post('landmark', true),
                 'area' => $this->input->post('area', true),

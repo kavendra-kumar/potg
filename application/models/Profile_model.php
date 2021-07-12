@@ -249,6 +249,7 @@ class Profile_model extends CI_Model
         $std->gps_location = "";
         $std->address_type = "";
         $std->building_no = "";
+        $std->street = "";
         $std->street_building_name = "";
         $std->landmark = "";
         $std->area = "";

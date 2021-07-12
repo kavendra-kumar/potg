@@ -285,6 +285,12 @@
 									</div>
                                     <div class="col-xs-12 col-sm-6">
 										<div class="form-group">
+											<label for="street"><?php echo trans("street"); ?> </label>
+											<input type="text" class="form-control" id="street" name="street" value="<?php echo $shipping->street; ?>">
+										</div>
+									</div>
+                                    <div class="col-xs-12 col-sm-6">
+										<div class="form-group">
 											<label for="landmark"><?php echo trans("landmark"); ?> </label>
 											<input type="text" class="form-control" id="landmark" name="landmark" value="<?php echo $shipping->landmark; ?>">
 										</div>
@@ -378,6 +384,14 @@
                                 </div>
                                 <div class="col-sm-8">
                                     <strong class="font-right"><?php echo $shipping->street_building_name; ?></strong>
+                                </div>
+                            </div>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("street"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->street; ?></strong>
                                 </div>
                             </div>
                             <div class="row row-details">

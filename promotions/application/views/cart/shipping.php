@@ -8,7 +8,7 @@
                     <div class="row">
                         <div class="col-sm-12 col-lg-7">
                             <div class="left">
-                                <h1 class="cart-section-title"> <?php echo trans("checkout"); ?></h1>
+                                <h1 class="cart-section-title"><?php echo trans("checkout"); ?></h1>
 
                                 <?php if (!$this->auth_check): ?>
                                     <div class="row m-b-15">
@@ -16,7 +16,7 @@
                                             <p><?php echo trans("checking_out_as_guest"); ?></p>
                                         </div>
                                         <div class="col-12 col-md-6">
-                                            <p class="text-right"><?php echo trans("have_account"); ?>&nbsp;<a href="javascript:void(0)" class="link-underlined" data-toggle="modal" data-target="#loginModal"><?php echo trans("login"); ?></a></p>
+                                            <p class="text-right1 "><?php echo trans("have_account"); ?>&nbsp;<a href="javascript:void(0)" class="link-underlined" data-toggle="modal" data-target="#loginModal"><?php echo trans("login"); ?></a></p>
                                         </div>
                                     </div>
                                 <?php endif; ?>
@@ -196,7 +196,7 @@
                                     <h2 class="title">3.&nbsp;&nbsp;<?php echo trans("payment"); ?></h2>
                                 </div>
 						 end of comment */?>
-								<div class="tab-checkout tab-checkout-open m-t-0 p-0">
+								<div class="tab-checkout tab-checkout-open m-t-0 p-0 Mobile_bottom">
                                     <h2 class="title"><?php echo trans("shipping_information"); ?></h2>
                                     <?php echo form_open_multipart("cod-direct-post", ['id' => 'form_validate']); ?>
                                     <div class="row">
@@ -310,6 +310,12 @@
                     <div class="form-group">
                         <label> <?php echo trans("street_building_name"); ?></label>
                         <input type="text" name="street_building_name" class="form-control form-input" value="<?php echo $shipping_address->street_building_name; ?>" placeholder="<?php echo trans("placeholder_building_name"); ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label> <?php echo trans("street"); ?></label>
+                        <input type="text" name="street" class="form-control form-input" value="<?php echo $shipping_address->street; ?>" placeholder="<?php echo trans("placeholder_street"); ?>" >
                     </div>
                 </div>
                 <div class="col-md-6 col-12">
@@ -483,11 +489,28 @@
                                                     <?php if ( $this->payment_settings->point_checkout_enabled && empty($cart_has_digital_product)): ?>
                                                         <li id="pcheckout">
 															<div class="option-payment">
-																<div class="custom-control custom-radio">
+                                                                <div class="row">
+                                                                    <div class="col-md-5">
+                                                                    <div class="custom-control custom-radio">
 																	<input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
 																	<label class="custom-control-label label-payment-option" for="option_point_checkout"><?php echo trans("point_checkout"); ?><br><small><?php echo trans("point_checkout"); ?></small></label>
 																</div>
+                                                                    </div>
+                                                                    <div class="col-md-7">
+                                                                    <div class="card_box">
+                                                            <img src="<?php echo base_url('assets/img/card/master-card.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                            <img src="<?php echo base_url('assets/img/card/visa.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                            <img src="<?php echo base_url('assets/img/card/discover.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                            <img src="<?php echo base_url('assets/img/card/american-ex.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                            </div>
+                                                                    </div>
+
+                                                                </div>
+															
+                                                           
 															</div>
+                                                           
+
 														</li>
                                                     <?php endif; ?>
 												</ul>
@@ -545,7 +568,7 @@
         $upselling_products = ($prod->upselling_products) ? explode(",", $prod->upselling_products) : null;
         // $addon_products = ($prod->addon_products) ? explode(",", $prod->addon_products) : null;
         if($upselling_products): ?>
-        
+       
 <!-- Modal -->
 <div class="modal fade" id="addonModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -621,16 +644,6 @@
     $(window).on('load', function() {
         $('#addonModal').modal('show');
     });
-    
-    
-$('input[type=radio][name=address_type]').change(function() {
-    if (this.value == 'home') {
-        $('#building_label').text('House No. / Flat No. *');
-    }
-    else if (this.value == 'office') {
-        $('#building_label').text('Office No. *');
-    }
-});
 </script>
 <?php break;
         endif;
@@ -641,16 +654,35 @@ $('input[type=radio][name=address_type]').change(function() {
 <?php endif; endif; ?>
 
 
+
 <script>
 $( 'select[name="shipping_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="shipping_phone_number"]').val();
-   console.log(val);
+   console.log(a);
    var mob = val.substr(val.length - a.attr("data-length"));
    $(".shipping-phone-number-code").html(a.attr('data-code'));
    $('input[name="shipping_phone_code"]').val(a.attr('data-code'));
    $('input[name="shipping_phone_number"]').val(mob);
    $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":parseInt(a.attr("data-length")) + 1});
   }).change();
+
+  $('#countries').on('change', function() {
+    var country_id = this.value;
+    if(country_id == 178) {
+        $('#id_picture').show();
+        // alert('show');
+    } else {
+        $('#id_picture').hide();
+        // alert('hide');
+    }
+
+    if(country_id == 80) {
+        $('#cod').hide();
+    } else {
+        $('#cod').show();
+    }
+  });
+
 $( 'select[name="billing_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="billing_phone_number"]').val();
    console.log(val);
@@ -749,6 +781,15 @@ $('.payment_method').on('click', function() {
    }
 });
 
+
+$('input[type=radio][name=address_type]').change(function() {
+    if (this.value == 'home') {
+        $('#building_label').text('House No. / Flat No. *');
+    }
+    else if (this.value == 'office') {
+        $('#building_label').text('Office No. *');
+    }
+});
 </script>
 
 
@@ -845,18 +886,38 @@ function codeAddress(address) {
     }
   });
 }
-
 // google.maps.event.addDomListener(window, "load", initialize);
 </script>
 
 
 <style>
+p.text-right1{
+    text-align:right;
+}
+@media (max-width:767px){
+
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
 @media (max-width:576px){
     .address_text_box h6{
             font-size:15px!important;
 }
 .address_text_box .custom-control{
     padding-left: 0.5rem;
+}
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
+ p{
+    text-align:center!important;  
+}
+.card_box {
+    margin-top:10px;
+}
+.card_box img{
+    width:50px;
+    margin-left:10px;
 }
 
 }
@@ -875,6 +936,19 @@ function codeAddress(address) {
 @media (max-width: 281px){
 .address_text_box .d-flex {
     display:block!important;
+}
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
+ p{
+    text-align:center!important;  
+}
+.card_box {
+    margin-top:10px;
+}
+.card_box img{
+    width:50px;
+   
 }
 }
 

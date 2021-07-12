@@ -314,6 +314,12 @@
                 </div>
                 <div class="col-md-6 col-12">
                     <div class="form-group">
+                        <label> <?php echo trans("street"); ?></label>
+                        <input type="text" name="street" class="form-control form-input" value="<?php echo $shipping_address->street; ?>" placeholder="<?php echo trans("placeholder_street"); ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
                         <label> <?php echo trans("landmark"); ?></label>
                         <input type="text" name="landmark" class="form-control form-input" value="<?php echo $shipping_address->landmark; ?>" placeholder="<?php echo trans("placeholder_landmark"); ?>" >
                     </div>
@@ -483,11 +489,28 @@
                                                     <?php if ( $this->payment_settings->point_checkout_enabled && empty($cart_has_digital_product)): ?>
                                                         <li id="pcheckout">
 															<div class="option-payment">
-																<div class="custom-control custom-radio">
+                                                                <div class="row">
+                                                                    <div class="col-md-5">
+                                                                    <div class="custom-control custom-radio">
 																	<input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
 																	<label class="custom-control-label label-payment-option" for="option_point_checkout"><?php echo trans("point_checkout"); ?><br><small><?php echo trans("point_checkout"); ?></small></label>
 																</div>
+                                                                    </div>
+                                                                    <div class="col-md-7">
+                                                                    <div class="card_box">
+                                                            <img src="<?php echo base_url('assets/img/card/master-card.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                            <img src="<?php echo base_url('assets/img/card/visa.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                            <img src="<?php echo base_url('assets/img/card/discover.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                            <img src="<?php echo base_url('assets/img/card/american-ex.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                            </div>
+                                                                    </div>
+
+                                                                </div>
+															
+                                                           
 															</div>
+                                                           
+
 														</li>
                                                     <?php endif; ?>
 												</ul>
@@ -889,6 +912,13 @@ p.text-right1{
  p{
     text-align:center!important;  
 }
+.card_box {
+    margin-top:10px;
+}
+.card_box img{
+    width:50px;
+    margin-left:10px;
+}
 
 }
 @media (max-width:360px){
@@ -912,6 +942,13 @@ p.text-right1{
 }
  p{
     text-align:center!important;  
+}
+.card_box {
+    margin-top:10px;
+}
+.card_box img{
+    width:50px;
+   
 }
 }
 

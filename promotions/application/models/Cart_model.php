@@ -390,6 +390,7 @@ class Cart_model extends CI_Model
         $std->gps_location = $this->input->post('gps_location', true);
         $std->address_type = $this->input->post('address_type', true);
         $std->building_no = $this->input->post('building_no', true);
+        $std->street = $this->input->post('street', true);
         $std->street_building_name = $this->input->post('street_building_name', true);
         $std->landmark = $this->input->post('landmark', true);
         $std->area = $this->input->post('area', true);
@@ -481,6 +482,7 @@ class Cart_model extends CI_Model
         // $std->gps_location = $row->gps_location;
         $std->address_type = (isset($row->address_type))?$row->address_type:'';
         $std->building_no = (isset($row->building_no))?$row->building_no:'';
+        $std->street = (isset($row->street))?$row->street:'';
         $std->street_building_name = (isset($row->street_building_name))?$row->street_building_name:'';
         $std->landmark = (isset($row->landmark))?$row->landmark:'';
         $std->area = (isset($row->area))?$row->area:'';
