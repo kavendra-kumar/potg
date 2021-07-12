@@ -204,6 +204,9 @@ class Product_controller extends Home_Core_Controller
      */
     public function edit_product($id)
     {
+        // echo "<pre>"; print_r($this->languages); die;
+        $sess_lang = $this->selected_lang->id;
+
         //check auth
         if (!$this->auth_check) {
             redirect(lang_base_url());
@@ -225,6 +228,8 @@ class Product_controller extends Home_Core_Controller
             redirect($this->agent->referrer());
         }
 
+        $data["newinfo"] = $this->product_model->get_new_promo_product_info($id, $sess_lang);
+
         $data['title'] = trans("edit_product");
         $data['description'] = trans("edit_product") . " - " . $this->app_name;
         $data['keywords'] = trans("edit_product") . "," . $this->app_name;
@@ -236,6 +241,8 @@ class Product_controller extends Home_Core_Controller
         $data["file_manager_images"] = $this->file_model->get_user_file_manager_images();
         $data["active_product_system_array"] = $this->get_activated_product_system();
         $data['index_settings'] = $this->settings_model->get_index_settings();
+
+        
 
         // Added by kk for get product list.
         $data['products'] = $this->product_admin_model->get_products_for_addon();
@@ -440,6 +447,38 @@ class Product_controller extends Home_Core_Controller
             exit();
         }
         $this->product_model->update_product_promo_info($product_id);
+
+        //reset cache
+        reset_cache_data_on_change();
+        reset_user_cache_data($this->auth_user->id);
+        $this->session->set_flashdata('success', trans("msg_updated"));
+        redirect($this->agent->referrer());        
+    }
+
+    
+    /**
+     * Edit new Product promotions information Post
+     */
+    public function edit_new_promotional_page_post()
+    {
+        //check auth
+        if (!$this->auth_check) {
+            redirect(lang_base_url());
+        }
+        if (!is_user_vendor()) {
+            redirect(lang_base_url());
+        }
+        $product_id = $this->input->post('id', true);
+        $product = $this->product_admin_model->get_product($product_id);
+        if (empty($product)) {
+            redirect($this->agent->referrer());
+            exit();
+        }
+        if ($this->auth_user->role != 'admin' && $this->auth_user->id != $product->user_id) {
+            redirect($this->agent->referrer());
+            exit();
+        }
+        $this->product_model->update_new_product_promo_info($product_id);
 
         //reset cache
         reset_cache_data_on_change();

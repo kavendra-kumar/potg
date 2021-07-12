@@ -611,6 +611,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <div class="row">
                         <div class="col-sm-4 col-xs-12">
@@ -628,16 +629,43 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="control-label"><?php echo trans('api_key'); ?></label>
                     <input type="text" class="form-control" name="point_checkout_api_key" placeholder="<?php echo trans('api_key'); ?>"
                            value="<?php echo $this->payment_settings->point_checkout_api_key; ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
                 </div>
+
                 <div class="form-group">
                     <label class="control-label"><?php echo trans('secret_key'); ?></label>
                     <input type="text" class="form-control" name="point_checkout_secret_key" placeholder="<?php echo trans('secret_key'); ?>"
                            value="<?php echo $this->payment_settings->point_checkout_secret_key; ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
                 </div>
+
+                <div class="form-group">
+                    <label class="control-label">Discount (in Percentage)</label>
+                    <input type="number" class="form-control" name="point_checkout_discount_percentage"
+                           value="<?php echo $this->payment_settings->point_checkout_discount_percentage; ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-4 col-xs-12">
+                            <label>Discount Option</label>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12 col-option">
+                            <input type="radio" name="point_checkout_discount_enabled" value="1" id="point_checkout_discount_enabled_1"
+                                   class="square-purple" <?php echo ($this->payment_settings->point_checkout_discount_enabled == 1) ? 'checked' : ''; ?>>
+                            <label for="point_checkout_discount_enabled_1" class="option-label"><?php echo trans('enable'); ?></label>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12 col-option">
+                            <input type="radio" name="point_checkout_discount_enabled" value="0" id="point_checkout_discount_enabled_2"
+                                   class="square-purple" <?php echo ($this->payment_settings->point_checkout_discount_enabled != 1) ? 'checked' : ''; ?>>
+                            <label for="point_checkout_discount_enabled_2" class="option-label"><?php echo trans('disable'); ?></label>
+                        </div>
+                    </div>
+                </div>
+                
 
             </div>
             <!-- /.box-body -->

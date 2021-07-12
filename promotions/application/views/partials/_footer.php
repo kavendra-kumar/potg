@@ -137,7 +137,6 @@
 	background-size: cover;
     background-position: center;
 	box-shadow: 0px 0px 15px 15px rgb(255 255 255 / 10%);
-	border:2px dashed #FFF;
 }
 #newsletterModal .jumbotron{
 	margin:0px;
@@ -145,21 +144,6 @@
 }
 #newsletterModal  h2{
 	margin-bottom:30px;
-}
-#newsletterModal .close  span{
-	display: block;
-    height: 20px;
-    width: 20px;
-    background: #FFF;
-    border-radius: 50%;
-	line-height:20px;
-	font-size:20px;
-}
-html[lang="ar"] #newsletterModal .close span{
-	    line-height: 16px;
-}
-html[lang="ar"] #newsletterModal{
-        direction: rtl;
 }
 </style>
 <div class="modal fade" id="newsletterModal" tabindex="-1" aria-hidden="true">
@@ -184,7 +168,7 @@ html[lang="ar"] #newsletterModal{
 								<div class="input-group mb-3">
 									<input type="email" class="form-control" name="email" placeholder="<?php echo trans("enter_email"); ?>" required>
 									<div class="input-group-append">
-										<button class="btn btn-warning px-3" type="submit" id="btn-newsletter"><?php echo trans("subscribe"); ?></button>
+										<button class="btn btn-warning" type="submit" id="btn-newsletter"><?php echo trans("subscribe"); ?></button>
 									</div>
 								</div>
 							</div>

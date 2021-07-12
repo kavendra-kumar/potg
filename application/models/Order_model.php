@@ -90,6 +90,18 @@ class Order_model extends CI_Model
         }
 
         $cart_total = $this->cart_model->get_sess_cart_total();
+
+        if($this->payment_settings->point_checkout_discount_enabled == 1) {
+            $discount_percentage = $this->payment_settings->point_checkout_discount_percentage;
+            $subtotal = $cart_total->subtotal/100;
+            $pointcheckout_discount = $subtotal * $discount_percentage / 100; 
+        } else {
+            $pointcheckout_discount = 0;
+        }
+
+        $total_amnt_float = ($cart_total->total/100) - $pointcheckout_discount;
+        $total_amnt_int = $total_amnt_float * 100;
+
         if (!empty($cart_total)) {
             $data = array(
                 'order_number' => uniqid(),
@@ -98,7 +110,7 @@ class Order_model extends CI_Model
                 'price_subtotal' => $cart_total->subtotal,
                 'price_vat' => $cart_total->vat,
                 'price_shipping' => $cart_total->shipping_cost,
-                'price_total' => $cart_total->total,
+                'price_total' => $total_amnt_int,
                 'price_currency' => $cart_total->currency,
                 'status' => 0,
                 'payment_method' => $payment_method,
@@ -183,13 +195,35 @@ class Order_model extends CI_Model
         $order_id = clean_number($order_id);
         if ($this->cart_model->check_cart_has_physical_product() == true && $this->form_settings->shipping == 1) {
             $shipping_address = $this->cart_model->get_sess_cart_shipping_address();
+
+            if($this->input->post('shipping_country_id', true) == 178){
+                $this->load->model('upload_model');
+                $response = $this->upload_model->landing_page_upload('id_picture');
+                if(!empty($response)){
+                    $id_picture = $response;
+                } else {
+                    $id_picture = null;
+                }
+            } else {
+                $id_picture = null;
+            }
+            // die;
+
+
             $data = array(
                 'order_id' => $order_id,
+                'id_picture' => $id_picture,
                 'shipping_first_name' => $shipping_address->shipping_first_name,
                 'shipping_last_name' => $shipping_address->shipping_last_name,
                 'shipping_email' => $shipping_address->shipping_email,
                 'shipping_phone_number' => $shipping_address->shipping_phone_number,
                 'gps_location' => $shipping_address->gps_location,
+                'address_type' => $shipping_address->address_type,
+                'building_no' => $shipping_address->building_no,
+                'street' => $shipping_address->street,
+                'street_building_name' => $shipping_address->street_building_name,
+                'landmark' => $shipping_address->landmark,
+                'area' => $shipping_address->area,
                 'shipping_address_1' => $shipping_address->shipping_address_1,
                 'shipping_address_2' => $shipping_address->shipping_address_2,
                 'shipping_country' => $shipping_address->shipping_country_id,
@@ -835,13 +869,15 @@ class Order_model extends CI_Model
                             array_push($invoice_items, $item);
                         }
                     }
+                    $client_address = $order_shipment->address_type.": ".$order_shipment->building_no.", ".$order_shipment->street_building_name.", ".$order_shipment->street.", ".$order_shipment->landmark.", ".$order_shipment->area.", ".$order_shipment->shipping_zip_code.", ".$order_shipment->shipping_city.", ".$order_shipment->shipping_state.", ".$order_shipment->shipping_country;
+
                     $data = array(
                         'order_id' => $order->id,
                         'order_number' => $order->order_number,
                         'client_username' => $order_shipment->shipping_first_name,
                         'client_first_name' => $order_shipment->shipping_first_name,
                         'client_last_name' => $order_shipment->shipping_last_name,
-                        'client_address' => $order_shipment->shipping_address_1.", ".$order_shipment->shipping_address_2.", ".$order_shipment->shipping_zip_code.", ".$order_shipment->shipping_city.", ".$order_shipment->shipping_state.", ".$order_shipment->shipping_country,
+                        'client_address' => $client_address,
                         'invoice_items' => @serialize($invoice_items),
                         'created_at' => date('Y-m-d H:i:s')
                     );

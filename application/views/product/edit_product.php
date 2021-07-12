@@ -1,4 +1,10 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); if($product->info){$info = (array)$product->info;} else{$info = $product->info;} ?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+if($product->info){
+    $info = (array)$product->info;
+} else{
+    $info = $product->info;
+}
+?>
 
 <!-- File Manager -->
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/vendor/file-manager/file-manager.css">
@@ -32,7 +38,14 @@
                             </div>
                             <div class="row">
                                 <div class="col-12 m-b-30">
-                                    <label class="control-label font-600"><?php echo trans("images"); ?></label> <a href="#" class="float-right"  data-toggle="modal" data-target="#updateLandingPage"><?php echo trans("edit_landing_page"); ?></a>
+                                    <label class="control-label font-600"><?php echo trans("images"); ?></label>
+
+                                    <a href="javascript:void(0)" class="float-right"  data-toggle="modal" data-target="#updateLandingPage"><?php echo trans("edit_landing_page"); ?></a>
+
+                                    <a href="javascript:void(0)" class="float-right">&nbsp; | &nbsp;</a>
+
+                                    <a href="javascript:void(0)" class="float-right"  data-toggle="modal" data-target="#updateNewLandingPage">Manage Promotional Page in <?php echo $this->selected_lang->name; ?></a>
+                                    
                                     <?php $this->load->view("product/_image_update_box"); ?>
                                 </div>
                             </div>
@@ -126,10 +139,16 @@
                                         </div>
                                         <div class="form-box-body">
 
-                                        <div class="form-group">
+                                            <div class="form-group">
                                                 <label class="control-label"><?php echo trans("title"); ?></label>
                                                 <input type="text" name="title" class="form-control form-input" value="<?php echo html_escape($product->title); ?>" placeholder="<?php echo trans("title"); ?>" required>
                                             </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label"><?php echo trans("title"); ?> in Arbic</label>
+                                                <input dir="rtl" type="text" name="title_arbic" class="form-control form-input" value="<?php echo html_escape($product->title_arbic); ?>" placeholder="<?php echo trans("title"); ?> in Arbic">
+                                            </div>
+                                            
 
                                             <div class="form-group">
                                                 <label class="control-label"><?php echo trans("short_title"); ?></label>
@@ -199,7 +218,7 @@
                                                 </div>
                                                 <textarea name="description" id="ckEditor" class="text-editor"><?php echo $product->description; ?></textarea>
                                             </div>
-
+                                            
 
                                             <?php 
                                                 $addon_products = ($product->addon_products) ? explode(',', $product->addon_products) : array();
@@ -280,6 +299,8 @@
     </div>
 </div>
 <!-- Wrapper End-->
+
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js"></script>
@@ -404,6 +425,11 @@
         });
     });
 </script>
+
+
+
+<?php $this->load->view('product/_new_promotional_page'); ?>
+
 
 <div class="modal fade" id="updateLandingPage" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="updateLandingPage" aria-hidden="true">
   <div class="modal-dialog modal-lg">

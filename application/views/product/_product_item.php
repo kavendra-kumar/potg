@@ -4,9 +4,9 @@
         <a class="item-wishlist-button item-wishlist-enable <?php echo (is_product_in_wishlist($product) == 1) ? 'item-wishlist' : ''; ?>" data-product-id="<?php echo $product->id; ?>"></a>
         <div class="img-product-container">
             <a href="<?php echo generate_product_url($product); ?>">
-                <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_item_image($product); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product">
+                <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_item_image($product); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid <?php if($this->selected_lang->short_form == 'en'){ ?> img-product<?php } ?>">
                 <?php if (!empty($product->image_second)): ?>
-                    <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_item_image($product, true); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product img-second">
+                    <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_item_image($product, true); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product img-second <?php if($this->selected_lang->short_form == 'ar'){ ?> img-ar-hover<?php } ?>">
                 <?php endif; ?>
             </a>
             <div class="product-item-options">

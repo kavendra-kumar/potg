@@ -16,13 +16,13 @@
                         } ?>
                         <div class="item">
                             <div class="item-left">
-                                <div class="img-cart-product">
+                                <div class="img-cart-product <?php if($this->selected_lang->short_form == 'ar'){ ?> img-ar-checkout-div<?php } ?>">
                                     <a href="<?php echo generate_product_url($product); ?>">
-                                        <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($cart_item->product_id, 'image_small'); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
+                                        <img src="<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>" data-src="<?php echo get_product_image($cart_item->product_id, 'image_small'); ?>" alt="<?php echo html_escape($product->title); ?>" class="lazyload img-fluid img-product <?php if($this->selected_lang->short_form == 'ar'){ ?> img-ar-checkout<?php } ?>" onerror="this.src='<?php echo base_url() . IMG_BG_PRODUCT_SMALL; ?>'">
                                     </a>
                                 </div>
                             </div>
-                            <div class="item-right">
+                            <div class="item-right <?php if($this->selected_lang->short_form == 'ar'){ ?> item-right-ar<?php } ?>">
                                 <?php if ($product->product_type == 'digital'): ?>
                                     <div class="list-item">
                                         <label class="label-instant-download label-instant-download-sm"><i class="icon-download-solid"></i><?php echo trans("instant_download"); ?></label>
@@ -97,12 +97,34 @@
             <p>
                 <?php echo trans("shipping"); ?><span class="float-right"><?php echo price_formatted($cart_total->shipping_cost, $this->payment_settings->default_product_currency = $myCurrency); ?></span>
             </p>
-        <?php endif; ?>       
+        <?php endif; ?>
+
+        <?php 
+        $pointcheckout_discount = 0;
+        if ($is_physical): ?>
+        <div class="pointcheckout_discount" style="display:none;">
+            <p>
+            <?php
+                $pointcheckout_discount = $cart_total->subtotal * $this->payment_settings->point_checkout_discount_percentage / 100; 
+            ?>
+            <?php if($this->payment_settings->point_checkout_discount_enabled == 1){ ?>
+                <?php echo trans("discount"); ?><span class="float-right"><?php echo price_formatted($pointcheckout_discount, $this->payment_settings->default_product_currency = $myCurrency); ?></span>
+            <?php } ?>
+            </p>
+
+            <p class="line-seperator"></p>
+            <p>
+                <strong><?php echo trans("total"); ?><span class="float-right"><?php echo price_formatted(($cart_total->total - $pointcheckout_discount), $this->payment_settings->default_product_currency); ?></span></strong>
+            </p>
+        </div>
+        <?php endif; ?> 
+        <div class="cod_discount">
+            <p class="line-seperator"></p>
+            <p>
+                <strong><?php echo trans("total"); ?><span class="float-right"><?php echo price_formatted($cart_total->total, $this->payment_settings->default_product_currency); ?></span></strong>
+            </p>
+        </div>
         
-        <p class="line-seperator"></p>
-        <p>
-            <strong><?php echo trans("total"); ?><span class="float-right"><?php echo price_formatted($cart_total->total, $this->payment_settings->default_product_currency); ?></span></strong>
-        </p>
 
     </div>
 </div>

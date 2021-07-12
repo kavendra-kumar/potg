@@ -33,6 +33,7 @@ input.checkbox {
 							<th><?php echo trans('currency'); ?></th>
 							<th><?php echo trans('status'); ?></th>
 							<th><?php echo trans('payment_status'); ?></th>
+							<th>Shipping Status</th>
 							<th><?php echo trans('updated'); ?></th>
 							<th><?php echo trans('date'); ?></th>
 							<th class="max-width-120"><?php echo trans('options'); ?></th>
@@ -116,6 +117,9 @@ input.checkbox {
 
 								<td>
 									<?php echo trans($item->payment_status); ?>
+								</td>
+								<td>
+									<?php echo $item->smsa_status; ?>
 								</td>
 								<td><?php echo time_ago($item->updated_at); ?></td>
 								<td> <?php echo formatted_date($item->created_at); ?></td>

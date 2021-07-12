@@ -21,8 +21,17 @@
             <div class="box-body">
                 <div class="row" style="margin-bottom: 30px;">
                     <div class="col-sm-12 col-md-12 col-lg-6">
+                        <?php
+                            if($order->assign_to) {
+                                $inf = get_user($order->assign_to);
+                                $contact_person = $inf->first_name.' '.$inf->last_name;
+                            } else {
+                                $contact_person = '';
+                            }
+                        ?>
                         <h4 class="sec-title">
-                            <?php echo trans("order"); ?>#<?php echo $order->order_number; ?>                             
+                            <?php echo trans("order"); ?>#<?php echo $order->order_number; ?>    
+                            <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#assignContactPerson">Contact Person: <?php echo $contact_person; ?> </button>                         
                         </h4>
                         <div class="row row-details">
                             <div class="col-xs-12 col-sm-4 col-right">
@@ -88,6 +97,34 @@
                                 </strong>
                             </div>
                         </div>
+
+                        <?php
+                        $payurl = '';
+                        if($order->payment_method == 'Point Checkout' && $order->transaction_id != null) {
+                            $response = get_point_checkout_payment_status($order->transaction_id);
+                            // echo "<pre>"; print_r($response);
+                            if($response){
+                                if($response->success == true) {
+                                    $payurl = $response->result->redirectUrlShort;
+                                }
+                            }
+                        ?>
+                        <div class="row row-details">
+                            <div class="col-xs-12 col-sm-4 col-right">
+                                <strong> Payment URL</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <strong class="font-right">
+                                <input disabled type="text" value="<?php echo $payurl; ?>" id="myInput">
+                                <button onclick="myFunction()">Copy URL</button>
+                                </strong>
+                            </div>
+                        </div>
+                        <?php
+                        }
+                        ?>
+
+
                         <div class="row row-details">
                             <div class="col-xs-12 col-sm-4 col-right">
                                 <strong> <?php echo trans("currency"); ?></strong>
@@ -236,14 +273,32 @@
 									</div>
 									<div class="col-xs-12 col-sm-6">
 										<div class="form-group">
-											<label for="address1"><?php echo trans("address"); ?> 1</label>
-											<input type="text" class="form-control" id="address1" name="shipping_address_1" value="<?php echo $shipping->shipping_address_1; ?>">
+											<label for="building_no">Building No.</label>
+											<input type="text" class="form-control" id="building_no" name="building_no" value="<?php echo $shipping->building_no; ?>">
 										</div>
 									</div>
 									<div class="col-xs-12 col-sm-6">
 										<div class="form-group">
-											<label for="address2"><?php echo trans("address"); ?> 2</label>
-											<input type="text" class="form-control" id="address2" name="shipping_address_2" value="<?php echo $shipping->shipping_address_2; ?>">
+											<label for="street_building_name"><?php echo trans("street_building_name"); ?> </label>
+											<input type="text" class="form-control" id="street_building_name" name="street_building_name" value="<?php echo $shipping->street_building_name; ?>">
+										</div>
+									</div>
+                                    <div class="col-xs-12 col-sm-6">
+										<div class="form-group">
+											<label for="street"><?php echo trans("street"); ?> </label>
+											<input type="text" class="form-control" id="street" name="street" value="<?php echo $shipping->street; ?>">
+										</div>
+									</div>
+                                    <div class="col-xs-12 col-sm-6">
+										<div class="form-group">
+											<label for="landmark"><?php echo trans("landmark"); ?> </label>
+											<input type="text" class="form-control" id="landmark" name="landmark" value="<?php echo $shipping->landmark; ?>">
+										</div>
+									</div>
+                                    <div class="col-xs-12 col-sm-6">
+										<div class="form-group">
+											<label for="area"><?php echo trans("area"); ?> </label>
+											<input type="text" class="form-control" id="area" name="area" value="<?php echo $shipping->area; ?>">
 										</div>
 									</div>
 									<div class="col-xs-12 col-sm-6">
@@ -308,18 +363,51 @@
                             </div>
                             <div class="row row-details">
                                 <div class="col-xs-12 col-sm-4 col-right">
-                                    <strong> <?php echo trans("address"); ?> 1</strong>
+                                    <strong> Address Type</strong>
                                 </div>
                                 <div class="col-sm-8">
-                                    <strong class="font-right"><?php echo $shipping->shipping_address_1; ?></strong>
+                                    <strong class="font-right"><?php echo $shipping->address_type; ?></strong>
                                 </div>
                             </div>
                             <div class="row row-details">
                                 <div class="col-xs-12 col-sm-4 col-right">
-                                    <strong> <?php echo trans("address"); ?> 2</strong>
+                                    <strong> <?php echo ($shipping->address_type == 'home') ? 'House No. / Flat No.' : 'Office No.' ?></strong>
                                 </div>
                                 <div class="col-sm-8">
-                                    <strong class="font-right"><?php echo $shipping->shipping_address_2; ?></strong>
+                                    <strong class="font-right"><?php echo $shipping->building_no; ?></strong>
+                                </div>
+                            </div>
+
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("street_building_name"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->street_building_name; ?></strong>
+                                </div>
+                            </div>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("street"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->street; ?></strong>
+                                </div>
+                            </div>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("landmark"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->landmark; ?></strong>
+                                </div>
+                            </div>
+                            <div class="row row-details">
+                                <div class="col-xs-12 col-sm-4 col-right">
+                                    <strong> <?php echo trans("area"); ?></strong>
+                                </div>
+                                <div class="col-sm-8">
+                                    <strong class="font-right"><?php echo $shipping->area; ?></strong>
                                 </div>
                             </div>
                             <div class="row row-details">
@@ -347,6 +435,7 @@
                                 </div>
                             </div>
 
+                            <?php if($shipping->gps_location) { ?>
                             <div class="row row-details">
                                 <div class="col-xs-12 col-sm-4 col-right">
                                     <strong> <?php echo trans("gps_location"); ?></strong>
@@ -355,6 +444,34 @@
                                     <strong class="font-right"><?php echo $shipping->gps_location; ?></strong>
                                 </div>
                             </div>
+                            <?php } ?>
+
+                            <?php if($shipping->shipping_country == 'Qatar') { ?>
+                                <?php if($shipping->id_picture) { ?>
+                                    <div class="row row-details">
+                                        <div class="col-xs-12 col-sm-4 col-right">
+                                            <strong> ID Picture</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <a class="btn btn-primary" download href="../../<?php echo $shipping->id_picture; ?>">Download</a>
+                                        </div>
+                                    </div>
+                                <?php } else { ?>
+                                    <?php echo form_open_multipart('order_admin_controller/update_picture_id'); ?>
+                                    <div class="row row-details">
+                                        <div class="col-xs-12 col-sm-4 col-right">
+                                            <strong> ID Picture</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <input type="hidden" name="order_id" value="<?php echo $order->id ?>">
+                                            <input type="file" name="id_picture" class="form-control form-input" value="" required>
+                                            <button type="submit" class="btn btn-success"><?php echo trans("upload"); ?></button>
+                                        </div>
+                                    </div>
+                                    <?php echo form_close(); ?>
+                                <?php } ?>
+                            <?php } ?>
+                            
 
 
                             <?php /*if($order->awb_number) { ?>
@@ -506,7 +623,7 @@
                     Ship Through SMSA
                     </button>
 
-                    <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateTaskModal"><i class="fa fa-plus"></i> Create Custom Shipment detail</button>
+                    <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#createCustomShipmentModal"><i class="fa fa-plus"></i> Create Custom Shipment detail</button>
                     
                     <?php if($shipping->billing_country=='Oman'){ ?>
                         <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateCustomAmount"><i class="fa fa-plus"></i><?php echo empty($getCustomDiscount)?"Add Csutom COD":"Edit Custom COD"; ?></button>
@@ -527,10 +644,12 @@
                         </tr>
                      </thead>
                      <tbody>
-                          <?php 
+                        <?php 
                             $awb_number = explode(',', $order->awb_number); 
-                          // echo "<pre>";  print_r($awb_number); exit;
-                          foreach($awb_number as $awb) { ?>
+                            // echo "<pre>";  print_r($awb_number); exit;
+                            if($awb_number) {
+                                foreach($awb_number as $awb) {
+                        ?>
                         <tr>
                            <td style="width: 80px;">
                               <?php echo ($order->order_number!="") ? $order->order_number :"--" ; ?>                                       
@@ -540,107 +659,87 @@
                                  echo ($order->order_number != "") ?$order->order_number:"--" ;?>
                            </td>
                            <td>  
-
-                           
-                          
-
                                 <a target="_blank" style="color:red" href="https://smsaexpress.com/trackingdetails?tracknumbers%5B0%5D=<?php echo $awb; ?>"><?php echo ($awb != "") ? $awb:"--" ;?> </a> <br>
-
-                           
-
                             </td>
-                           <td><?php 
 
-                       
-          
+                           <td>
+
+
+                           <?php
             $shipping = get_order_shipping($order->id);
            // print_r($shipping); exit;
+
             $country = $shipping->shipping_country;
-
             $passkey="";
-
             if($country == "United Arab Emirates") {
-
                 $passkey = 'PmG@5125';
             } elseif ($country == "Saudi Arabia") {
                 $passkey = 'pMt@3423';
-
             } elseif ($country == "Oman") {
-
                 $passkey == 'PmG@3717';
-
             } elseif ($country == "Kuwait") {
-
                 $passkey = 'pGt@3424';
-
             } elseif ($country == "Bahrain") {
-
                 $passkey = 'Pmg@3425';
-
-            } 
-
+            }
 
             $arguments = array('awbNo' =>$awb);
             $arguments['passkey'] = $passkey;
 
-
-
-
-
-
-
-
         $url    = "http://track.smsaexpress.com/SECOM/SMSAwebService.asmx?wsdl";
         $client     = new SoapClient($url, array("trace" => 1, "exception" => 0));
-        //echo "<pre>"; print_r($arguments); exit;
+        // echo "<pre>"; print_r($client); exit;
         try {
 
              $data= $client->{'getStatus'}($arguments);
              $response = count((array)$data)? $data->getStatusResult:'--';
-             //echo "<pre>"; print_r($response); exit;
+             if($response) {
+                update_smsa_status($order->id, $response);
+             }
+             echo isset($response) ? $response:"--" ;
+            // echo "<pre>"; print_r($data); exit;
         }
         catch(Exception $e) {
-
+            
         }
-
-       
-    //echo "<pre>"; print_r($data); exit;
-
-
-
-
 ?>
+                          </td>
 
 
-
-
-                          <?php echo (@$response != "") ? @$response:"--" ;?></td>
                            <td>
                               <?php echo ($order->order_smsa_type != "") ? "SMSA":"--" ;?>
                            </td>
                            
                         </tr>
-                         <?php } ?>
+                         <?php } } ?>
 
-             <?php foreach($ShipmentCustomDetail as $shipment) { ?>
+             <?php if($ShipmentCustomDetail){ foreach($ShipmentCustomDetail as $shipment) { ?>
                 <tr>
-   <td style="width: 80px;">
-      <?php echo $shipment['order_id']; ?>                                   
-   </td>
-   <td>
-       <?php echo $shipment['order_id']; ?>                             
-   </td>
-   <td>  
-      <a target="_blank" style="color:red" href="<?php echo $shipment['custom_link']; ?> "> <?php echo $shipment['awb']; ?>  
-   </td>
-   <td>
-      <?php echo $shipment['final_status']; ?>  
-   </td>
-   <td>
-      <?php echo $shipment['courier']; ?>                           
-   </td>
-</tr>
-                <?php } ?> 
+                    <td style="width: 80px;">
+                        <?php echo $shipment['order_id']; ?>                                   
+                    </td>
+                    <td>
+                        <?php echo $shipment['ref']; ?>                             
+                    </td>
+                    <td>  
+                        <a target="_blank" style="color:red" href="<?php echo $shipment['custom_link']; ?> "> <?php echo $shipment['awb']; ?>  
+                    </td>
+
+                    <td>
+                        <?php
+                        echo $shipment['final_status']; 
+                        update_smsa_status($order->id, $shipment['final_status']);
+                        ?>
+                        &nbsp; 
+                        <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#UpdateCustomSMSA_Status_<?php echo $shipment['id']; ?>"><i class="fa fa-edit"></i></button>
+                    </td>
+
+                    <td>
+                        <?php echo $shipment['courier']; ?>                           
+                    </td>
+                </tr>
+
+            <?php } } ?> 
                      </tbody>
                   </table>
                   <div class="col-sm-12 table-ft">
@@ -681,7 +780,7 @@
     </div>
   </div>
 </div>
-    
+
 
     <!-- Order Task List Start -->
     <div class="col-sm-12">
@@ -738,7 +837,8 @@
                                             <td>
                                                 <?php
                                                 $inf = get_user($order_task->created_by);
-                                                echo $inf->first_name.' '.$inf->last_name; ?>
+                                                if($inf){ echo $inf->first_name.' '.$inf->last_name; } else { echo "N/A"; }
+                                                ?>
                                             </td>
                                             <td>
                                                 <?php
@@ -747,7 +847,12 @@
                                                     $name_arr = array();
                                                     foreach($assign_to as $uid){
                                                         $inf = get_user($uid);
-                                                        echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
+                                                        if($inf){
+                                                            echo "<p>".$inf->first_name.' '.$inf->last_name."</p>";
+                                                        } else {
+                                                            echo "N/A";
+                                                        }
+                                                        
                                                     }
                                                 }
                                                 ?>
@@ -756,7 +861,11 @@
                                                 <?php
                                                 if($order_task->updated_by){
                                                 $inf = get_user($order_task->updated_by);
-                                                echo $inf->first_name.' '.$inf->last_name;
+                                                if($inf){
+                                                    echo $inf->first_name.' '.$inf->last_name;
+                                                } else {
+                                                    echo "N/A";
+                                                }
                                                 } else {
                                                     echo "N/A";
                                                 }
@@ -965,13 +1074,8 @@
            
 
 
-              <?php 
-
-           
-
-
-              if ($getDiscount['discount_type']!=""): ?>
-                <div class="row row-details">
+              <?php if ($getDiscount['discount_type']): ?>
+                <!-- <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong> Discount type </strong>
                     </div>
@@ -987,21 +1091,33 @@
                             
                         </strong>
                     </div>
-                </div>
+                </div> -->
             <?php endif; ?>
 
-             <?php if ($getDiscount['total_discount']!=""): ?>
+             <?php if ($getDiscount['total_discount']): 
+                
+                if($getDiscount['discount_type']=="fix-amount") {
+                    $total_discount = $getDiscount['total_discount'];
+                    $msg = '';
+                } else {
+                    $total_discount = ($order->price_subtotal / 100) * $getDiscount['total_discount']/100;
+                    $msg = ' ('.$getDiscount['total_discount'].'%)';
+                }
+            ?>
                 <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong> Total Discount </strong>
                     </div>
                     <div class="col-sm-6">
-                        <strong class="font-right"><?php echo $getDiscount['total_discount']; ?></strong>
+                        <strong class="font-right">
+                            <?php echo $msg; ?>
+                            <?php echo price_formatted($total_discount*100, $order->price_currency); ?>
+                        </strong>
                     </div>
                 </div>
             <?php endif; ?>
 
-               <?php if ($is_order_has_physical_product): ?>
+            <?php if ($is_order_has_physical_product): ?>
                 <div class="row row-details">
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong> <?php echo trans("shipping"); ?> </strong>
@@ -1016,7 +1132,7 @@
                     <div class="col-xs-12 col-sm-6 col-right">
                         <strong>
 
-                            <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateDiscount"><i class="fa fa-plus"></i><?php echo $getDiscount['total_discount']?'Edit Discount':'Add Discount'; ?></button> 
+                            <button  data-toggle="modal" style="" class="btn btn-sm btn-info m-l-5" data-target="#CreateDiscount"><i class="fa fa-plus"></i><?php echo isset($getDiscount)?'Edit Discount':'Add Discount'; ?></button> 
                         </strong>
                     </div>
                     <div class="col-sm-6">
@@ -1030,7 +1146,9 @@
                     <strong> <?php echo trans("total"); ?></strong>
                 </div>
                 <div class="col-sm-6">
-                    <strong class="font-right"><?php echo price_formatted_again($order->price_subtotal, $order->price_currency,$getDiscount['discount_type'],$getDiscount['total_discount'],$order->price_shipping,$order->price_vat); ?></strong>
+                    <strong class="font-right">
+                    <?php echo price_formatted($order->price_total, $order->price_currency); ?>
+                    <?php // echo price_formatted_again($order->price_subtotal, $order->price_currency,$getDiscount['discount_type'],$getDiscount['total_discount'],$order->price_shipping,$order->price_vat); ?></strong>
                 </div>
             </div>
         </div>
@@ -1049,6 +1167,39 @@
                     <h4 class="modal-title"><?php echo trans("update_order_status"); ?></h4>
                 </div>
                 <div class="modal-body">
+                
+                <!-- =============Table====== -->
+                <?php $user_track = order_product_status_track($item->id, $item->order_id); ?>
+                <div class="modelTable">
+                <table class="table table-responsive table-striped table-bordered">
+                    <thead class="bg-light text-dark">
+                        <tr>
+                            <th>Status</th>
+                            <th>Updated By</th>
+                            <th>Updated at</th>
+                        </tr>
+                    </thead>   
+                    <tbody>
+                        <?php 
+                        if($user_track){
+                            foreach($user_track as $obj){ 
+                        ?>
+                        <tr>
+                            <td><?php echo trans($obj->order_status); ?></td>
+                            <td>
+                                <?php
+                                $inf = get_user($obj->user_id);
+                                if($inf){ echo $inf->first_name.' '.$inf->last_name; } else { echo "N/A"; }
+                                ?>
+                            </td>
+                            <td><?php echo $obj->created_at; ?></td>
+                        </tr>
+                        <?php } } ?>
+                    </tbody> 
+
+                </table>
+                 </div>
+                 <!-- =============Table====== -->
                     <div class="table-order-status">
                         <div class="form-group">
                             <label class="control-label"><?php echo trans('status'); ?></label>
@@ -1137,40 +1288,41 @@
         </div>
     </div>
 
+    
 
-    <!--create task Modal -->
-    <div id="CreateTaskModal" class="modal fade" role="dialog">
+    <!--Assign Contact Person Modal -->
+    <div id="assignContactPerson" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <?php echo form_open('order_admin_controller/create_custom_shipment'); ?>
+                <?php echo form_open('order_admin_controller/assign_contact_person'); ?>
                 <input type="hidden" name="id" value="<?php echo $order->id; ?>">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Shipment Details</h4>
+                    <h4 class="modal-title">Assign Contact Person</h4>
                 </div>
                 <div class="modal-body">
                     <div class="table-order-status">
+                        
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('assign_to'); ?></label>
+                            
+                            <select name="assign_to" class="form-control" required>
+                                <?php
+                                $login_id = $this->session->userdata['modesy_sess_user_id'];
+                                if($admin_users) {
+                                    if($login_id == 1) {
+                                    foreach($admin_users as $obj){
+                                        
+                                ?>
+                                    <option <?php echo ($obj->id == $order->assign_to) ? 'selected' : '' ?> value="<?php echo $obj->id; ?>"><?php echo $obj->first_name.' '.$obj->last_name; ?></option>
 
-                        <div class="form-group">
-                            <label class="control-label"> AWB </label>
-                          
-                            <input type="text" name="task" class="form-control" value="" required />
+                                <?php } } else {
+                                    foreach($admin_users as $obj){
+                                        if($login_id == $obj->id){ ?>
+                                    <option <?php echo ($obj->id == $order->assign_to) ? 'selected' : '' ?> value="<?php echo $obj->id; ?>"><?php echo $obj->first_name.' '.$obj->last_name; ?></option>
+                                <?php } } } } ?>
+                            </select>
                         </div>
-                         <div class="form-group">
-                            <label class="control-label"> Custom Links </label>
-                          
-                            <input type="text" name="custom_link" class="form-control" value="" required />
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Final Status</label>
-                            <input type="text" name="final_status" class="form-control" value="" required />
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">Courier</label>
-                            <input type="text" name="courier" id="" class="form-control datepicker" value="" required />
-                        </div>
-                       
-                      
                         
                     </div>
                 </div>
@@ -1183,37 +1335,52 @@
         </div>
     </div>
 
-    <!-- Create Discount -->
-      <div id="CreateDiscount" class="modal fade" role="dialog">
+
+    <!--create task Modal -->
+    <div id="CreateTaskModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <?php echo form_open('admin/create-discount'); ?>
-                <input type="hidden" name="order_id" value="<?php echo $order->id; ?>">
+                <?php echo form_open('order_admin_controller/create_task_post'); ?>
+                <input type="hidden" name="id" value="<?php echo $order->id; ?>">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"><?php echo $getDiscount['discount_type']=="Create Discount"?"":"Edit Discount";?></h4>
+                    <h4 class="modal-title"><?php echo trans("order_follw_up"); ?></h4>
                 </div>
                 <div class="modal-body">
                     <div class="table-order-status">
-                     <input type="hidden" name="type" value= "<?php echo ($getDiscount['total_discount'])?'edit':'add'; ?>" id="discount" class="form-control">
+
                         <div class="form-group">
-                            <label class="control-label">Discount Type</label>
-                             <select class="form-control" name="discount_type" id="" required>
-                                <option value="">Select Status</option>
-                                <option <?php echo ($getDiscount['discount_type']=="fix-amount")?"selected":""; ?> value="fix-amount">Fix amount</option>
-                                <option <?php echo ($getDiscount['discount_type']=="percentage")?"selected":""; ?>value="percentage">Percentage</option>
+                            <label class="control-label"><?php echo trans('task'); ?></label>
+                            <input type="text" name="task" class="form-control" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('comment'); ?></label>
+                            <textarea name="comment" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('reminder_date'); ?></label>
+                            <input type="text" name="reminder_date"id="datepicker" class="form-control datepicker" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('reminder_time'); ?></label>
+                            <input placeholder="Select time" type="text" name="reminder_time" id="reminder_time" class="form-control timepicker">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="control-label"><?php echo trans('assign_to'); ?></label>
+                            
+                            <select id="assign_to" name="assign_to[]" class="form-control mySelect for" multiple="multiple" style="width: 100%" required>
+                                <?php
+                                if($admin_users) {
+                                    foreach($admin_users as $obj){
+                                ?>
+                                <option value="<?php echo $obj->id; ?>"><?php echo $obj->first_name.' '.$obj->last_name; ?></option>
+                                <?php } } ?>
                             </select>
                         </div>
-
-
-                        <div class="form-group">
-                            <label class="control-label">Fill Discount</label>
-                            <input type="text" name="discount" value= "<?php echo ($getDiscount['total_discount'])?$getDiscount['total_discount']:''; ?>" id="discount" class="form-control">
-                        </div>
-
-                   </div>
+                        
+                    </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
@@ -1222,11 +1389,9 @@
             </div>
         </div>
     </div>
-    <!-- End -->
-    
 
     <!--update task Modal -->
-    <div id="createCustomShipmentModal" class="modal fade" role="dialog">
+    <div id="UpdateTaskModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <?php echo form_open('order_admin_controller/update_task_post'); ?>
@@ -1285,6 +1450,102 @@
             </div>
         </div>
     </div>
+
+
+     <!--create custom shipment Modal -->
+     <div id="createCustomShipmentModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <?php echo form_open('order_admin_controller/create_custom_shipment'); ?>
+                <input type="hidden" name="id" value="<?php echo $order->id; ?>">
+                <input type="hidden" name="type" value="manual">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Shipment Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-order-status">
+
+                        <div class="form-group">
+                            <label class="control-label"> Reference </label>
+                            <input type="text" name="ref" class="form-control" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label"> AWB </label>
+                            <input type="text" name="task" class="form-control" value="" required />
+                        </div>
+                         <div class="form-group">
+                            <label class="control-label"> Custom Links </label>
+                          
+                            <input type="text" name="custom_link" class="form-control" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Final Status</label>
+                            <input type="text" name="final_status" class="form-control" value="" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Courier</label>
+                            <input type="text" name="courier" id="" class="form-control datepicker" value="" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+                <?php echo form_close(); ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Discount -->
+      <div id="CreateDiscount" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <?php echo form_open('admin/create-discount'); ?>
+                <input type="hidden" name="order_id" value="<?php echo $order->id; ?>">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><?php echo $getDiscount['discount_type']=="Create Discount"?"":"Edit Discount";?></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="table-order-status">
+
+                    <input type="hidden" name="price_subtotal" value="<?php echo $order->price_subtotal; ?>" />
+                    <input type="hidden" name="price_vat" value="<?php echo $order->price_vat; ?>" />
+                    <input type="hidden" name="price_shipping" value="<?php echo $order->price_shipping; ?>" />
+
+                     <input type="hidden" name="type" value= "<?php echo ($getDiscount['total_discount'])?'edit':'add'; ?>" id="discount" class="form-control">
+                        <div class="form-group">
+                            <label class="control-label">Discount Type</label>
+                             <select class="form-control" name="discount_type" id="" required>
+                                <option value="">Select Status</option>
+                                <option <?php echo ($getDiscount['discount_type']=="fix-amount")?"selected":""; ?>  value="fix-amount">Fix amount</option>
+                                <option <?php echo ($getDiscount['discount_type']=="percentage")?"selected":""; ?> value="percentage">Percentage</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="control-label">Fill Discount</label>
+                            <input type="text" name="discount" value= "<?php echo isset($getDiscount)?$getDiscount['total_discount']:''; ?>" id="discount" class="form-control">
+                        </div>
+
+                   </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                </div>
+                <?php echo form_close(); ?>
+            </div>
+        </div>
+    </div>
+    <!-- End -->
+    
+
+    
 
     <div id="CreateCustomAmount" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -1374,6 +1635,36 @@
             </div>
         </div>
     </div>
+
+    <?php if($ShipmentCustomDetail){ foreach($ShipmentCustomDetail as $shipment) { ?>
+        <!-- Update custom smsa status modal. -->
+        <div id="UpdateCustomSMSA_Status_<?php echo $shipment['id']; ?>" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <?php echo form_open('order_admin_controller/UpdateCustomSMSA_Status'); ?>
+                    <input type="hidden" name="id" value="<?php echo $shipment['id']; ?>">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-order-status">
+
+                            <div class="form-group">
+                                <label class="control-label">Shipment Status</label>
+                                <input type="text" name="final_status" class="form-control" value="<?php echo $shipment['final_status']; ?>" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success"><?php echo trans("save_changes"); ?></button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><?php echo trans("close"); ?></button>
+                    </div>
+                    <?php echo form_close(); ?>
+                </div>
+            </div>
+        </div>
+    <?php } } ?>
 
     <?php if($recent_orders) { ?>
     <!--Recent Orders Modal -->
@@ -1570,3 +1861,12 @@ $(document).ready(function(){
     });
   </script>
 
+<script>
+function myFunction() {
+  var copyText = document.getElementById("myInput");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999)
+  document.execCommand("copy");
+  alert("Copied the URL: " + copyText.value);
+}
+</script>

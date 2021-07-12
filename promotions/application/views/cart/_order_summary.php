@@ -68,6 +68,7 @@
 			<?php
             endif; ?>
         </div>
+        
         <p class="m-t-30">
             <strong><?php echo trans("subtotal"); ?><span class="float-right"><?php echo price_formatted($cart_total->subtotal, $this->payment_settings->default_product_currency  = $myCurrency); ?></span></strong>
         </p>
@@ -81,10 +82,34 @@
                 <?php echo trans("shipping"); ?><span class="float-right"><?php echo price_formatted($cart_total->shipping_cost, $this->payment_settings->default_product_currency = $myCurrency); ?></span>
             </p>
         <?php endif; ?>
-        <p class="line-seperator"></p>
-        <p>
-            <strong><?php echo trans("total"); ?><span class="float-right"><?php echo price_formatted($cart_total->total, $this->payment_settings->default_product_currency); ?></span></strong>
-        </p>
+
+        
+        <?php 
+        $pointcheckout_discount = 0;
+        if ($is_physical): ?>
+        <div class="pointcheckout_discount" style="display:none;">
+            <p>
+            <?php
+                $pointcheckout_discount = $cart_total->subtotal * $this->payment_settings->point_checkout_discount_percentage / 100; 
+            ?>
+            <?php if($this->payment_settings->point_checkout_discount_enabled == 1){ ?>
+                <?php echo trans("discount"); ?><span class="float-right"><?php echo price_formatted($pointcheckout_discount, $this->payment_settings->default_product_currency = $myCurrency); ?></span>
+            <?php } ?>
+            </p>
+
+            <p class="line-seperator"></p>
+            <p>
+                <strong><?php echo trans("total"); ?><span class="float-right"><?php echo price_formatted(($cart_total->total - $pointcheckout_discount), $this->payment_settings->default_product_currency); ?></span></strong>
+            </p>
+        </div>
+        <?php endif; ?> 
+        <div class="cod_discount">
+            <p class="line-seperator"></p>
+            <p>
+                <strong><?php echo trans("total"); ?><span class="float-right"><?php echo price_formatted($cart_total->total, $this->payment_settings->default_product_currency); ?></span></strong>
+            </p>
+        </div>
+        
 
     </div>
 </div>

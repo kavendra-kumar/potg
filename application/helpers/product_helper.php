@@ -129,6 +129,13 @@ if (!function_exists('get_product_form_data')) {
 
         if (!empty($product)) {
             $disabled = "";
+
+            // $current_country = $ci->session->userdata('mds_default_location_id');
+            // $product_country = $product->country_id;
+            // if($current_country != $product_country){
+            //     $disabled = "disabled";
+            // }
+            
             if (!check_product_stock($product)) {
                 $disabled = " disabled";
             }

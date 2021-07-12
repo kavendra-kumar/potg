@@ -2003,6 +2003,7 @@ if (!function_exists('get_point_checkout_payment_url')) {
     {
         $ci =& get_instance();
 
+
         if ($ci->payment_settings->point_checkout_enabled == 1) {
 
             $point_checkout_api_key = $ci->payment_settings->point_checkout_api_key;
@@ -2024,18 +2025,6 @@ if (!function_exists('get_point_checkout_payment_url')) {
             $shipping_address = $ci->cart_model->get_sess_cart_shipping_address();
 
             $buyer_id=$ci->auth_model->get_user_data();
-            
-            $items_arr = array();
-            if (!empty($cart_items)) {
-                foreach ($cart_items as $cart_item) {
-                    $items_arr[] = array(
-                        "name" => $cart_item->product_title,
-                        "sku" => $cart_item->sku,
-                        "quantity" => $cart_item->quantity,
-                        "total" => $cart_item->total_price/100          
-                    );
-                }
-            }
 
             $shippingAddress = array(
                 "name" => $shipping_address->shipping_first_name.' '.$shipping_address->shipping_last_name,
@@ -2053,16 +2042,81 @@ if (!function_exists('get_point_checkout_payment_url')) {
                 "country" => $shipping_address->billing_country_id,
             );
 
+            
+        
+            if($ci->payment_settings->point_checkout_discount_enabled == 1) {
+                $discount_percentage = $ci->payment_settings->point_checkout_discount_percentage;
+                $subtotal = $cart_total->subtotal/100;
+                $pointcheckout_discount = $subtotal * $discount_percentage / 100; 
+            } else {
+                $pointcheckout_discount = 0;
+            }
+
+            // Currency Converter API (Fixer) start.
+            $pc_currency = $cart_total->currency;
+            $pc_subtotal = $cart_total->subtotal/100;
+            $pc_tax = $cart_total->vat/100;
+            $pc_shipping = $cart_total->shipping_cost/100;
+            $pc_amount = ($cart_total->total/100) - $pointcheckout_discount;
+            
+            $convert_rate = 1;
+
+            if($pc_currency != "AED") {
+
+                // set API Endpoint and API key 
+                $endpoint = 'latest';
+                $access_key = 'aa5953e16a892c4646a5a5e08acc6886';
+
+                // Initialize CURL:
+                $ch = curl_init('https://data.fixer.io/api/'.$endpoint.'?access_key='.$access_key.'&base=AED&symbols='.$pc_currency);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                // Store the data:
+                $json = curl_exec($ch);
+                curl_close($ch);
+
+                // Decode JSON response:
+                $exchangeRates = json_decode($json, true);
+
+                // Access the exchange rate values, e.g. AED:
+                // echo $pc_currency."<br>";
+                $convert_rate = $exchangeRates['rates'][$pc_currency];
+                // echo "<br>";
+                /* ******************** */
+                $pc_currency = "AED";
+                $pc_subtotal = $pc_subtotal / $convert_rate;
+                $pc_tax = $pc_tax / $convert_rate;
+                $pc_shipping = $pc_shipping / $convert_rate;
+                $pc_amount = $pc_amount / $convert_rate;
+                /* ******************** */
+
+            }
+            // Currency Converter API (Fixer) end.
+
+            $items_arr = array();
+            if (!empty($cart_items)) {
+                foreach ($cart_items as $cart_item) {
+                    $items_arr[] = array(
+                        "name" => $cart_item->product_title,
+                        "sku" => $cart_item->sku,
+                        "quantity" => $cart_item->quantity,
+                        "total" => ($cart_item->total_price/100) / $convert_rate
+                    );
+                }
+            }
+
+                
             $json_arr = array(
                         "transactionId" => $order_id,
                         "orderId" => $order_id,
                         "resultUrl" => generate_url("order_completed").'/'.$order_number,
-                        "currency" => $cart_total->currency,
-                        "amount" => $cart_total->total/100,
-                        "subtotal" => $cart_total->subtotal/100,
-                        "shipping" => $cart_total->shipping_cost/100,
-                        "tax" => $cart_total->vat/100,
-                        "discount" => "0.0",
+                        "currency" => $pc_currency,
+                        "amount" => ($pc_amount),
+                        // "discount" => $pointcheckout_discount,
+                        "subtotal" => $pc_subtotal,
+                        "shipping" => $pc_shipping,
+                        "tax" => $pc_tax,
+                        "discount" => $pointcheckout_discount,
                         "defaultPaymentMethod" => "CARD",
                         "paymentMethods" => array("POINTCHECKOUT", "CARD"),
                         "deviceReference" => "POS-01",
@@ -2188,18 +2242,41 @@ if(!function_exists('checkTodayTask')){
        
         $response = $ci->order_admin_model->get_paginated_today_task(15, 0);
         if(count((array)$response)){
-
             return true;
-
         }else{
-
             return false;
-
         }
-        
-        
     }
 }
 
+
+// Check today task
+if(!function_exists('order_product_status_track')){
+    function order_product_status_track($order_product_id, $order_id) {
+       $ci =& get_instance();
+      
+       $response = $ci->order_admin_model->get_order_product_status_track($order_product_id, $order_id);
+       if($response){
+           return $response;
+       }else{
+           return array();
+       }
+       
+   }
+}
+
+// 
+if(!function_exists('update_smsa_status')){
+    function update_smsa_status($order_id, $status) {
+       $ci =& get_instance();
+      
+       $res = $ci->order_admin_model->update_smsa_status($order_id, $status);
+       if(count((array)$res)){
+           return true;
+       }else{
+           return false;
+       }
+   }
+}
 
 ?>

@@ -369,6 +369,118 @@ class Home_controller extends Home_Core_Controller
             $this->product_model->increase_product_hit($data["product"]);
         }
     }
+    
+    
+    
+    
+    /**
+     * New promotional page from different ci
+     */
+    public function promotional_page($lang, $slug)
+    {
+        
+        get_method();
+        $slug = clean_slug($slug);
+        $this->review_limit = 5;
+        $this->comment_limit = 5;
+        
+        $data["product"] = $this->product_model->get_product_by_slug($slug);
+        $data["product"]->info = $this->product_model->get_new_my_promotion_product_by_slug($slug, $lang);
+
+        if(empty($data["product"]->info)) {
+            $this->error_404();
+        }
+        
+        if (empty($data['product'])) {
+            $this->error_404();
+        } else {
+            if ($data['product']->status == 0 || $data['product']->visibility == 0) {
+                if (!$this->auth_check) {
+                    redirect(lang_base_url());
+                }
+                if ($data['product']->user_id != $this->auth_user->id && $this->auth_user->role != "admin") {
+                    redirect(lang_base_url());
+                }
+            }
+            $data['lang']   =   $lang;
+            $data["category"] = $this->category_model->get_category($data["product"]->category_id);
+
+            //images
+            $data["product_images"] = $this->file_model->get_product_images($data["product"]->id);
+
+            //related products
+            $key = "related_products_" . $data["product"]->id;
+            $data["related_products"] = get_cached_data($key);
+            if (empty($data["related_products"])) {
+                $data["related_products"] = $this->product_model->get_related_products($data["product"]);
+                set_cache_data($key, $data["related_products"]);
+            }
+
+            $data["user"] = $this->auth_model->get_user($data["product"]->user_id);
+
+            //user products
+            $key = 'more_products_by_user_' . $data["user"]->id . 'cache';
+            $data['user_products'] = get_cached_data($key);
+            if (empty($data['user_products'])) {
+                $data["user_products"] = $this->product_model->get_user_products($data["user"]->id, $data["product"]->id);
+                set_cache_data($key, $data['user_products']);
+            }
+
+            $data['review_count'] = $this->review_model->get_review_count($data["product"]->id);
+            $data['reviews'] = $this->review_model->get_limited_reviews($data["product"]->id, $this->review_limit);
+            $data['review_limit'] = $this->review_limit;
+
+            $data['comment_count'] = $this->comment_model->get_product_comment_count($data["product"]->id);
+            $data['comments'] = $this->comment_model->get_comments($data["product"]->id, $this->comment_limit);
+            $data['comment_limit'] = $this->comment_limit;
+            $data["custom_fields"] = $this->field_model->generate_custom_fields_array($data["product"]->category_id, $data["product"]->id);
+            $data["half_width_product_variations"] = $this->variation_model->get_half_width_product_variations($data["product"]->id);
+            $data["full_width_product_variations"] = $this->variation_model->get_full_width_product_variations($data["product"]->id);
+
+            $data["video"] = $this->file_model->get_product_video($data["product"]->id);
+            $data["audio"] = $this->file_model->get_product_audio($data["product"]->id);
+
+            $data["digital_sale"] = null;
+            if ($data["product"]->product_type == 'digital' && $this->auth_check) {
+                $data["digital_sale"] = get_digital_sale_by_buyer_id($this->auth_user->id, $data["product"]->id);
+            }
+            //og tags
+            $data['show_og_tags'] = true;
+            $data['og_title'] = $data['product']->title;
+            $description_text = trim(html_escape(strip_tags($data['product']->description)));
+            $data['og_description'] = character_limiter($description_text, 200, "");
+            $data['og_type'] = "article";
+            $data['og_url'] = generate_product_url($data['product']);
+            $data['og_image'] = get_product_image($data['product']->id, 'image_default');
+            $data['og_width'] = "750";
+            $data['og_height'] = "500";
+            if (!empty($data['user'])) {
+                $data['og_creator'] = $data['user']->username;
+                $data['og_author'] = $data['user']->username;
+            } else {
+                $data['og_creator'] = "";
+                $data['og_author'] = "";
+            }
+            $data['og_published_time'] = $data['product']->created_at;
+            $data['og_modified_time'] = $data['product']->created_at;
+
+            $data['title'] = $data['product']->title;
+            $data['description'] = character_limiter($description_text, 200, "");
+            $data['keywords'] = generate_product_keywords($data['product']->title);
+
+            $this->load->view('partials_promotionals/_header', $data);
+            $this->load->view('product/promotionals/product', $data);
+            $this->load->view('partials_promotionals/_footer');
+            //increase hit
+            $this->product_model->increase_product_hit($data["product"]);
+        }
+    }
+    
+    
+    
+    
+    
+    
 
     /**
      * Product landing page

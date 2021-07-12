@@ -73,6 +73,19 @@
             <label><?php echo trans("search").' '.trans("phone"); ?></label>
             <input name="search_phone" class="form-control" placeholder="<?php echo trans("phone"); ?>" type="search" value="<?php echo html_escape($this->input->get('search_phone', true)); ?>" <?php echo ($this->rtl == true) ? 'dir="rtl"' : ''; ?>>
         </div>
+
+        <div class="item-table-filter col-md-2">
+            <label><?php echo trans("assign_to"); ?></label>
+            <select name="assign_to" class="form-control">
+                <option value="" selected>Select</option>
+                <?php
+                if($admin_users) {
+                    foreach($admin_users as $obj){
+                ?>
+                <option <?php echo ($obj->id == $this->input->get('assign_to', true)) ? 'selected' : '' ?> value="<?php echo $obj->id; ?>"><?php echo $obj->first_name.' '.$obj->last_name; ?></option>
+                <?php } } ?>
+            </select>
+        </div>
         
         <?php } ?>
 

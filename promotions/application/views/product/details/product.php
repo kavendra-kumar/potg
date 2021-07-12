@@ -481,7 +481,7 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 				<div class="col-12 col-md-6 order-2">
 					<div class="add-space-padding">
 						<a href="#add_to_cart" class="onpage-link btn btn-shadow" data-at="button">
-							<?php echo trans("buy_now") ?>
+							<?php echo trans("get_the_product_now") ?>
 						</a>
 					</div>
 				</div>
@@ -619,7 +619,7 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 					</div>
 					<div class="add-space-padding py-0">
 						<a href="#add_to_cart" class="onpage-link btn btn-shadow" data-at="button">
-							<?php echo trans("buy_now") ?>
+							<?php echo trans("get_the_product_now") ?>
 						</a>
 					</div>
 				</div>
@@ -722,7 +722,7 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 					<p class="cross-prod-details"><?php if($this->selected_lang->id !=2){echo $info->s7_details;}else{echo $info->s7_details_ar;} ?></p>
 					<div class="add-space-padding py-3">
 						<a href="#add_to_cart" class="onpage-link btn btn-shadow" data-at="button">
-							<?php echo trans("buy_now") ?>
+							<?php echo trans("get_the_product_now") ?>
 						</a>
 					</div>
 				</div>
@@ -753,7 +753,7 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 						</div>
 						<div class="w-50 mt-2 mx-auto">
 							<a href="#add_to_cart" class="onpage-link btn btn-shadow" data-at="button">
-								<?php echo trans("buy_now") ?>
+								<?php echo trans("get_the_product_now") ?>
 							</a>
 						</div>
 					</div>
@@ -894,10 +894,40 @@ html[lang="ar"] .custom-control-variation .custom-control-label-image .img-varia
 							<?php endif; ?>
 
 						</div>
+						
+						    <?php
+							// $current_country = $this->session->userdata('mds_default_location_id');
+							// $product_country = $product->country_id;
+							// $number = "+971503053129";
+							// $currentURL = current_url();
+							// if($current_country != $product_country){
+							?>
+								<!-- <p class="wrong_location_msg">
+									<?php echo trans("this_product_is_not_available_in_your_region") ?>
+									<a target="_blank" href="https://wa.me/<?php echo $number; ?>/?text=<?php echo $currentURL; ?>">
+										<img src="<?php echo base_url(); ?>assets/img/social-icons/whatsapp.png" alt="WhatsApp" class="img-whatsapp" style="height: 55px; width: 55px; margin-left:-10px;">
+									</a>
+								</p> -->
+							<?php // } ?>
+
+
 						<?php echo form_close(); ?>
 						<div class="row pt-4">
 							<div class="col">
 								<?php if($this->selected_lang->id !=2){echo "-CASH ON DELIVERY-";}else{echo "الدفع نقداً عند التسليم";} ?>
+								<p>
+								<?php 
+									if ($this->payment_settings->point_checkout_enabled && $this->payment_settings->point_checkout_discount_enabled && empty($cart_has_digital_product)): 
+										
+										if($this->selected_lang->short_form == 'ar') {
+											echo "<h6 class='point_disc'>استعمل بطاقتك الائتمانية وأحصل على ".$this->payment_settings->point_checkout_discount_percentage." ٪؜  خصم.</h6>";
+										} else {
+											echo "<h6 class='point_disc'>Use your credit card and get ".$this->payment_settings->point_checkout_discount_percentage."% discount.</h6>";
+										}
+										echo "<br>";
+									endif; 
+								?>
+								</p>
 							</div>
 							<div class="col">
 								<div class="text-right">
@@ -1141,11 +1171,13 @@ var x = setInterval(function() {
 }
 </style>
 <script>
-<?php if( $product->country_id == '165' || $product->country_id == '189' ){
-	$ccNumber = '+971505414735';
-}else{
-	$ccNumber = '+971502189305';
-}
+<?php
+// if( $product->country_id == '165' || $product->country_id == '189' ){
+	// $ccNumber = '+971505414735';
+// }else{
+	// $ccNumber = '+971502189305';
+// }
+$ccNumber = '+971568901213';
 ?>
 $(document).ready(function() {
 	$( "#whats-openPopup" ).on( "click", function() {

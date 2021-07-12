@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <!DOCTYPE html>
-<html lang="<?php echo $this->selected_lang->short_form ?>">
+<html <?php if($this->selected_lang->short_form == 'ar'){ ?>dir="rtl" <?php } ?> lang="<?php echo $this->selected_lang->short_form ?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

@@ -150,13 +150,20 @@ if (!function_exists('get_product_form_data')) {
 
         if (!empty($product)) {
             $disabled = "";
+
+            // $current_country = $ci->session->userdata('mds_default_location_id');
+            // $product_country = $product->country_id;
+            // if($current_country != $product_country){
+                // $disabled = "disabled";
+            // }
+            
             if (!check_product_stock($product)) {
                 $disabled = " disabled";
             }
             if ($product->listing_type == 'sell_on_site') {
                 if ($product->is_free_product != 1) {
                     $data->add_to_cart_url = base_url() . 'add-to-cart';
-                    $data->button = '<button class="btn btn-md btn-block btn-product-cart"' . $disabled . '><i class="icon-cart-solid"></i>' . trans("buy_now") . '</button>';
+                    $data->button = '<button class="btn btn-md btn-block btn-product-cart"' . $disabled . '><i class="icon-cart-solid"></i>' . trans("get_the_product_now") . '</button>';
                 }
             } elseif ($product->listing_type == 'bidding') {
                 $data->add_to_cart_url = base_url() . 'request-quote';
@@ -166,7 +173,7 @@ if (!function_exists('get_product_form_data')) {
                 }
             } else {
                 if (!empty($product->external_link)) {
-                    $data->button = '<a href="' . $product->external_link . '" class="btn btn-md btn-block" target="_blank">' . trans("buy_now") . '</a>';
+                    $data->button = '<a href="' . $product->external_link . '" class="btn btn-md btn-block" target="_blank">' . trans("get_the_product_now") . '</a>';
                 }
             }
         }

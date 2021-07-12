@@ -73,6 +73,38 @@ class Order_admin_model extends CI_Model
         return false;
     }
     
+    public function update_order_product_status_track($order_product_id, $order_id)
+    {
+        $order_id = clean_number($order_id);
+        $order_product_id = clean_number($order_product_id);
+        $login_id = $this->session->userdata['modesy_sess_user_id'];
+        $order_product = $this->get_order_product($order_product_id);
+
+        if (!empty($order_product)) {
+            $data = array(
+                'user_id' => $login_id,
+                'order_id' => $order_id,
+                'order_product_id' => $order_product_id,
+                'order_status' => $this->input->post('order_status', true),
+                'created_at' => date('Y-m-d H:i:s'),
+            );
+
+            return $this->db->insert('order_status_track',$data);
+        }
+        return false;
+    }
+
+    public function get_order_product_status_track($order_product_id, $order_id) {
+        $order_product_id = clean_number($order_product_id);
+        $order_id = clean_number($order_id);
+
+        $this->db->where('order_product_id', $order_product_id);
+        $this->db->where('order_id', $order_id);
+        $this->db->order_by('id', 'ASC');
+        $query = $this->db->get('order_status_track');
+        return $query->result();   
+    }
+    
     //update order refund values
     public function update_order_refund_values()
     {
@@ -136,6 +168,24 @@ class Order_admin_model extends CI_Model
 
         $this->db->where('id', $id);
         return $this->db->update('order_tasks', $data);
+        return true;
+    }
+
+        
+    //update UpdateCustomSMSA_Status
+    public function UpdateCustomSMSA_Status()
+    {
+        $id = $this->input->post('id', true);
+        $data = array(
+            'final_status' => $this->input->post('final_status', true),
+        );
+        $this->db->where('id', $id);
+        $this->db->update('order_custom_shipment_details', $data);
+
+        // $arr = array('smsa_status' => $this->input->post('final_status', true));
+        // $this->db->where('id', $id);
+        // $this->db->update('orders', $arr);
+
         return true;
     }
 
@@ -564,13 +614,17 @@ class Order_admin_model extends CI_Model
     public function update_shipping_address($id)
     {
 		if (!empty($id)) {
-			$this->db->select('shipping_country');
+			$this->db->select('shipping_country, address_type');
 			$this->db->from('order_shipping');
 			$this->db->where('order_id', $id);
-			$country = $this->db->get()->row()->shipping_country;
-			//'client_address' => $order_shipment->shipping_address_1.", ".$order_shipment->shipping_address_2.", ".$order_shipment->shipping_zip_code.", ".$order_shipment->shipping_city.", ".$order_shipment->shipping_state.", ".$order_shipment->shipping_country,
+            $res = $this->db->get()->row();
+			$country = $res->shipping_country;
+			$address_type = $res->address_type;
+
+			$client_address = $address_type.": ".$this->input->post('building_no', true).", ".$this->input->post('street_building_name', true).", ".$this->input->post('street', true).", ".$this->input->post('landmark', true).", ".$this->input->post('area', true);
+            
             $data1 = array(
-                'client_address' => $this->input->post('shipping_address_1', true).", ".$this->input->post('shipping_address_2', true).", ".$this->input->post('shipping_city', true) .", ".$country
+                'client_address' => $client_address.", ".$this->input->post('shipping_city', true) .", ".$country
             );
             $this->db->where('order_id', $id);
             $this->db->update('invoices', $data1);
@@ -578,6 +632,11 @@ class Order_admin_model extends CI_Model
             $data = array(
                 'shipping_first_name' => $this->input->post('shipping_first_name', true),
                 'shipping_phone_number' => $this->input->post('shipping_phone_number', true),
+                'building_no' => $this->input->post('building_no', true),
+                'street' => $this->input->post('street', true),
+                'street_building_name' => $this->input->post('street_building_name', true),
+                'landmark' => $this->input->post('landmark', true),
+                'area' => $this->input->post('area', true),
                 'shipping_address_1' => $this->input->post('shipping_address_1', true),
                 'shipping_address_2' => $this->input->post('shipping_address_2', true),
                 'shipping_city' => $this->input->post('shipping_city', true)
@@ -633,6 +692,7 @@ class Order_admin_model extends CI_Model
         
         $data = array(
             'status' => $this->input->get('status', true),
+            'assign_to' => $this->input->get('assign_to', true),
             'payment_status' => $this->input->get('payment_status', true),
             'q' => $this->input->get('q', true),
             'search_phone' => $this->input->get('search_phone', true),
@@ -680,6 +740,10 @@ class Order_admin_model extends CI_Model
             $this->db->where('date(orders.created_at) >=', $from);
 			$this->db->where('date(orders.created_at) <=', $to);
         }
+
+        if (!empty($data['assign_to'])) {
+            $this->db->where('orders.assign_to', $data['assign_to']);
+        }
         
         $data['search_phone'] = trim($data['search_phone']);
         
@@ -695,6 +759,8 @@ class Order_admin_model extends CI_Model
         if (!empty($data['country'])) {
             $this->db->like('order_shipping.shipping_country', $data['country']);
         }
+        
+
     }
 
     //get orders count
@@ -727,7 +793,7 @@ class Order_admin_model extends CI_Model
     // get orders for export
     public function get_all_orders_export()
     {
-        $this->db->select('orders.id, orders.order_number, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->select('orders.id, orders.order_number, orders.assign_to, orders.created_at, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
         // $this->db->where('orders.status !=', 3);
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
@@ -741,7 +807,7 @@ class Order_admin_model extends CI_Model
     // get orders for export
     public function get_orders_export($order_ids)
     {
-        $this->db->select('orders.id, orders.order_number, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
+        $this->db->select('orders.id, orders.order_number, orders.assign_to, orders.created_at, orders.buyer_id, orders.payment_status, orders.price_vat, orders.price_shipping, orders.price_total, orders.price_currency, order_shipping.shipping_first_name, order_shipping.shipping_last_name, order_shipping.shipping_phone_number, order_shipping.shipping_email, order_shipping.shipping_address_1, order_shipping.shipping_address_2, order_shipping.shipping_city, order_shipping.shipping_country, order_shipping.gps_location');
         $this->db->order_by('orders.id', 'ASC');
         $this->db->from('orders');
         $this->db->where_in('orders.id', $order_ids);
@@ -1223,17 +1289,22 @@ class Order_admin_model extends CI_Model
 
             $data = array(
             'order_id' => $details['id'],
+            'ref' => $details['ref'],
             'awb' => $details['task'],
             'custom_link' => $details['custom_link'],
             'final_status' => $details['final_status'],
             'courier' => $details['courier'],
+            'type' => $details['type'],
             'created_at' => date('Y-m-d H:i:s'),
            
         );
+        $this->db->insert('order_custom_shipment_details',$data);
 
-        return $this->db->insert('order_custom_shipment_details',$data);
+        $arr = array('smsa_status' => $details['final_status']);
+        $this->db->where('id', $details['id']);
+        $this->db->update('orders', $arr);
+
         return true;
-
     }
 
 
@@ -1247,9 +1318,9 @@ class Order_admin_model extends CI_Model
 
     }
 
-    public function create_order_discount($postdata){
+    public function create_order_discount($postdata) {
      //echo "<pre>"; print_r($postdata); exit;
-            if($postdata['type']=='add'){
+            if($postdata['type']=='add') {
                 $data = array(
                         'order_id' => $postdata['order_id'],
                         'discount_type' => $postdata['discount_type'],
@@ -1259,8 +1330,7 @@ class Order_admin_model extends CI_Model
                         );
 
                 $this->db->insert('order_discount',$data);
-            }else{
-
+            } else {
                 $data = array(
                         'order_id' => $postdata['order_id'],
                         'discount_type' => $postdata['discount_type'],
@@ -1269,13 +1339,21 @@ class Order_admin_model extends CI_Model
                         'updated_at' => date('Y-m-d H:i:s'),
                         );
 
-                    //print_r($data); exit;
-
                    $this->db->where('order_id', $postdata['order_id']);
                    $this->db->update('order_discount', $data);
             }
-            
 
+            if($postdata['discount_type'] == 'fix-amount') {
+                $price_total = ($postdata['price_subtotal'] - $postdata['discount']) + $postdata['price_vat'] + $postdata['price_shipping'];
+            } else {
+                $disc_per = $postdata['price_subtotal'] * $postdata['discount'] / 100;
+                $price_total = ($postdata['price_subtotal'] - $disc_per) + $postdata['price_vat'] + $postdata['price_shipping'];
+            }
+            $arr = array('price_total' => $price_total);
+            $this->db->where('id', $postdata['order_id']);
+            $this->db->update('orders', $arr);
+            
+            // echo $price_total; die;
         return true;
 
     }
@@ -1322,6 +1400,53 @@ class Order_admin_model extends CI_Model
 
         return $query->row_array();
 
+    }
+
+    
+    //Assign Contact Person
+    public function assign_contact_person()
+    {
+        $data_order = array(
+            'assign_to' => $this->input->post('assign_to', true),
+        );
+
+        $this->db->where('id', $this->input->post('id', true));
+        $this->db->update('orders', $data_order);
+        return false;
+    }
+
+    //Assign Contact Person
+    public function update_picture_id()
+    {
+        $this->load->model('upload_model');
+        $response = $this->upload_model->landing_page_upload('id_picture');
+        if(!empty($response)){
+            $id_picture = $response;
+        } else {
+            $id_picture = null;
+        }
+
+        $data_order = array(
+            'id_picture' => $id_picture,
+        );
+
+        $this->db->where('order_id', $this->input->post('order_id', true));
+        $this->db->update('order_shipping', $data_order);
+        return false;
+    }
+
+    public function update_smsa_status($order_id, $status) {
+        $order = $this->db->select("smsa_status")->from('orders')->where('id', $order_id)->get()->row();
+        if($order) {
+            if($order->smsa_status == null or $order->smsa_status != $status) {
+                $data_order = array(
+                    'smsa_status' => $status,
+                );
+                $this->db->where('id', $order_id);
+                $this->db->update('orders', $data_order);
+            }
+        }
+        return false;
     }
 	
 }

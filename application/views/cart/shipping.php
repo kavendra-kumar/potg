@@ -16,7 +16,7 @@
                                             <p><?php echo trans("checking_out_as_guest"); ?></p>
                                         </div>
                                         <div class="col-12 col-md-6">
-                                            <p class="text-right"><?php echo trans("have_account"); ?>&nbsp;<a href="javascript:void(0)" class="link-underlined" data-toggle="modal" data-target="#loginModal"><?php echo trans("login"); ?></a></p>
+                                            <p class="text-right1 "><?php echo trans("have_account"); ?>&nbsp;<a href="javascript:void(0)" class="link-underlined" data-toggle="modal" data-target="#loginModal"><?php echo trans("login"); ?></a></p>
                                         </div>
                                     </div>
                                 <?php endif; ?>
@@ -196,9 +196,9 @@
                                     <h2 class="title">3.&nbsp;&nbsp;<?php echo trans("payment"); ?></h2>
                                 </div>
 						 end of comment */?>
-								<div class="tab-checkout tab-checkout-open m-t-0 p-0">
+								<div class="tab-checkout tab-checkout-open m-t-0 p-0 Mobile_bottom">
                                     <h2 class="title"><?php echo trans("shipping_information"); ?></h2>
-                                    <?php echo form_open("cod-direct-post", ['id' => 'form_validate']); ?>
+                                    <?php echo form_open_multipart("cod-direct-post", ['id' => 'form_validate']); ?>
                                     <div class="row">
                                         <div class="col-12 cart-form-shipping-address">
                                             <div class="form-group">
@@ -206,24 +206,25 @@
                                                 <div class="row">
                                                     <div class="col-12 col-md-12 m-b-sm-15">
                                                         <label><?php echo trans("full_name"); ?>*</label>
-                                                        <input type="text" name="shipping_first_name" class="form-control form-input" value="<?php echo $shipping_address->shipping_first_name; ?>" required>
+                                                    <input type="text" name="shipping_first_name" class="form-control form-input" value="<?php echo $shipping_address->shipping_first_name; ?>" placeholder="<?php echo trans("placeholder_name"); ?>" required>
                                                     </div>
+
                                                     <div class="col-12 col-md-6 d-none">
                                                         <label><?php echo trans("last_name"); ?>*</label>
                                                         <input type="text" name="shipping_last_name" class="form-control form-input" value="<?php echo $shipping_address->shipping_last_name; ?>">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label><?php echo trans("address"); ?> 1*</label>
-                                                <input type="text" name="shipping_address_1" class="form-control form-input" value="<?php echo $shipping_address->shipping_address_1; ?>" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label><?php echo trans("address"); ?> 2 (<?php echo trans("optional"); ?>)</label>
-                                                <input type="text" name="shipping_address_2" class="form-control form-input" value="<?php echo $shipping_address->shipping_address_2; ?>">
-                                            </div>
+                                            
                                             <div class="form-group">
                                                 <div class="row">
+                                                    <div class="col-12 col-md-6 m-b-sm-15">
+                                                        <div class="form-group">
+                                                            <label><?php echo trans("email"); ?>*</label>
+                                                            <input type="email" name="shipping_email" class="form-control form-input" value="<?php echo $shipping_address->shipping_email; ?>" placeholder="<?php echo trans("placeholder_email"); ?>" required>
+                                                        </div>
+                                                    </div>
+
                                                     <div class="col-12 col-md-6 m-b-sm-15">
                                                         <label><?php echo trans("country"); ?>*</label>
                                                         <div class="selectdiv">
@@ -235,21 +236,20 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    
+                                                    
                                                     <div class="col-12 col-md-6 d-none">
                                                         <label><?php echo trans("state"); ?>*</label>
                                                         <input type="text" name="shipping_state" class="form-control form-input" value="<?php echo $shipping_address->shipping_state; ?>">
                                                     </div>
-                                                    <div class="col-12 col-md-6 m-b-sm-15">
-                                                        <label><?php echo trans("city"); ?>*</label>
-                                                        <input type="text" name="shipping_city" class="form-control form-input" value="<?php echo $shipping_address->shipping_city; ?>" required>
-                                                    </div>
+                                                    
                                                     <div class="col-12 col-md-6 d-none">
                                                         <label><?php echo trans("zip_code"); ?>*</label>
                                                         <input type="text" name="shipping_zip_code" class="form-control form-input" value="<?php echo $shipping_address->shipping_zip_code; ?>">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group">
+                                        <div class="form-group">
                                             <div class="row">
 												<div class="col-12 col-md-6">
                                                     <label><?php echo trans("phone_number"); ?>*</label>
@@ -274,14 +274,91 @@
                                                         <label id="confirm_validation-error" class="error" for="confirm_validation" style="display: none;"></label>
 													</div>
 												</div>
-                                                <div class="col-12 col-md-6 m-b-sm-15">
-                                                    <div class="form-group">
-                                                        <label><?php echo trans("email"); ?>*</label>
-                                                        <input type="email" name="shipping_email" class="form-control form-input" value="<?php echo $shipping_address->shipping_email; ?>" required>
-                                                    </div>
-                                                </div>
+
+                                                
 											</div>
-                                        </div></div>
+                                            </div>
+<!-- --------------------Adreess box----------------- -->
+<div class="form-group address_text_box">
+    <div class="row">
+        <div class="col-md-6 col-6">
+            <h6><?php echo trans("address_type"); ?></h6>
+        </div>
+        <div class="col-md-6 col-6">
+            <div class="form-group d-flex">
+                <div class="custom-control custom-checkbox">
+                    <input checked type="radio" name="address_type" value="home" id="home"> <?php echo trans("home"); ?>
+                </div>
+                <div class="custom-control custom-checkbox">
+                    <input type="radio" name="address_type" value="office" id="office"> <?php echo trans("office"); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="addressBox  py-2" style="border:1px solid gray; margin-top:-14px;">
+        <div class="container ">                                                
+            <!-- -------Row 1=== -->
+            <div class="row">
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label id="building_label"> House No. / Flat No.*</label>
+                        <input type="text" name="building_no" class="form-control form-input" value="<?php echo $shipping_address->building_no; ?>" placeholder="<?php echo trans("placeholder_officeno"); ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label> <?php echo trans("street_building_name"); ?></label>
+                        <input type="text" name="street_building_name" class="form-control form-input" value="<?php echo $shipping_address->street_building_name; ?>" placeholder="<?php echo trans("placeholder_building_name"); ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label> <?php echo trans("street"); ?></label>
+                        <input type="text" name="street" class="form-control form-input" value="<?php echo $shipping_address->street; ?>" placeholder="<?php echo trans("placeholder_street"); ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label> <?php echo trans("landmark"); ?></label>
+                        <input type="text" name="landmark" class="form-control form-input" value="<?php echo $shipping_address->landmark; ?>" placeholder="<?php echo trans("placeholder_landmark"); ?>" >
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label> <?php echo trans("area"); ?>*</label>
+                        <input type="text" name="area" class="form-control form-input" value="<?php echo $shipping_address->area; ?>" placeholder="<?php echo trans("placeholder_area"); ?>" required>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="form-group">
+                        <label><?php echo trans("city"); ?>*</label>
+                        <input type="text" name="shipping_city" class="form-control form-input" value="<?php echo $shipping_address->shipping_city; ?>" placeholder="<?php echo trans("placeholder_city"); ?>" required>
+                    </div>
+                </div>
+            </div> <!--------- row ----- -->  
+        </div> <!--------- container ----- -->     
+    </div>
+</div>
+<!-- ==========================Address box.========= -->
+
+                                            <div class="form-group d-none">
+                                                <label><?php echo trans("address"); ?> 1*</label>
+                                                <input type="text" name="shipping_address_1" class="form-control form-input" value="<?php echo $shipping_address->shipping_address_1; ?>" >
+                                            </div>
+                                            <div class="form-group d-none">
+                                                <label><?php echo trans("address"); ?> 2 (<?php echo trans("optional"); ?>)</label>
+                                                <input type="text" name="shipping_address_2" class="form-control form-input" value="<?php echo $shipping_address->shipping_address_2; ?>">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-12 col-md-12 py-2" id="id_picture" style="<?php echo ($shipping_address->shipping_country_id == 178) ? 'display:block' : ($country->id == 178)?'display:block':'display:none'; ?>">
+                                            <label class="font-weight-bold"><?php echo trans("id_picture"); ?></label>
+                                                <input type="file" name="id_picture" class="form-control form-input" value="" required>
+                                        </div>
+
+                                        
                                         <div class="col-12 cart-form-billing-address d-none" <?php echo ($shipping_address->use_same_address_for_billing == 0) ? 'style="display: block;"' : ''; ?>>
                                             <h3 class="title-billing-address"><?php echo trans("billing_address") ?></h3>
                                             <div class="form-group">
@@ -384,11 +461,23 @@
 											<h2 class="title mb-3">
 												<?php echo trans("payment_method"); ?>
 											</h2>
-
+                                            
+                                            <?php 
+                                            if ($this->payment_settings->point_checkout_enabled && $this->payment_settings->point_checkout_discount_enabled && empty($cart_has_digital_product)): 
+                                                
+                                                if($this->selected_lang->short_form == 'ar') {
+                                                    echo "<h6 class='point_disc'>استعمل بطاقتك الائتمانية وأحصل على ".$this->payment_settings->point_checkout_discount_percentage." ٪؜  خصم.</h6>";
+                                                } else {
+                                                    echo "<h6 class='point_disc'>Use your credit card and get ".$this->payment_settings->point_checkout_discount_percentage."% discount.</h6>";
+                                                }
+                                                echo "<br>";
+                                            endif; 
+                                            ?>
+                                            
 											<div class="form-group">
 												<ul class="payment-options-list">
-													<?php if ($this->payment_settings->cash_on_delivery_enabled && empty($cart_has_digital_product) && $mds_payment_type != 'promote'): ?>
-														<li>
+													<?php if ($this->payment_settings->cash_on_delivery_enabled && empty($cart_has_digital_product) && ($mds_payment_type != 'promote') && ($country->id != 80)): ?>
+														<li id="cod">
 															<div class="option-payment">
 																<div class="custom-control custom-radio">
 																	<input type="radio" class="custom-control-input payment_method" id="option_cash_on_delivery" name="payment_option" value="cash_on_delivery" required>
@@ -397,13 +486,28 @@
 															</div>
 														</li>
 													<?php endif; ?>
-                                                    <?php if ($this->payment_settings->point_checkout_enabled && empty($cart_has_digital_product)): ?>
-                                                        <li>
+                                                    <?php if ( $this->payment_settings->point_checkout_enabled && empty($cart_has_digital_product)): ?>
+                                                        <li id="pcheckout">
 															<div class="option-payment">
-																<div class="custom-control custom-radio">
-																	<input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
-																	<label class="custom-control-label label-payment-option" for="option_point_checkout"><?php echo trans("point_checkout"); ?><br><small><?php echo trans("point_checkout"); ?></small></label>
-																</div>
+                                                                <div class="row">
+                                                                    <div class="col-md-5">
+                                                                        <div class="custom-control custom-radio">
+                                                                            <input type="radio" class="custom-control-input payment_method" id="option_point_checkout" name="payment_option" value="point_checkout" required>
+                                                                            <label class="custom-control-label label-payment-option" for="option_point_checkout">
+                                                                                <?php echo trans("point_checkout"); ?>
+                                                                                <!-- <br><small><?php echo trans("point_checkout"); ?></small> -->
+                                                                             </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-7">
+                                                                        <div class="card_box">
+                                                                            <img src="<?php echo base_url('assets/img/card/master-card.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                                            <img src="<?php echo base_url('assets/img/card/visa.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                                            <img src="<?php echo base_url('assets/img/card/discover.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                                            <img src="<?php echo base_url('assets/img/card/american-ex.png'); ?>" alt="" srcset="" class="img-fluid">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
 															</div>
 														</li>
                                                     <?php endif; ?>
@@ -552,13 +656,31 @@
 <script>
 $( 'select[name="shipping_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="shipping_phone_number"]').val();
-   console.log(val);
+   console.log(a);
    var mob = val.substr(val.length - a.attr("data-length"));
    $(".shipping-phone-number-code").html(a.attr('data-code'));
    $('input[name="shipping_phone_code"]').val(a.attr('data-code'));
    $('input[name="shipping_phone_number"]').val(mob);
    $('input[name="shipping_phone_number"],input[name="shipping_phone_number_confirm"]').attr({"minlength": a.attr("data-length"),"maxlength":parseInt(a.attr("data-length")) + 1});
   }).change();
+
+  $('#countries').on('change', function() {
+    var country_id = this.value;
+    if(country_id == 178) {
+        $('#id_picture').show();
+        // alert('show');
+    } else {
+        $('#id_picture').hide();
+        // alert('hide');
+    }
+
+    if(country_id == 80) {
+        $('#cod').hide();
+    } else {
+        $('#cod').show();
+    }
+  });
+
 $( 'select[name="billing_country_id"]' ).change(function () {
    var a = $(this).children("option:selected"),val = $('input[name="billing_phone_number"]').val();
    console.log(val);
@@ -648,11 +770,24 @@ $( '#place_order' ).click(function() {
 $('.payment_method').on('click', function() {
    if( $('input[name=payment_option]:checked').val() == 'cash_on_delivery') {
        $('.cod_msg').show();
+       $('.cod_discount').show();
+       $('.pointcheckout_discount').hide();
    } else {
     $('.cod_msg').hide();
+    $('.cod_discount').hide();
+    $('.pointcheckout_discount').show();
    }
 });
 
+
+$('input[type=radio][name=address_type]').change(function() {
+    if (this.value == 'home') {
+        $('#building_label').text('House No. / Flat No. *');
+    }
+    else if (this.value == 'office') {
+        $('#building_label').text('Office No. *');
+    }
+});
 </script>
 
 
@@ -749,6 +884,72 @@ function codeAddress(address) {
     }
   });
 }
-
 // google.maps.event.addDomListener(window, "load", initialize);
 </script>
+
+
+<style>
+p.text-right1{
+    text-align:right;
+}
+@media (max-width:767px){
+
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
+@media (max-width:576px){
+    .address_text_box h6{
+            font-size:15px!important;
+}
+.address_text_box .custom-control{
+    padding-left: 0.5rem;
+}
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
+ p{
+    text-align:center!important;  
+}
+.card_box {
+    margin-top:10px;
+}
+.card_box img{
+    width:50px;
+    margin-left:10px;
+}
+
+}
+@media (max-width:360px){
+    .address_text_box h6{
+            font-size:15px!important;
+    }
+    .address_text_box .custom-control{
+        <?php if($this->selected_lang->short_form == 'ar'){ ?> padding-right: 0rem !important; <?php } else { ?> padding-left: 0.5rem; <?php } ?>
+    }
+}
+@media (max-width: 321px){
+.address_text_box h6 {
+    font-size: 13px!important;
+}
+@media (max-width: 281px){
+.address_text_box .d-flex {
+    display:block!important;
+}
+.Mobile_bottom .m-b-sm-15{
+    margin-bottom: 0px;
+}
+ p{
+    text-align:center!important;  
+}
+.card_box {
+    margin-top:10px;
+}
+.card_box img{
+    width:50px;
+   
+}
+}
+
+
+
+</style>

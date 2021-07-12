@@ -6,34 +6,9 @@ class Order_model extends CI_Model
     //add order
     public function add_order($data_transaction)
     {
-			$shipping_address = $this->cart_model->get_sess_cart_shipping_address();
-			$user=$this->auth_model->get_user_by_email($shipping_address->shipping_email);
-			if (!empty($user)) {
-				$buyer_id=$user->id;
-				$buyer_type= "registered";
-			}
-			else
-			{
-				$this->load->library('bcrypt');        
-				$datas['username'] = remove_special_characters($shipping_address->shipping_first_name);
-				$datas['email']=$shipping_address->shipping_email;
-				//secure password
-				$datas['password'] = $this->bcrypt->hash_password('Test@123');
-				$datas['role'] = "member";
-				$datas['user_type'] = "registered";
-				$datas["slug"] = $this->auth_model->generate_uniqe_slug($datas["username"]);
-				$datas['banned'] = 0;
-				$datas['created_at'] = date('Y-m-d H:i:s');
-				$datas['token'] = generate_token();
-				$datas['email_status'] = 1;
-				if ($this->db->insert('users', $datas))
-				{
-					$last_id = $this->db->insert_id();
-					$buyer_id=$last_id;
-					$buyer_type= "registered";
-				}
-				
-			}
+		$buyer_id=$this->auth_model->get_user_data();
+		$buyer_type='registered';		
+			
 	    $cart_total = $this->cart_model->get_sess_cart_total();
         if (!empty($cart_total)) {
             $data = array(
@@ -115,6 +90,18 @@ class Order_model extends CI_Model
         }
 
         $cart_total = $this->cart_model->get_sess_cart_total();
+
+        if($this->payment_settings->point_checkout_discount_enabled == 1) {
+            $discount_percentage = $this->payment_settings->point_checkout_discount_percentage;
+            $subtotal = $cart_total->subtotal/100;
+            $pointcheckout_discount = $subtotal * $discount_percentage / 100; 
+        } else {
+            $pointcheckout_discount = 0;
+        }
+
+        $total_amnt_float = ($cart_total->total/100) - $pointcheckout_discount;
+        $total_amnt_int = $total_amnt_float * 100;
+
         if (!empty($cart_total)) {
             $data = array(
                 'order_number' => uniqid(),
@@ -123,7 +110,7 @@ class Order_model extends CI_Model
                 'price_subtotal' => $cart_total->subtotal,
                 'price_vat' => $cart_total->vat,
                 'price_shipping' => $cart_total->shipping_cost,
-                'price_total' => $cart_total->total,
+                'price_total' => $total_amnt_int,
                 'price_currency' => $cart_total->currency,
                 'status' => 0,
                 'payment_method' => $payment_method,
@@ -168,8 +155,19 @@ class Order_model extends CI_Model
         }
         return false;
     }
-    
-     //update order number
+
+    //update order number
+    public function update_order_number($order_id)
+    {
+        $order_id = clean_number($order_id);
+        $data = array(
+            'order_number' => $order_id + 10000
+        );
+        $this->db->where('id', $order_id);
+        $this->db->update('orders', $data);
+    }
+
+    //update order number
     public function update_order_status($order_id, $status)
     {
         if($status == 'PAID') {
@@ -191,30 +189,41 @@ class Order_model extends CI_Model
         $this->db->update('order_products', $data2);
     }
 
-    //update order number
-    public function update_order_number($order_id)
-    {
-        $order_id = clean_number($order_id);
-        $data = array(
-            'order_number' => $order_id + 10000
-        );
-        $this->db->where('id', $order_id);
-        $this->db->update('orders', $data);
-    }
-
     //add order shipping
     public function add_order_shipping($order_id)
     {
         $order_id = clean_number($order_id);
         if ($this->cart_model->check_cart_has_physical_product() == true && $this->form_settings->shipping == 1) {
             $shipping_address = $this->cart_model->get_sess_cart_shipping_address();
+
+            if($this->input->post('shipping_country_id', true) == 178){
+                $this->load->model('upload_model');
+                $response = $this->upload_model->landing_page_upload('id_picture');
+                if(!empty($response)){
+                    $id_picture = $response;
+                } else {
+                    $id_picture = null;
+                }
+            } else {
+                $id_picture = null;
+            }
+            // die;
+
+
             $data = array(
                 'order_id' => $order_id,
+                'id_picture' => $id_picture,
                 'shipping_first_name' => $shipping_address->shipping_first_name,
                 'shipping_last_name' => $shipping_address->shipping_last_name,
                 'shipping_email' => $shipping_address->shipping_email,
                 'shipping_phone_number' => $shipping_address->shipping_phone_number,
                 'gps_location' => $shipping_address->gps_location,
+                'address_type' => $shipping_address->address_type,
+                'building_no' => $shipping_address->building_no,
+                'street' => $shipping_address->street,
+                'street_building_name' => $shipping_address->street_building_name,
+                'landmark' => $shipping_address->landmark,
+                'area' => $shipping_address->area,
                 'shipping_address_1' => $shipping_address->shipping_address_1,
                 'shipping_address_2' => $shipping_address->shipping_address_2,
                 'shipping_country' => $shipping_address->shipping_country_id,
@@ -258,12 +267,10 @@ class Order_model extends CI_Model
     {
         $order_id = clean_number($order_id);
         $cart_items = $this->cart_model->get_sess_cart_items();
-		$shipping_address = $this->cart_model->get_sess_cart_shipping_address();
-			$user=$this->auth_model->get_user_by_email($shipping_address->shipping_email);
-			if (!empty($user)) {
-				$buyer_id=$user->id;
-				$buyer_type= "registered";
-			}
+		
+		$buyer_id=$this->auth_model->get_user_data();
+		$buyer_type='registered';
+			
         if (!empty($cart_items)) {
             foreach ($cart_items as $cart_item) {
                 $product = get_available_product($cart_item->product_id);
@@ -533,6 +540,7 @@ class Order_model extends CI_Model
     {
         $order_product_id = clean_number($order_product_id);
         $this->db->where('id', $order_product_id);
+        $this->db->where('order_status!=','cancelled');
         $query = $this->db->get('order_products');
         return $query->row();
     }
@@ -861,13 +869,15 @@ class Order_model extends CI_Model
                             array_push($invoice_items, $item);
                         }
                     }
+                    $client_address = $order_shipment->address_type.": ".$order_shipment->building_no.", ".$order_shipment->street_building_name.", ".$order_shipment->street.", ".$order_shipment->landmark.", ".$order_shipment->area.", ".$order_shipment->shipping_zip_code.", ".$order_shipment->shipping_city.", ".$order_shipment->shipping_state.", ".$order_shipment->shipping_country;
+
                     $data = array(
                         'order_id' => $order->id,
                         'order_number' => $order->order_number,
                         'client_username' => $order_shipment->shipping_first_name,
                         'client_first_name' => $order_shipment->shipping_first_name,
                         'client_last_name' => $order_shipment->shipping_last_name,
-                        'client_address' => $order_shipment->shipping_address_1.", ".$order_shipment->shipping_address_2.", ".$order_shipment->shipping_zip_code.", ".$order_shipment->shipping_city.", ".$order_shipment->shipping_state.", ".$order_shipment->shipping_country,
+                        'client_address' => $client_address,
                         'invoice_items' => @serialize($invoice_items),
                         'created_at' => date('Y-m-d H:i:s')
                     );
@@ -875,6 +885,36 @@ class Order_model extends CI_Model
                     }
                 /* } */
             }
+			else{
+                //$invoice
+                $client = get_user($order->buyer_id);
+                if (!empty($client)) {
+                    $invoice_items = array();
+                    $order_products = $this->order_model->get_order_products($order_id);
+                    if (!empty($order_products)) {
+                        foreach ($order_products as $order_product) {
+                            $seller = get_user($order_product->seller_id);
+                            $item = array(
+                                'id' => $order_product->id,
+                                'seller' => (!empty($seller)) ? $seller->username : ""
+                            );
+                            array_push($invoice_items, $item);
+                        }
+                    }
+                    $data = array(
+                        'order_id' => $order->id,
+                        'order_number' => $order->order_number,
+                        'client_username' => $client->username,
+                        'client_first_name' => $client->first_name,
+                        'client_last_name' => $client->last_name,
+                        'client_address' => get_location($client),
+                        'invoice_items' => @serialize($invoice_items),
+                        'created_at' => date('Y-m-d H:i:s')
+                    );
+                    $this->db->where('id',$invoice->id);
+                    return $this->db->update('invoices', $data);
+                }
+			}
         }
         return false;
     }
@@ -899,37 +939,4 @@ class Order_model extends CI_Model
 		$this->db->where('id', $order_id);
         $this->db->update('orders', $order);
     }
-	
-	/*public function get_user_data()
-    {
-			$shipping_address = $this->cart_model->get_sess_cart_shipping_address();
-			$user=$this->auth_model->get_user_by_email($shipping_address->shipping_email);
-			if (!empty($user)) {
-				$buyer_id=$user->id;
-				$buyer_type= "registered";
-			}
-			else
-			{
-				$this->load->library('bcrypt');        
-				$datas['username'] = remove_special_characters($shipping_address->shipping_first_name);
-				$datas['email']=$shipping_address->shipping_email;
-				//secure password
-				$datas['password'] = $this->bcrypt->hash_password('Test@123');
-				$datas['role'] = "member";
-				$datas['user_type'] = "registered";
-				$datas["slug"] = $this->auth_model->generate_uniqe_slug($datas["username"]);
-				$datas['banned'] = 0;
-				$datas['created_at'] = date('Y-m-d H:i:s');
-				$datas['token'] = generate_token();
-				$datas['email_status'] = 1;
-				if ($this->db->insert('users', $datas))
-				{
-					$last_id = $this->db->insert_id();
-					$buyer_id=$last_id;
-					$buyer_type= "registered";
-				}
-				
-			}
-			return $buyer_id;
-    }*/
 }

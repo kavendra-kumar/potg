@@ -115,6 +115,7 @@ class Order_admin_controller extends Admin_Core_Controller
 		$data['orders'] = $this->order_admin_model->get_paginated_orders($pagination['per_page'], $pagination['offset']);
         $data['panel_settings'] = $this->settings_model->get_panel_settings();
 
+		$data['admin_users'] = $this->order_admin_model->get_user_by_role();
 		$data['countries'] = $this->order_admin_model->get_countries();
 		//echo "<pre>"; print_r($data['orders']); die;
 		$this->load->view('admin/includes/_header', $data);
@@ -155,8 +156,11 @@ class Order_admin_controller extends Admin_Core_Controller
 					'custom_value' => 'Custom Value',
 					'payment_status' => 'Payment Status',
 					'price_currency' => 'Currency',
+					'assign_to' => 'Assign To',
+					'created_at' => 'Created At',
 					'recent_order_number' => 'Recent Order Number',
 					'recent_order_status' => 'Recent Order Status',
+					
 				);
 				foreach($orders as $obj) {
 					//echo "<pre>";  print_r($obj); die;
@@ -228,6 +232,13 @@ class Order_admin_controller extends Admin_Core_Controller
 
 					$Number  = ($obj->shipping_phone_number) ? $obj->shipping_phone_number:'';
 
+					if($obj->assign_to) {
+						$inf = get_user($obj->assign_to);
+                        $contact_person = $inf->first_name.' '.$inf->last_name;
+					} else {
+						$contact_person = '';
+					}
+
 					$data[] = array(
 						'order_number' => ($obj->order_number)?$obj->order_number:'',
 						'name' => ($obj->shipping_first_name ? $obj->shipping_first_name:'').' '.($obj->shipping_last_name ?$obj->shipping_last_name:''),
@@ -246,6 +257,8 @@ class Order_admin_controller extends Admin_Core_Controller
 						'custom_value' => number_format($custom_value, 2),
 						'payment_status' => trans($obj->payment_status),
 						'price_currency' => ($obj->price_currency)?$obj->price_currency:'',
+						'assign_to' => $contact_person,
+						'created_at' => ($obj->created_at)?$obj->created_at:'',
 						'recent_order_number' => $rec_order_number,
 						'recent_order_status' => $rec_status
 					);
@@ -309,6 +322,8 @@ class Order_admin_controller extends Admin_Core_Controller
 				'custom_value' => 'Custom Value',
 				'payment_status' => 'Payment Status',
 				'price_currency' => 'Currency',
+				'assign_to' => 'Assign To',
+				'created_at' => 'Created At',
 				'recent_order_number' => 'Recent Order Number',
 				'recent_order_status' => 'Recent Order Status',
 			);
@@ -381,6 +396,12 @@ class Order_admin_controller extends Admin_Core_Controller
 				}
 
 				$Number  = ($obj->shipping_phone_number) ? $obj->shipping_phone_number:'';
+				if($obj->assign_to) {
+					$inf = get_user($obj->assign_to);
+					$contact_person = $inf->first_name.' '.$inf->last_name;
+				} else {
+					$contact_person = '';
+				}
 
 				$data[] = array(
 					'order_number' => ($obj->order_number)?$obj->order_number:'',
@@ -400,6 +421,8 @@ class Order_admin_controller extends Admin_Core_Controller
 					'custom_value' => number_format($custom_value, 2),
 					'payment_status' => trans($obj->payment_status),
 					'price_currency' => ($obj->price_currency)?$obj->price_currency:'',
+					'assign_to' => $contact_person,
+					'created_at' => ($obj->created_at)?$obj->created_at:'',
 					'recent_order_number' => $rec_order_number,
 					'recent_order_status' => $rec_status
 				);
@@ -477,6 +500,18 @@ class Order_admin_controller extends Admin_Core_Controller
                 $datas['price_total']+=$products->product_total_price;
 				
 			}
+			$discount = $this->order_admin_model->get_order_discount($id);
+			if($discount) {
+				if($discount['discount_type'] == 'fix-amount') {
+					
+					$datas['price_total'] = (($datas['price_total']/100) - $discount['total_discount'])*100;
+					//echo $datas['price_total']; die;
+				} else {
+					$disc_per = ($datas['price_subtotal']/100) * $discount['total_discount'] / 100;
+					$datas['price_total'] = (($datas['price_total']/100) - $disc_per)*100;
+				}
+			}
+
 			$this->order_model->update_order($datas,$id);
 		
 		}
@@ -511,14 +546,13 @@ class Order_admin_controller extends Admin_Core_Controller
 	 */
 	public function generate_awb($Number)
 	{
-		
-
 		$order = $this->order_admin_model->get_order_by_order_number($Number);
-		//echo "<pre>"; print_r($order); exit;
+		// echo "<pre>"; print_r($order); exit;
 
 		if($order->awb_number!=""){
 			$Number = $Number.'-'.rand(10,99);
 		}
+
 		$shipping = get_order_shipping($order->id);
 		$productss = $this->order_admin_model->get_order_products($order->id);
 		$pcs = 0;
@@ -533,12 +567,16 @@ class Order_admin_controller extends Admin_Core_Controller
 				}
 			}
 		}
+		// print_r($product_name); die;
 
-		if($order->payment_method == 'Cash On Delivery'){
-			$total = $order->price_total;
-		} else {
+		$total = $order->price_total/100;
+
+		if($order->payment_method == 'Point Checkout' && $order->payment_status == "payment_received") {
 			$total = 0;
 		}
+
+		$minus_per = $total * 30 / 100;
+		$custom_value = $total - $minus_per;
 
 		$currency = $order->price_currency;
 
@@ -550,9 +588,9 @@ class Order_admin_controller extends Admin_Core_Controller
 		// 	$passkey = 'pMt@3423';
 		// }
 
-//echo $country."--".$passkey; exit;
+		//echo $country."--".$passkey; exit;
 		$getCustomCodAmount = array();
-//		echo $country;
+		//		echo $country;
 		if($country == "United Arab Emirates") {
 
 			
@@ -565,6 +603,10 @@ class Order_admin_controller extends Admin_Core_Controller
 		} elseif ($country == "Oman") {
 		
 			$getCustomCodAmount = $this->order_admin_model->get_custom_code_amount($order->id);
+			if(!empty($getCustomCodAmount)){
+				$custom_value = $getCustomCodAmount['customAmount'];
+				$currency = 'USD';
+			}
 			
 			$passkey = 'PmG@3717';
 
@@ -577,31 +619,6 @@ class Order_admin_controller extends Admin_Core_Controller
 			$passkey = 'Pmg@3425';
 
 		} 
-
-		if(!empty($getCustomCodAmount)){
-
-			$custVal = $getCustomCodAmount['customAmount'];
-
-		} else {
-
-			$custVal = "";
-
-		}
-
-		//echo $custVal; exit;
-		//echo $passkey; exit;
-
-		// if($country = 'United Arab Emirates') {
-		// 	$passkey = 'PmG@5125';
-		// } elseif($country = 'Saudi Arabia') {
-		// 	$passkey = 'pMt@3423';
-		// } elseif($country = 'Oman') {
-		// 	$passkey = 'PmG@3717';
-		// } elseif($country = 'Kuwait') {
-		// 	$passkey = 'pGt@3424';
-		// } elseif($country = 'Bahrain') {
-		// 	$passkey = 'PmG@Pmg@3425';
-		// }
 
 		
 
@@ -625,9 +642,9 @@ class Order_admin_controller extends Admin_Core_Controller
 		$arguments['cEmail'] = '';
 		$arguments['carrValue'] = '0';
 		$arguments['carrCurr'] = $currency;
-		$arguments['codAmt'] = $total/100;
+		$arguments['codAmt'] = $total;
 		$arguments['weight'] = '1';
-		$arguments['custVal'] = $custVal;
+		$arguments['custVal'] = $custom_value;
 		$arguments['custCurr'] = $currency;
 		$arguments['insrAmt'] = '0';
 		$arguments['insrCurr'] = $currency;
@@ -640,19 +657,15 @@ class Order_admin_controller extends Admin_Core_Controller
 		echo $awb_number = $output->addShipmentResult;
 
 		if($order->awb_number==""){
-
 			$this->db->set('awb_number', $awb_number);
 			$this->db->where('id', $order->id);
 			$this->db->update('orders');
-
 		} else {
-			
 			$updated_awb_number = $order->awb_number.','.$awb_number;
 			$this->db->set('awb_number',$updated_awb_number);
 			$this->db->where('id', $order->id);
 			$this->db->update('orders');
 		}
-		
 		//echo $awb_number; exit;
 
 		$this->session->set_flashdata('success', trans("msg_updated"));
@@ -759,6 +772,8 @@ class Order_admin_controller extends Admin_Core_Controller
 		if (!empty($order_product)) {
 			if ($this->order_admin_model->update_order_product_status($order_product->id)) {
 
+				$this->order_admin_model->update_order_product_status_track($order_product->id, $order_product->order_id);
+
 				$order_status = $this->input->post('order_status', true);
 				if ($order_product->product_type == "digital") {
 					if ($order_status == 'completed' || $order_status == 'payment_received') {
@@ -784,9 +799,12 @@ class Order_admin_controller extends Admin_Core_Controller
 				$this->session->set_flashdata('error', trans("msg_error"));
 			}
 
-			$this->order_admin_model->update_payment_status_if_all_received($order_product->order_id);
+			if($order_status == 'awaiting_payment' or $order_status == 'payment_received') {
+				$this->order_admin_model->update_payment_status_if_all_received($order_product->order_id);
+			}
 			$this->order_admin_model->update_order_status_if_completed($order_product->order_id);
 		}
+
 		redirect($this->agent->referrer(),'refresh');
 	}
 	
@@ -827,6 +845,20 @@ class Order_admin_controller extends Admin_Core_Controller
 	public function update_task_post()
 	{
 		if ($this->order_admin_model->update_order_task()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
+
+	/**
+	 * update task Post
+	 */
+	public function UpdateCustomSMSA_Status()
+	{
+		if ($this->order_admin_model->UpdateCustomSMSA_Status()) {
 			
 			$this->session->set_flashdata('success', trans("msg_updated"));
 		} else {
@@ -1122,21 +1154,37 @@ class Order_admin_controller extends Admin_Core_Controller
 
 	#For manage discount
 	public function createDiscount(){
-
 		$this->order_admin_model->create_order_discount($this->input->post());
+		$this->session->set_flashdata('success', trans("msg_updated"));
+		redirect('admin/orders');
+		// redirect($this->agent->referrer());
+	}
+
+	public function addCustomCodAmount() {
+		$this->order_admin_model->addCustomCodAmount($this->input->post());
 		$this->session->set_flashdata('success', trans("msg_updated"));
 		redirect($this->agent->referrer());
 	}
 
+	/**
+	 * Assign contact person Post
+	 */
+	public function assign_contact_person()
+	{
+		if ($this->order_admin_model->assign_contact_person()) {
+			
+			$this->session->set_flashdata('success', trans("msg_updated"));
+		} else {
+			$this->session->set_flashdata('error', trans("msg_error"));
+		}
+		redirect($this->agent->referrer(),'refresh');
+	}
 
-
-	public function addCustomCodAmount() {
-		
-		$this->order_admin_model->addCustomCodAmount($this->input->post());
+	#Upload ID Picture for Qatar.
+	public function update_picture_id(){
+		$this->order_admin_model->update_picture_id();
 		$this->session->set_flashdata('success', trans("msg_updated"));
 		redirect($this->agent->referrer());
-
-		
 	}
 	
 }
